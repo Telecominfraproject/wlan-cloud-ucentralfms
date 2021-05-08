@@ -102,6 +102,8 @@ components:
         uuid:
           type: string
           format: uuid
+        creator:
+          type: string
         location:
           type: string
           format: uri
