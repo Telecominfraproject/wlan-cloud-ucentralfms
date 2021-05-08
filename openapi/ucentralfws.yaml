@@ -1,0 +1,535 @@
+openapi: 3.0.1
+info:
+  title: uCentral Firmware Service API
+  description: A process to manage new uCentral firmware distribution.
+  version: 0.0.1
+  license:
+    name: BSD3
+    url: https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/master/LICENSE
+  contact:
+    name: Arilia Support
+    url: https://www.ucentral.info/support
+
+servers:
+  - url: 'https://localhost:15055/api/v1'
+
+security:
+  - ApiKeyAuth: []
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorResponse'
+
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericErrorResponse'
+
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GenericGoodAnswer'
+
+  schemas:
+    FirmwareDetails:
+      type: object
+      description: Definition of a firmware release
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        description:
+          type: string
+        uploaded:
+          type: string
+          format: 'date-time'
+        firmwareDate:
+          type: string
+          format: 'date-time'
+        owner:
+          type: string
+        location:
+          type: string
+          format: uri
+        deviceTypes:
+          type: array
+          items:
+            type: string
+        downloadCount:
+          type: integer
+          format: int64
+        uploader:
+          type: string
+        size:
+          type: integer
+          format: int64
+        digest:
+          type: string
+        s3uri:
+          type: string
+
+    FirmwareDetailsList:
+      type: object
+      properties:
+        firmwares:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirmwareDetails'
+
+    CallbackHook:
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        location:
+          type: string
+          format: uri
+        token:
+          type: string
+        tokenType:
+          type: string
+        created:
+          type: string
+          format: 'date-time'
+        expires:
+          type: string
+          format: 'date-time'
+
+    CallbackHookList:
+      type: object
+      properties:
+        callbacks:
+          type: array
+          items:
+            $ref: '#/components/schemas/CallbackHook'
+
+    GenericErrorResponse:
+      description: Typical error response
+      properties:
+        ErrorCode:
+          type: integer
+        ErrorDetails:
+          type: string
+        ErrorDescription:
+          type: string
+
+    GenericGoodAnswer:
+      description: used for all succesful responses.
+      properties:
+        Operation:
+          type: string
+        Details:
+          type: string
+        Code:
+          type: integer
+
+    WebTokenRequest:
+      description: User Id and password.
+      type: object
+      required:
+        - userId
+        - password
+      properties:
+        userId:
+          type: string
+          default: support@example.com
+        password:
+          type: string
+          default: support
+        refreshToken:
+          type: string
+      example:
+        userId: support@example.com
+        password: support
+
+    WebTokenResult:
+      description: Login and Refresh Tokens to be used in subsequent API calls.
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+          format: int32
+        idle_timeout:
+          type: integer
+          format: int32
+        username:
+          type: string
+        created:
+          type: string
+          format: 'date-time'
+        aclTemplate:
+          $ref: '#/components/schemas/WebTokenAclTemplate'
+
+    WebTokenAclTemplate:
+      type: object
+      properties:
+        aclTemplate:
+          $ref: '#/components/schemas/AclTemplate'
+
+    AclTemplate:
+      type: object
+      properties:
+        Read:
+          type: boolean
+        ReadWrite:
+          type: boolean
+        ReadWriteCreate:
+          type: boolean
+        Delete:
+          type: boolean
+        PortalLogin:
+          type: boolean
+
+paths:
+  /oauth2:
+    post:
+      tags:
+        - Authentication
+      summary: Get access token - to be used as Bearer token header for all other API requests.
+      operationId: getAccessToken
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebTokenRequest'
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebTokenResult'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /oauth2/{token}:
+    delete:
+      tags:
+        - Authentication
+      summary: Revoke a token.
+      operationId: removeAccessToken
+      parameters:
+        - in: path
+          name: token
+          schema:
+            type:
+              string
+          required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /firmwares:
+    get:
+      tags:
+        - Firmware
+      summary: Returns a list of firmwares.
+      description: Get a list of firmwares.
+      operationId: getFirmwareList
+      parameters:
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: List firmwares
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareDetailsList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /firmware/{uuid}:
+    get:
+      tags:
+        - Firmware
+      summary: Returns a Firmware
+      description: Get a Firmware.
+      operationId: getFirmware
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: A Firmware definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareDetails'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Firmware
+      summary: Delete some commands
+      operationId: createFirmware
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Successfully deleted commands for the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareDetails'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Firmware
+      summary: Delete some Firmware
+      operationId: deleteFirmware
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Successfully deleted Firmware for the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /callbacks:
+    get:
+      tags:
+        - Callbacks
+      summary: Returns a list of callbacks
+      description: Get a list of callbacks
+      operationId: getCallBackList
+      parameters:
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: A callback list definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackHookList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+
+  /callback/{uuid}:
+    get:
+      tags:
+        - Callbacks
+      summary: Returns a callback
+      description: Get a callback.
+      operationId: getCallback
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: A callback definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackHook'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Callbacks
+      summary: Delete some commands
+      operationId: createCallback
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Successfully deleted commands for the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Callbacks
+      summary: Delete some commands
+      operationId: deleteCallback
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Successfully deleted commands for the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /file/{uuid}:
+    get:
+      tags:
+        - Files
+      summary: Get a file from the upload directory
+      operationId: getUploadFile
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Succesfull file retrieval
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Files
+      summary: Delete a file from the upload directory
+      operationId: deleteUploadFidelete
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+            format: uuid
+          required: true
+        - in: query
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
