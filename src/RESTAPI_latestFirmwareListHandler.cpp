@@ -11,5 +11,13 @@ void RESTAPI_latestFirmwareListHandler::handleRequest(Poco::Net::HTTPServerReque
     if (!IsAuthorized(Request, Response))
         return;
 
-    ParseParameters(Request);
+    ParseParameters(Request);    if(Request.getMethod()==Poco::Net::HTTPRequest::HTTP_GET)
+        DoGet(Request, Response);
+    else
+        BadRequest(Response);
+
+}
+
+void RESTAPI_latestFirmwareListHandler::DoGet(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
+
 }

@@ -19,6 +19,7 @@ public:
                                 Poco::Net::HTTPRequest::HTTP_DELETE,
                                 Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
     void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) override;
+    void DoGet(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 };
 
 

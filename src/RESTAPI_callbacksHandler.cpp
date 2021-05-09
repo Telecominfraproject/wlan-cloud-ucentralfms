@@ -12,4 +12,13 @@ void RESTAPI_callbacksHandler::handleRequest(Poco::Net::HTTPServerRequest& Reque
         return;
 
     ParseParameters(Request);
+    if(Request.getMethod()==Poco::Net::HTTPRequest::HTTP_GET)
+        DoGet(Request, Response);
+    else
+        BadRequest(Response);
+
+}
+
+void RESTAPI_callbacksHandler::DoGet(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
+
 }
