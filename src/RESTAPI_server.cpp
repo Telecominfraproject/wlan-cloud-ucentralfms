@@ -85,9 +85,8 @@ namespace uCentral::RESTAPI {
             return new RESTAPI_callbackHandler(bindings, Logger_);
         } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/latestFirmwareList", bindings)) {
             return new RESTAPI_latestFirmwareListHandler(bindings, Logger_);
-        }
-
-        return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
+        } else
+            return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
     }
 
     void Service::Stop() {

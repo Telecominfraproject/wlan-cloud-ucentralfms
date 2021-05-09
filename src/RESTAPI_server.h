@@ -15,6 +15,9 @@
 
 namespace uCentral::RESTAPI {
 
+    int Start();
+    void Stop();
+
     class Service : public SubSystemServer {
 
     public:

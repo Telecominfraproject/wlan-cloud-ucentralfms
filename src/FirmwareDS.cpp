@@ -18,6 +18,7 @@
 
 #include "FirmwareDS.h"
 #include "uStorageService.h"
+#include "RESTAPI_server.h"
 
 namespace uCentral {
 
@@ -77,6 +78,7 @@ namespace uCentral {
 
         addSubsystem(uCentral::Storage::Service::instance());
         addSubsystem(uCentral::Auth::Service::instance());
+        addSubsystem(uCentral::RESTAPI::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -189,9 +191,11 @@ namespace uCentral {
 
             uCentral::Storage::Start();
             uCentral::Auth::Start();
+            uCentral::RESTAPI::Start();
 
             App.waitForTerminationRequest();
 
+            uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
             uCentral::Storage::Stop();
 
