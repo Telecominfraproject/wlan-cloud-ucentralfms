@@ -11,8 +11,11 @@
 namespace uCentral::Storage {
 
 	int Service::Create_Tables() {
-		Create_Firmwares();
+
+	    Create_Firmwares();
 		Create_Callbacks();
+        Create_LatestFirmwareList();
+
 		return 0;
 	}
 
@@ -29,15 +32,21 @@ namespace uCentral::Storage {
         firmwareDate:
           type: string
           format: 'date-time'
+        firmwareFileName:
+          type: string
+        firmwareVersion:
+          type: string  #the version the AP will report
+        firmwareHash:
+          type: string
+        firmwareLatestDoc:
+          type: string
         owner:
           type: string
         location:
           type: string
           format: uri
-        deviceTypes:
-          type: array
-          items:
-            type: string
+        deviceType:
+          type: string
         downloadCount:
           type: integer
           format: int64
@@ -62,13 +71,17 @@ namespace uCentral::Storage {
                     "Description VARCHAR(128), "
                     "Owner VARCHAR(128), "
                     "Location TEXT, ",
-                    "DeviceTypes TEXT, "
+                    "DeviceType VARCHAR(128), "
                     "Uploaded BIGINT, "
                     "DownloadCount BIGINT, "
                     "Uploader VARCHAR(128), "
                     "Size BIGINT, "
                     "Digest TEXT, "
                     "FirmwareDate BIGINT, "
+                    "FirmwareFileName TEXT, "
+                    "FirmwareVersion VARCHAR(128), "
+                    "FirmwareHash VARCHAR(32), "
+                    "FirmwareLatestDoc TEXT, "
                     "S3URI TEXT )",
                 Poco::Data::Keywords::now;
 			return 0;
@@ -83,6 +96,9 @@ namespace uCentral::Storage {
         uuid:
           type: string
           format: uuid
+        uri:
+          type: string
+          format: uri
         location:
           type: string
           format: uri
@@ -105,7 +121,7 @@ namespace uCentral::Storage {
 		try {
 			Poco::Data::Session Sess = Pool_->get();
 
-            Sess << "CREATE TABLE IF NOT EXISTS Devices ("
+            Sess << "CREATE TABLE IF NOT EXISTS Callbacks ("
                     "UUID VARCHAR(64) PRIMARY KEY, "
                     "Token TEXT, "
                     "TokenType VARCHAR(64), ",
@@ -114,7 +130,7 @@ namespace uCentral::Storage {
                     "Expires BIGINT, "
                     "Digest TEXT, "
                     "FirmwareDate BIGINT, "
-                    "S3URI TEXT )",
+                    "URI TEXT )",
                     Poco::Data::Keywords::now;
 			return 0;
 		} catch(const Poco::Exception &E) {
@@ -122,4 +138,35 @@ namespace uCentral::Storage {
 		}
 		return -1;
 	}
+
+    /*
+    LatestFirmware:
+    type: object
+        properties:
+            deviceType:
+            type: string
+        uuid:
+            type: string
+            format: uuid
+        lastUpdated:
+            type: string
+            format: 'date-time'
+    */
+    int Service::Create_LatestFirmwareList() {
+        try {
+            Poco::Data::Session Sess = Pool_->get();
+
+            Sess << "CREATE TABLE IF NOT EXISTS LatestFirmwares ("
+                    "DeviceType     VARCHAR(128) PRIMARY KEY, "
+                    "UUID           TEXT, "
+                    "LastUpdated    BIGINT"
+                    ")",
+                    Poco::Data::Keywords::now;
+            return 0;
+        } catch(const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return -1;
+	}
 }
+

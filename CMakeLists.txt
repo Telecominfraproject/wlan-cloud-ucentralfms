@@ -24,6 +24,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED system)
 find_package(OpenSSL REQUIRED)
+find_package(AWSSDK REQUIRED)
 find_package(Poco REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka)
@@ -34,7 +35,11 @@ add_executable(ucentralfws
                     src/uStorageService.cpp src/uStorageService.h src/storage_tables.cpp
                     src/storage_sqlite.cpp src/SubSystemServer.cpp src/SubSystemServer.h
                     src/uAuthService.h src/uAuthService.cpp src/RESTAPI_handler.cpp src/RESTAPI_handler.h
-                    src/utils.cpp src/utils.h)
+                    src/utils.cpp src/utils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
+                    src/storage_latestfirmware.cpp src/RESTAPI_server.cpp src/RESTAPI_server.h
+                    src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h src/RESTAPI_unknownRequestHandler.cpp
+                    src/RESTAPI_unknownRequestHandler.h
+        src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp src/RESTAPI_latestFirmwareListHandler.h)
 
 target_link_libraries(ucentralfws PUBLIC
         ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})

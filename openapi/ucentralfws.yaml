@@ -66,15 +66,21 @@ components:
         firmwareDate:
           type: string
           format: 'date-time'
+        firmwareFileName:
+          type: string
+        firmwareVersion:
+          type: string  #the version the AP will report
+        firmwareHash:
+          type: string
+        firmwareLatestDoc:
+          type: string
         owner:
           type: string
         location:
           type: string
           format: uri
-        deviceTypes:
-          type: array
-          items:
-            type: string
+        deviceType:
+          type: string
         downloadCount:
           type: integer
           format: int64
@@ -102,6 +108,8 @@ components:
         uuid:
           type: string
           format: uuid
+        uri:
+          type: string
         creator:
           type: string
         location:
@@ -125,6 +133,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CallbackHook'
+
+    LatestFirmware:
+      type: object
+      properties:
+        deviceType:
+          type: string
+        uuid:
+          type: string
+          format: uuid
+        lastUpdated:
+          type: string
+          format: 'date-time'
+
+    LatestFirmwareList:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/LatestFirmware'
 
     GenericErrorResponse:
       description: Typical error response
@@ -474,6 +502,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /latestFirmwareList:
+    get:
+      tags:
+        - Firmware
+      summary: Returns the list of latest firmwares
+      description: Returns the list of latest firmwares
+      operationId: getLatestFirmwareList
+      responses:
+        200:
+          description: Returns the list of latest firmwares
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LatestFirmwareList'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:

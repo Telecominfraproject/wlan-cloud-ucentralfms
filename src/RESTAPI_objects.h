@@ -36,27 +36,40 @@ namespace uCentral::Objects {
         std::string Description;
         uint64_t    Uploaded;
         uint64_t    FirmwareDate;
+        std::string FirmwareFileName;
+        std::string FirmwareVersion;
+        std::string FirmwareHash;
+        std::string FirmwareLatestDoc;
         std::string Owner;
         std::string Location;
-        std::string DeviceTypes;
+        std::string DeviceType;
         uint64_t    DownloadCount;
         std::string Uploader;
         uint64_t    Size;
         std::string Digest;
         std::string S3URI;
-        void to_json(Poco::JSON::Object &Obj);
+        void to_json(Poco::JSON::Object &Obj) const;
     };
 
     struct Callback {
         std::string UUID;
-        std::string Creator;
+        std::string URI;
         std::string Location;
+        std::string Creator;
         std::string Token;
         std::string TokenType;
         uint64_t    Created;
         uint64_t    Expires;
-        void to_json(Poco::JSON::Object &Obj);
+        void to_json(Poco::JSON::Object &Obj) const;
     };
+
+    struct LatestFirmware {
+        std::string DeviceType;
+        std::string UUID;
+        uint64_t    LastUpdated;
+        void to_json(Poco::JSON::Object &Obj) const;
+    };
+
 }
 
 #endif //UCENTRALFWS_RESTAPI_OBJECTS_H

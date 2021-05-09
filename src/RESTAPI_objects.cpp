@@ -4,15 +4,51 @@
 
 #include "RESTAPI_objects.h"
 #include "RESTAPI_handler.h"
+#include "Poco/JSON/Parser.h"
 
 namespace uCentral::Objects {
 
-    void Firmware::to_json(Poco::JSON::Object &Obj) {
-
+    void EmbedDocument(const std::string & ObjName, Poco::JSON::Object & Obj, const std::string &ObjStr) {
+        std::string D = ObjStr.empty() ? "{}" : ObjStr;
+        Poco::JSON::Parser P;
+        Poco::Dynamic::Var result = P.parse(D);
+        const auto &DetailsObj = result.extract<Poco::JSON::Object::Ptr>();
+        Obj.set(ObjName, DetailsObj);
     }
 
-    void Callback::to_json(Poco::JSON::Object &Obj) {
+    void Firmware::to_json(Poco::JSON::Object &Obj) const {
+        Obj.set("uuid",UUID);
+        Obj.set("description", Description);
+        Obj.set("uploaded",RESTAPIHandler::to_RFC3339(Uploaded));
+        Obj.set("firmwareDate",RESTAPIHandler::to_RFC3339(FirmwareDate));
+        Obj.set("firmwareVersion", FirmwareVersion);
+        Obj.set("firmwareHash", FirmwareHash);
+        Obj.set("owner", Owner);
+        Obj.set("location", Location);
+        Obj.set("downloadCount", DownloadCount);
+        Obj.set("uploader", Uploader);
+        Obj.set("size", Size);
+        Obj.set("digest", Digest);
+        Obj.set("s3uri", S3URI);
+        Obj.set("deviceType", DeviceType);
+        EmbedDocument("firmwareLatestDoc",Obj,FirmwareLatestDoc);
+    }
 
+    void Callback::to_json(Poco::JSON::Object &Obj) const {
+        Obj.set("uri", URI);
+        Obj.set("uuid",UUID);
+        Obj.set("location",Location);
+        Obj.set("creator", Creator);
+        Obj.set("Token", Token);
+        Obj.set("tokenType", TokenType);
+        Obj.set("created",RESTAPIHandler::to_RFC3339(Created));
+        Obj.set("expires",RESTAPIHandler::to_RFC3339(Expires));
+    }
+
+    void LatestFirmware::to_json(Poco::JSON::Object &Obj) const {
+        Obj.set("deviceType", DeviceType);
+        Obj.set("uuid", UUID);
+        Obj.set("lastUpdated", RESTAPIHandler::to_RFC3339(LastUpdated));
     }
 
     void AclTemplate::to_json(Poco::JSON::Object &Obj) const {
