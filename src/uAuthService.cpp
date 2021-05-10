@@ -7,6 +7,8 @@
 //
 
 #include <ctime>
+#include <iostream>
+#include <fstream>
 
 #include "Poco/Net/OAuth20Credentials.h"
 #include "Poco/JWT/Token.h"
@@ -66,6 +68,10 @@ namespace uCentral::Auth {
         uCentral::Auth::Service::instance()->Logout(Token);
     }
 
+    bool IsValidAPIKey(const std::string &Key) {
+	    return uCentral::Auth::Service::instance()->IsValidAPIKey(Key);
+	}
+
     int Service::Start() {
 		Signer_.setRSAKey(uCentral::instance()->Key());
 		Signer_.addAllAlgorithms();
@@ -74,8 +80,28 @@ namespace uCentral::Auth {
         DefaultPassword_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".default.password","");
         DefaultUserName_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".default.username","");
         Mechanism_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".service.type","internal");
+        ApiKeyDb_ = uCentral::ServiceConfig::GetString("authentication.apikey.db","");
+        InitAPIKeys();
         return 0;
     }
+
+    void Service::InitAPIKeys() {
+        std::ifstream  in(ApiKeyDb_,std::ios_base::in);
+
+        std::string Line;
+        while(std::getline(in,Line)) {
+            APIKeyEntry E;
+
+            auto P1=Line.find_first_of(':');
+            E.Key = Line.substr(0,P1);
+            if(!E.Key.empty()) {
+                auto P2 = Line.find_last_of(':');
+                E.Owner = Line.substr(P1 + 1, P2 - P1 - 1);
+                E.Description = Line.substr(P2 + 1);
+                APIKeys_[E.Key] = E;
+            }
+        }
+	}
 
     void Service::Stop() {
 		Logger_.notice("Stopping...");
@@ -219,5 +245,16 @@ namespace uCentral::Auth {
         }
         return false;
     }
+
+    bool Service::IsValidAPIKey(const std::string &APIKey) {
+	    SubMutexGuard   Guard(Mutex_);
+
+	    SHA2_.reset();
+	    SHA2_.update(APIKey);
+	    std::string K = Poco::SHA2Engine::digestToHex(SHA2_.digest());
+	    if(APIKeys_.find(K)!=APIKeys_.end())
+	        return true;
+	    return false;
+	}
 
 }  // end of namespace

@@ -39,10 +39,27 @@ namespace uCentral::Objects {
         Obj.set("uuid",UUID);
         Obj.set("location",Location);
         Obj.set("creator", Creator);
-        Obj.set("Token", Token);
+        Obj.set("token", Token);
         Obj.set("tokenType", TokenType);
         Obj.set("created",RESTAPIHandler::to_RFC3339(Created));
         Obj.set("expires",RESTAPIHandler::to_RFC3339(Expires));
+    }
+
+    bool Callback::from_json(Poco::JSON::Object::Ptr Obj) {
+        Poco::DynamicStruct ds = *Obj;
+
+        if(ds.contains("uri"))
+            URI = ds["uri"].toString();
+        if(ds.contains("uuid"))
+            UUID = ds["uuid"].toString();
+        if(ds.contains("location"))
+            Location = ds["location"].toString();
+        if(ds.contains("token"))
+            Token = ds["token"].toString();
+        if(ds.contains("tokenType"))
+            TokenType = ds["tokenType"].toString();
+
+        return true;
     }
 
     void LatestFirmware::to_json(Poco::JSON::Object &Obj) const {

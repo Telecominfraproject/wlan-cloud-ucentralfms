@@ -22,7 +22,7 @@ public:
     void DoPost(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     void DoGet(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
     void DoDelete(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-
+    void DoPut(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
 };
 
 

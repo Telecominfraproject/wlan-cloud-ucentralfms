@@ -39,7 +39,12 @@ add_executable(ucentralfws
                     src/storage_latestfirmware.cpp src/RESTAPI_server.cpp src/RESTAPI_server.h
                     src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h src/RESTAPI_unknownRequestHandler.cpp
                     src/RESTAPI_unknownRequestHandler.h
-        src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp src/RESTAPI_latestFirmwareListHandler.h)
+                    src/uFileUploader.cpp src/uFileUploader.h
+                    src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h
+                    src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h
+                    src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp
+                    src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp
+                    src/RESTAPI_latestFirmwareListHandler.h)
 
 target_link_libraries(ucentralfws PUBLIC
         ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})

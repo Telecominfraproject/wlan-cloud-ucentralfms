@@ -26,7 +26,7 @@ namespace uCentral::Storage {
     bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
     bool DeleteCallback(std::string & UUID);
     bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
-    bool GetCallBacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
+    bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
 
     bool AddFirmware(uCentral::Objects::Firmware & F);
     bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
@@ -35,7 +35,7 @@ namespace uCentral::Storage {
     bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
 
     bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-    bool GetLatestFirmware(std::string & DeviceType, std::string &UUID);
+    bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
     bool DeleteLatestFirmware(std::string & DeviceType);
     bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
@@ -52,7 +52,7 @@ namespace uCentral::Storage {
         friend bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
         friend bool DeleteCallback(std::string & UUID);
         friend bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
-        friend bool GetCallBacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
+        friend bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
 
         friend bool AddFirmware(uCentral::Objects::Firmware & F);
         friend bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
@@ -61,7 +61,7 @@ namespace uCentral::Storage {
         friend bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
 
         friend bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-        friend bool GetLatestFirmware(std::string & DeviceType, std::string &UUID);
+        friend bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
         friend bool DeleteLatestFirmware(std::string & DeviceType);
         friend bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
@@ -87,7 +87,7 @@ namespace uCentral::Storage {
         bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
         bool DeleteCallback(std::string & UUID);
         bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
-        bool GetCallBacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
+        bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
 
         bool AddFirmware(uCentral::Objects::Firmware & F);
         bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
@@ -96,7 +96,7 @@ namespace uCentral::Storage {
         bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
 
         bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-        bool GetLatestFirmware(std::string & DeviceType, std::string &UUID);
+        bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
         bool DeleteLatestFirmware(std::string & DeviceType);
         bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 

@@ -29,7 +29,7 @@ namespace uCentral::RESTAPI {
     }
 
     Service::Service() noexcept:
-            SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentral.restapi")
+            SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
     {
     }
 

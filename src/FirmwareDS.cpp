@@ -19,6 +19,7 @@
 #include "FirmwareDS.h"
 #include "uStorageService.h"
 #include "RESTAPI_server.h"
+#include "uFileUploader.h"
 
 namespace uCentral {
 
@@ -49,14 +50,14 @@ namespace uCentral {
 
         Poco::Net::initializeSSL();
 
-        std::string Location = Poco::Environment::get("UCENTRAL_CONFIG",".");
+        std::string Location = Poco::Environment::get("UCENTRALFWS_CONFIG",".");
         Poco::Path ConfigFile;
 
         ConfigFile = ConfigFileName_.empty() ? Location + "/ucentralfws.properties" : ConfigFileName_;
 
         if(!ConfigFile.isFile())
         {
-            std::cerr << "uCentral: Configuration " << ConfigFile.toString() << " does not seem to exist. Please set UCENTRAL_CONFIG env variable the path of the ucentralfws.properties file." << std::endl;
+            std::cerr << "uCentralFWS: Configuration " << ConfigFile.toString() << " does not seem to exist. Please set UCENTRALFWS_CONFIG env variable the path of the ucentralfws.properties file." << std::endl;
             std::exit(Poco::Util::Application::EXIT_CONFIG);
         }
 
@@ -79,6 +80,7 @@ namespace uCentral {
         addSubsystem(uCentral::Storage::Service::instance());
         addSubsystem(uCentral::Auth::Service::instance());
         addSubsystem(uCentral::RESTAPI::Service::instance());
+        addSubsystem(uCentral::uFileUploader::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -192,9 +194,11 @@ namespace uCentral {
             uCentral::Storage::Start();
             uCentral::Auth::Start();
             uCentral::RESTAPI::Start();
+            uCentral::uFileUploader::Start();
 
             App.waitForTerminationRequest();
 
+            uCentral::uFileUploader::Stop();
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
             uCentral::Storage::Stop();

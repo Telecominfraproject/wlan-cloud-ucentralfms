@@ -149,7 +149,7 @@ components:
     LatestFirmwareList:
       type: object
       properties:
-        types:
+        latestFirmwareList:
           type: array
           items:
             $ref: '#/components/schemas/LatestFirmware'
@@ -354,7 +354,7 @@ paths:
     post:
       tags:
         - Firmware
-      summary: Delete some commands
+      summary: Create A New firmware
       operationId: createFirmware
       parameters:
         - in: path
@@ -362,9 +362,46 @@ paths:
           schema:
             type: string
           required: true
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirmwareDetails'
       responses:
         200:
           description: Successfully deleted commands for the device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareDetails'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Firmware
+      summary: Update A New firmware
+      operationId: upodateFirmware
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirmwareDetails'
+      responses:
+        200:
+          description: Successfully updated firmware
           content:
             application/json:
               schema:
@@ -472,6 +509,13 @@ paths:
           schema:
             type: string
           required: true
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackHook'
       responses:
         200:
           description: Successfully deleted commands for the device.
@@ -479,6 +523,36 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GenericGoodAnswer'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Callbacks
+      summary: Update A New firmware
+      operationId: upodateFirmware
+      parameters:
+        - in: path
+          name: uuid
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: User id and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackHook'
+      responses:
+        200:
+          description: Successfully updated callback
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackHook'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:

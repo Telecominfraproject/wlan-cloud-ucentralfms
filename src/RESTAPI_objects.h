@@ -34,20 +34,20 @@ namespace uCentral::Objects {
     struct Firmware {
         std::string UUID;
         std::string Description;
-        uint64_t    Uploaded;
-        uint64_t    FirmwareDate;
+        std::string Owner;
+        std::string Location;
+        std::string DeviceType;
+        std::string Uploader;
+        std::string Digest;
         std::string FirmwareFileName;
         std::string FirmwareVersion;
         std::string FirmwareHash;
         std::string FirmwareLatestDoc;
-        std::string Owner;
-        std::string Location;
-        std::string DeviceType;
-        uint64_t    DownloadCount;
-        std::string Uploader;
-        uint64_t    Size;
-        std::string Digest;
         std::string S3URI;
+        uint64_t    FirmwareDate;
+        uint64_t    Uploaded;
+        uint64_t    DownloadCount;
+        uint64_t    Size;
         void to_json(Poco::JSON::Object &Obj) const;
     };
 
@@ -55,12 +55,13 @@ namespace uCentral::Objects {
         std::string UUID;
         std::string URI;
         std::string Location;
-        std::string Creator;
         std::string Token;
         std::string TokenType;
+        std::string Creator;
         uint64_t    Created;
         uint64_t    Expires;
         void to_json(Poco::JSON::Object &Obj) const;
+        bool from_json(Poco::JSON::Object::Ptr Obj);
     };
 
     struct LatestFirmware {

@@ -14,9 +14,6 @@ public:
             : RESTAPIHandler(bindings,L,
                              std::vector<std::string>
                                      {  Poco::Net::HTTPRequest::HTTP_GET,
-                                        Poco::Net::HTTPRequest::HTTP_POST,
-                                        Poco::Net::HTTPRequest::HTTP_PUT,
-                                        Poco::Net::HTTPRequest::HTTP_DELETE,
                                         Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
     void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) override;
     void DoGet(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);

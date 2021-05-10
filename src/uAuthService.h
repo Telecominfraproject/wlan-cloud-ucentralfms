@@ -9,6 +9,8 @@
 #ifndef UCENTRAL_UAUTHSERVICE_H
 #define UCENTRAL_UAUTHSERVICE_H
 
+#include <map>
+
 #include "SubSystemServer.h"
 
 #include "Poco/JSON/Object.h"
@@ -16,6 +18,8 @@
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/JWT/Signer.h"
 #include "Poco/SHA2Engine.h"
+#include "Poco/MD5Engine.h"
+#include "Poco/DigestEngine.h"
 
 #include "RESTAPI_objects.h"
 
@@ -30,11 +34,18 @@ namespace uCentral::Auth {
 	ACCESS_TYPE IntToAccessType(int C);
 	int AccessTypeToInt(ACCESS_TYPE T);
 
+	struct APIKeyEntry {
+	    std::string     Key;
+	    std::string     Owner;
+	    std::string     Description;
+	};
+
     int Start();
     void Stop();
     bool IsAuthorized(Poco::Net::HTTPServerRequest & Request,std::string &SessionToken, struct uCentral::Objects::WebToken & UserInfo );
     bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken );
     void Logout(const std::string &token);
+    bool IsValidAPIKey(const std::string &APIKey);
 
     class Service : public SubSystemServer {
     public:
@@ -56,17 +67,21 @@ namespace uCentral::Auth {
         [[nodiscard]] std::string GenerateToken(const std::string & UserName, ACCESS_TYPE Type, int NumberOfDays);
 		[[nodiscard]] bool ValidateToken(const std::string & Token, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  );
         friend void Logout(const std::string &token);
+        friend bool IsValidAPIKey(const std::string &APIKey);
 
     private:
 		static Service *instance_;
 		std::map<std::string,uCentral::Objects::WebToken>   Tokens_;
-		bool    			Secure_ = false ;
-		std::string     	DefaultUserName_;
-		std::string			DefaultPassword_;
-		std::string     	Mechanism_;
-		bool            	AutoProvisioning_ = false ;
-		Poco::JWT::Signer	Signer_;
-		Poco::SHA2Engine	SHA2_;
+		bool    			        Secure_ = false ;
+		std::string     	        DefaultUserName_;
+		std::string			        DefaultPassword_;
+		std::string     	        Mechanism_;
+		bool            	        AutoProvisioning_ = false ;
+		Poco::JWT::Signer	                Signer_;
+		Poco::SHA2Engine	                SHA2_;
+		Poco::MD5Engine                     MD5_;
+		std::string                         ApiKeyDb_;
+        std::map<std::string,APIKeyEntry>   APIKeys_;
 
         int Start() override;
         void Stop() override;
@@ -74,6 +89,8 @@ namespace uCentral::Auth {
         void CreateToken(const std::string & UserName, uCentral::Objects::WebToken & ResultToken, uCentral::Objects::AclTemplate & ACL);
         bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken );
         void Logout(const std::string &token);
+        bool IsValidAPIKey(const std::string &APIKey);
+        void InitAPIKeys();
     };
 
 }; // end of namespace

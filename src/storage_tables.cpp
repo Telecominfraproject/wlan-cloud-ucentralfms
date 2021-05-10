@@ -20,7 +20,6 @@ namespace uCentral::Storage {
 	}
 
 /*
-      properties:
         uuid:
           type: string
           format: uuid
@@ -59,7 +58,6 @@ namespace uCentral::Storage {
           type: string
         s3uri:
           type: string
-
  */
 
 	int Service::Create_Firmwares() {
@@ -72,9 +70,9 @@ namespace uCentral::Storage {
                     "Owner VARCHAR(128), "
                     "Location TEXT, ",
                     "DeviceType VARCHAR(128), "
+                    "Uploader VARCHAR(128), "
                     "Uploaded BIGINT, "
                     "DownloadCount BIGINT, "
-                    "Uploader VARCHAR(128), "
                     "Size BIGINT, "
                     "Digest TEXT, "
                     "FirmwareDate BIGINT, "
@@ -123,14 +121,13 @@ namespace uCentral::Storage {
 
             Sess << "CREATE TABLE IF NOT EXISTS Callbacks ("
                     "UUID VARCHAR(64) PRIMARY KEY, "
-                    "Token TEXT, "
+                    "URI TEXT, "
+                    "Location VARCHAR(128),"
+                    "Token TEXT,"
                     "TokenType VARCHAR(64), ",
                     "Creator VARCHAR(128), "
                     "Created BIGINT, "
-                    "Expires BIGINT, "
-                    "Digest TEXT, "
-                    "FirmwareDate BIGINT, "
-                    "URI TEXT )",
+                    "Expires BIGINT",
                     Poco::Data::Keywords::now;
 			return 0;
 		} catch(const Poco::Exception &E) {
