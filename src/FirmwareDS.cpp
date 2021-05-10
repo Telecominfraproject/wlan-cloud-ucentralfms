@@ -20,6 +20,7 @@
 #include "uStorageService.h"
 #include "RESTAPI_server.h"
 #include "uFileUploader.h"
+#include "FWManager.h"
 
 namespace uCentral {
 
@@ -81,6 +82,7 @@ namespace uCentral {
         addSubsystem(uCentral::Auth::Service::instance());
         addSubsystem(uCentral::RESTAPI::Service::instance());
         addSubsystem(uCentral::uFileUploader::Service::instance());
+        addSubsystem(uCentral::FWManager::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -195,9 +197,11 @@ namespace uCentral {
             uCentral::Auth::Start();
             uCentral::RESTAPI::Start();
             uCentral::uFileUploader::Start();
+            uCentral::FWManager::Start();
 
             App.waitForTerminationRequest();
 
+            uCentral::FWManager::Stop();
             uCentral::uFileUploader::Stop();
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();

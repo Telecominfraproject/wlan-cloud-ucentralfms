@@ -44,7 +44,7 @@ add_executable(ucentralfws
                     src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h
                     src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp
                     src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp
-                    src/RESTAPI_latestFirmwareListHandler.h)
+                    src/RESTAPI_latestFirmwareListHandler.h src/FWManager.cpp src/FWManager.h)
 
 target_link_libraries(ucentralfws PUBLIC
         ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
