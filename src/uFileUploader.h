@@ -48,7 +48,6 @@ namespace uCentral::uFileUploader {
         std::vector<std::unique_ptr<Poco::Net::HTTPServer>>   Servers_;
 		Poco::ThreadPool				Pool_;
         std::string                     FullName_;
-        std::map<std::string,uint64_t>  OutStandingUploads_;
         std::string                     Path_;
     };
 

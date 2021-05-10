@@ -17,6 +17,9 @@ else()
     set(BUILD_NUM 1)
     file(WRITE build ${BUILD_NUM})
 endif()
+
+set(BUILD_SHARED_LIBS 1)
+
 add_definitions(-DAPP_VERSION="${CMAKE_PROJECT_VERSION}" -DBUILD_NUMBER="${BUILD_NUM}")
 
 set(Boost_USE_STATIC_LIBS OFF)
@@ -24,7 +27,7 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost REQUIRED system)
 find_package(OpenSSL REQUIRED)
-find_package(AWSSDK REQUIRED)
+find_package(AWSSDK REQUIRED COMPONENTS S3)
 find_package(Poco REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka)
@@ -47,4 +50,6 @@ add_executable(ucentralfws
                     src/RESTAPI_latestFirmwareListHandler.h src/FWManager.cpp src/FWManager.h)
 
 target_link_libraries(ucentralfws PUBLIC
-        ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
+        ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} aws-cpp-sdk-s3 aws-cpp-sdk-core)
+
+# ${AWSSDK_LINK_LIBRARIES}

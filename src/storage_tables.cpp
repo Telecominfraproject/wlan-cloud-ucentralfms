@@ -68,7 +68,7 @@ namespace uCentral::Storage {
                     "UUID VARCHAR(64) PRIMARY KEY, "
                     "Description VARCHAR(128), "
                     "Owner VARCHAR(128), "
-                    "Location TEXT, ",
+                    "Location TEXT, "
                     "DeviceType VARCHAR(128), "
                     "Uploader VARCHAR(128), "
                     "Uploaded BIGINT, "
@@ -124,10 +124,10 @@ namespace uCentral::Storage {
                     "URI TEXT, "
                     "Location VARCHAR(128),"
                     "Token TEXT,"
-                    "TokenType VARCHAR(64), ",
+                    "TokenType VARCHAR(64), "
                     "Creator VARCHAR(128), "
                     "Created BIGINT, "
-                    "Expires BIGINT",
+                    "Expires BIGINT)",
                     Poco::Data::Keywords::now;
 			return 0;
 		} catch(const Poco::Exception &E) {

@@ -34,8 +34,16 @@ namespace uCentral::Auth {
 	ACCESS_TYPE IntToAccessType(int C);
 	int AccessTypeToInt(ACCESS_TYPE T);
 
+	enum API_KEY_ACCESS {
+	    NONE,
+	    ALL,
+	    CALLBACK,
+	    UPLOADER
+	};
+
 	struct APIKeyEntry {
 	    std::string     Key;
+        API_KEY_ACCESS  Access;
 	    std::string     Owner;
 	    std::string     Description;
 	};
@@ -45,7 +53,7 @@ namespace uCentral::Auth {
     bool IsAuthorized(Poco::Net::HTTPServerRequest & Request,std::string &SessionToken, struct uCentral::Objects::WebToken & UserInfo );
     bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken );
     void Logout(const std::string &token);
-    bool IsValidAPIKey(const std::string &APIKey);
+    bool IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry);
 
     class Service : public SubSystemServer {
     public:
@@ -67,7 +75,8 @@ namespace uCentral::Auth {
         [[nodiscard]] std::string GenerateToken(const std::string & UserName, ACCESS_TYPE Type, int NumberOfDays);
 		[[nodiscard]] bool ValidateToken(const std::string & Token, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  );
         friend void Logout(const std::string &token);
-        friend bool IsValidAPIKey(const std::string &APIKey);
+        friend bool IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry);
+        APIKeyEntry GetFirst() { return APIKeys_.begin()->second; }
 
     private:
 		static Service *instance_;
@@ -89,7 +98,7 @@ namespace uCentral::Auth {
         void CreateToken(const std::string & UserName, uCentral::Objects::WebToken & ResultToken, uCentral::Objects::AclTemplate & ACL);
         bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken );
         void Logout(const std::string &token);
-        bool IsValidAPIKey(const std::string &APIKey);
+        bool IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry);
         void InitAPIKeys();
     };
 

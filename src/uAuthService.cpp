@@ -68,8 +68,8 @@ namespace uCentral::Auth {
         uCentral::Auth::Service::instance()->Logout(Token);
     }
 
-    bool IsValidAPIKey(const std::string &Key) {
-	    return uCentral::Auth::Service::instance()->IsValidAPIKey(Key);
+    bool IsValidAPIKey(const std::string &Key, APIKeyEntry & Entry) {
+	    return uCentral::Auth::Service::instance()->IsValidAPIKey(Key, Entry);
 	}
 
     int Service::Start() {
@@ -85,6 +85,9 @@ namespace uCentral::Auth {
         return 0;
     }
 
+    //  apikey file:
+    //  Key:Access:Owner:Description
+    //  Access= NONE,ALL,UPLOADER,CALLBACK
     void Service::InitAPIKeys() {
         std::ifstream  in(ApiKeyDb_,std::ios_base::in);
 
@@ -92,13 +95,24 @@ namespace uCentral::Auth {
         while(std::getline(in,Line)) {
             APIKeyEntry E;
 
-            auto P1=Line.find_first_of(':');
-            E.Key = Line.substr(0,P1);
-            if(!E.Key.empty()) {
-                auto P2 = Line.find_last_of(':');
-                E.Owner = Line.substr(P1 + 1, P2 - P1 - 1);
-                E.Description = Line.substr(P2 + 1);
+            std::vector<std::string>  Fields = uCentral::Utils::Split(Line, ':');
+
+            if(!Fields[0].empty()) {
+                E.Key = Fields[0];
+                E.Description = Fields[3];
+                E.Owner = Fields[2];
+                std::string Access = Fields[1];
+                if (Access == "ALL")
+                    E.Access = ALL;
+                else if (Access == "CALLBACK")
+                    E.Access = CALLBACK;
+                else if (Access == "UPLOADER")
+                    E.Access = UPLOADER;
+                else
+                    E.Access = NONE;
                 APIKeys_[E.Key] = E;
+                std::cout << "K:" << E.Key << " A:" << Access << " O:" << E.Owner << " D:" << E.Description
+                          << std::endl;
             }
         }
 	}
@@ -246,14 +260,19 @@ namespace uCentral::Auth {
         return false;
     }
 
-    bool Service::IsValidAPIKey(const std::string &APIKey) {
+    bool Service::IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry) {
 	    SubMutexGuard   Guard(Mutex_);
 
 	    SHA2_.reset();
 	    SHA2_.update(APIKey);
 	    std::string K = Poco::SHA2Engine::digestToHex(SHA2_.digest());
-	    if(APIKeys_.find(K)!=APIKeys_.end())
-	        return true;
+
+	    auto Index = APIKeys_.find(K);
+
+	    if(Index!=APIKeys_.end()) {
+	        Entry = Index->second;
+            return true;
+        }
 	    return false;
 	}
 

@@ -199,6 +199,11 @@ namespace uCentral {
             uCentral::uFileUploader::Start();
             uCentral::FWManager::Start();
 
+            Poco::Thread::sleep(2000);
+
+//            uCentral::Auth::APIKeyEntry E = uCentral::Auth::Service::instance()->GetFirst();
+//            uCentral::FWManager::AddJob("job1", E);
+
             App.waitForTerminationRequest();
 
             uCentral::FWManager::Stop();

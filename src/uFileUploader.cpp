@@ -13,6 +13,7 @@
 #include "uFileUploader.h"
 #include "FirmwareDS.h"
 #include "uStorageService.h"
+#include "FWManager.h"
 
 #include "Poco/Net/HTTPServerParams.h"
 #include "Poco/Net/HTTPServerResponse.h"
@@ -145,9 +146,10 @@ namespace uCentral::uFileUploader {
         /// Return a HTML document with the current date and time.
     {
     public:
-        explicit FormRequestHandler(std::string UUID, Poco::Logger & L):
+        explicit FormRequestHandler(std::string UUID, Poco::Logger & L, const uCentral::Auth::APIKeyEntry & Entry):
             UUID_(std::move(UUID)),
-            Logger_(L)
+            Logger_(L),
+            Entry_(Entry)
         {
         }
 
@@ -181,6 +183,8 @@ namespace uCentral::uFileUploader {
                     }
                 }
                 ResponseStream << "</body>\n";
+
+                uCentral::FWManager::AddJob(UUID_,Entry_);
             }
             catch( const Poco::Exception & E )
             {
@@ -191,8 +195,9 @@ namespace uCentral::uFileUploader {
             }
         }
     private:
-        std::string     UUID_;
-        Poco::Logger    & Logger_;
+        std::string                 UUID_;
+        Poco::Logger                & Logger_;
+        const uCentral::Auth::APIKeyEntry & Entry_;
     };
 
     Poco::Net::HTTPRequestHandler *RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest & Request) {
@@ -206,8 +211,9 @@ namespace uCentral::uFileUploader {
             return nullptr;
         }
 
-		if(uCentral::Auth::IsValidAPIKey(Key)) {
-            return new FormRequestHandler(UUID, Logger_);
+		uCentral::Auth::APIKeyEntry Entry;
+		if(uCentral::Auth::IsValidAPIKey(Key,Entry) && (Entry.Access==Auth::ALL || Entry.Access==Auth::UPLOADER)) {
+            return new FormRequestHandler(UUID, Logger_, Entry);
         } else {
 		    Logger_.error(Poco::format("REQUEST(%s): Invalid key",UUID));
             return nullptr;

@@ -8,12 +8,19 @@
 #include <queue>
 
 #include "SubSystemServer.h"
+#include <aws/s3/S3Client.h>
+#include "uAuthService.h"
 
 namespace uCentral::FWManager {
 
     int Start();
     void Stop();
-    bool AddJob(const std::string &UUID);
+    bool AddJob(const std::string &UUID, const uCentral::Auth::APIKeyEntry & Entry);
+
+    struct JobId {
+        std::string UUID;
+        uCentral::Auth::APIKeyEntry Entry;
+    };
 
 class Service : public SubSystemServer, Poco::Runnable {
     public:
@@ -29,19 +36,26 @@ class Service : public SubSystemServer, Poco::Runnable {
             }
             return instance_;
         }
-
-        friend bool AddJob(const std::string &UUID);
-
+        friend bool AddJob(const std::string &UUID, const uCentral::Auth::APIKeyEntry & Entry);
         void run() override;
 
     private:
         static Service          *instance_;
-        std::queue<std::string> Jobs_;
+        std::queue<JobId>       Jobs_;
         Poco::Thread            Worker_;
         std::atomic_bool        Running_=false;
+        std::string             S3BucketName_;
+        std::string             S3Region_;
+        std::string             S3Key_;
+        std::string             S3Secret_;
+        uint64_t                S3Retry_;
         int Start() override;
         void Stop() override;
-        bool AddJob(const std::string &UUID);
+        bool AddJob(const std::string &UUID, const uCentral::Auth::APIKeyEntry & Entry);
+
+        bool SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
+             const std::string & ImageObjectName, const std::string & ImageFileName);
+        bool SendObjectToS3(std::shared_ptr<Aws::S3::S3Client> & Client, const std::string &ObjectName, const std::string & ObjectFileName);
     };
 
 }   // namespace
