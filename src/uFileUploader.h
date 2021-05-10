@@ -20,9 +20,6 @@ namespace uCentral::uFileUploader {
     int Start();
     void Stop();
     const std::string & FullName();
-    bool AddUUID( const std::string & UUID);
-    bool ValidRequest(const std::string & UUID);
-    void RemoveRequest(const std::string &UUID);
     const std::string & Path();
 
     class Service : public SubSystemServer {
@@ -32,9 +29,6 @@ namespace uCentral::uFileUploader {
         friend int Start();
         friend void Stop();
         friend const std::string & FullName();
-        friend bool AddUUID( const std::string & UUID);
-        friend bool ValidRequest(const std::string & UUID);
-        friend void RemoveRequest(const std::string &UUID);
         friend const std::string & Path();
 
         static Service *instance() {
@@ -48,9 +42,6 @@ namespace uCentral::uFileUploader {
         int Start() override;
         void Stop() override;
         const std::string & FullName();
-        bool AddUUID( const std::string & UUID);
-        bool ValidRequest(const std::string & UUID);
-        void RemoveRequest(const std::string &UUID);
         const std::string & Path() { return Path_; };
 
         static Service *instance_;

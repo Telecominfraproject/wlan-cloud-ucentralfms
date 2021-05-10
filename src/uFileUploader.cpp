@@ -42,22 +42,9 @@ namespace uCentral::uFileUploader {
         return uCentral::uFileUploader::Service::instance()->FullName();
     }
 
-    bool AddUUID( const std::string & UUID) {
-        return uCentral::uFileUploader::Service::instance()->AddUUID(UUID);
-    }
-
-    bool ValidRequest(const std::string & UUID) {
-        return uCentral::uFileUploader::Service::instance()->ValidRequest(UUID);
-    }
-
-    void RemoveRequest(const std::string & UUID) {
-        uCentral::uFileUploader::Service::instance()->RemoveRequest(UUID);
-    }
-
     const std::string & Path() {
         return uCentral::uFileUploader::Service::instance()->Path();
     }
-
 
     Service::Service() noexcept:
             SubSystemServer("FileUploader", "FILE-UPLOAD", "ucentralfws.fileuploader")
@@ -104,37 +91,6 @@ namespace uCentral::uFileUploader {
 
     const std::string & Service::FullName() {
         return FullName_;
-    }
-
-    //  if you pass in an empty UUID, it will just clean the list and not add it.
-    bool Service::AddUUID( const std::string & UUID) {
-		SubMutexGuard		Guard(Mutex_);
-
-        uint64_t Now = time(nullptr) ;
-
-        // remove old stuff...
-        for(auto i=OutStandingUploads_.cbegin();i!=OutStandingUploads_.end();) {
-            if ((Now-i->second) > (60 * 30))
-                OutStandingUploads_.erase(i++);
-            else
-                ++i;
-        }
-
-        if(!UUID.empty())
-            OutStandingUploads_[UUID] = Now;
-
-        return true;
-    }
-
-    bool Service::ValidRequest(const std::string &UUID) {
-		SubMutexGuard		Guard(Mutex_);
-
-        return OutStandingUploads_.find(UUID)!=OutStandingUploads_.end();
-    }
-
-    void Service::RemoveRequest(const std::string &UUID) {
-		SubMutexGuard		Guard(Mutex_);
-        OutStandingUploads_.erase(UUID);
     }
 
     class MyPartHandler: public Poco::Net::PartHandler
