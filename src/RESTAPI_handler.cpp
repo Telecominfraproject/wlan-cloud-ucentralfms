@@ -230,6 +230,17 @@ bool RESTAPIHandler::IsAuthorized(Poco::Net::HTTPServerRequest & Request, Poco::
     return false;
 }
 
+bool RESTAPIHandler::IsValidAPIKey(Poco::Net::HTTPServerRequest & Request, Poco::Net::HTTPServerResponse & Response , uCentral::Auth::APIKeyEntry & Entry ) {
+
+    auto Key = Request.get("X-API-KEY","");
+
+    if(uCentral::Auth::IsValidAPIKey(Key, Entry)) {
+        if(Entry.Access==uCentral::Auth::ALL || Entry.Access==uCentral::Auth::CALLBACK )
+            return true;
+    }
+    return false;
+}
+
 
 void RESTAPIHandler::ReturnObject(Poco::JSON::Object & Object, Poco::Net::HTTPServerResponse & Response) {
     PrepareResponse(Response);

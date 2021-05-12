@@ -15,9 +15,9 @@
 #include "Poco/JWT/Signer.h"
 
 #include "uAuthService.h"
-#include "FirmwareDS.h"
+#include "uFirmwareDS.h"
 #include "RESTAPI_handler.h"
-#include "utils.h"
+#include "uUtils.h"
 #include "uStorageService.h"
 
 namespace uCentral::Auth {
@@ -43,33 +43,33 @@ namespace uCentral::Auth {
 	}
 
     Service::Service() noexcept:
-            SubSystemServer("Authentication", "AUTH-SVR", "authentication")
+            uSubSystemServer("Authentication", "AUTH-SVR", "authentication")
     {
 		std::string E{"SHA512"};
     }
 
     int Start() {
-        return uCentral::Auth::Service::instance()->Start();
+        return Service::instance()->Start();
     }
 
     void Stop() {
-        uCentral::Auth::Service::instance()->Stop();
+        Service::instance()->Stop();
     }
 
     bool IsAuthorized(Poco::Net::HTTPServerRequest & Request,std::string &SessionToken, struct uCentral::Objects::WebToken & UserInfo ) {
-        return uCentral::Auth::Service::instance()->IsAuthorized(Request,SessionToken, UserInfo);
+        return Service::instance()->IsAuthorized(Request,SessionToken, UserInfo);
     }
 
     bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken ) {
-        return uCentral::Auth::Service::instance()->Authorize(UserName,Password,ResultToken);
+        return Service::instance()->Authorize(UserName,Password,ResultToken);
     }
 
     void Logout(const std::string &Token) {
-        uCentral::Auth::Service::instance()->Logout(Token);
+        Service::instance()->Logout(Token);
     }
 
     bool IsValidAPIKey(const std::string &Key, APIKeyEntry & Entry) {
-	    return uCentral::Auth::Service::instance()->IsValidAPIKey(Key, Entry);
+	    return Service::instance()->IsValidAPIKey(Key, Entry);
 	}
 
     int Service::Start() {
@@ -98,6 +98,9 @@ namespace uCentral::Auth {
             std::vector<std::string>  Fields = uCentral::Utils::Split(Line, ':');
 
             if(!Fields[0].empty()) {
+
+                // std::cout << Fields[0] << " : " << Fields[1] << " : " << Fields[2] << " : " << Fields[3] << std::endl;
+
                 E.Key = Fields[0];
                 E.Description = Fields[3];
                 E.Owner = Fields[2];
@@ -111,8 +114,6 @@ namespace uCentral::Auth {
                 else
                     E.Access = NONE;
                 APIKeys_[E.Key] = E;
-                std::cout << "K:" << E.Key << " A:" << Access << " O:" << E.Owner << " D:" << E.Description
-                          << std::endl;
             }
         }
 	}

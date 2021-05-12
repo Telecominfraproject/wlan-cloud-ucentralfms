@@ -14,7 +14,7 @@
 #include "Poco/Data/SQLite/Connector.h"
 
 #include "RESTAPI_objects.h"
-#include "SubSystemServer.h"
+#include "uSubSystemServer.h"
 #include "uAuthService.h"
 
 namespace uCentral::Storage {
@@ -23,6 +23,7 @@ namespace uCentral::Storage {
     void Stop();
 
     bool AddCallback(uCentral::Objects::Callback & C);
+    bool AddOrUpdateCallback(uCentral::Objects::Callback & C);
     bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
     bool DeleteCallback(std::string & UUID);
     bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
@@ -33,6 +34,8 @@ namespace uCentral::Storage {
     bool DeleteFirmware(std::string & UUID);
     bool GetFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
     bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
+    bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t &Version);
+    uint64_t FirmwareVersion();
 
     bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
     bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
@@ -40,7 +43,7 @@ namespace uCentral::Storage {
     bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
 
-    class Service : public SubSystemServer {
+    class Service : public uSubSystemServer {
 
     public:
         Service() noexcept;
@@ -49,10 +52,14 @@ namespace uCentral::Storage {
         friend void uCentral::Storage::Stop();
 
         friend bool AddCallback(uCentral::Objects::Callback & C);
+        friend bool AddOrUpdateCallback(uCentral::Objects::Callback & C);
         friend bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
         friend bool DeleteCallback(std::string & UUID);
         friend bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
         friend bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
+        friend bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t &Version);
+        friend uint64_t FirmwareVersion();
+;
 
         friend bool AddFirmware(uCentral::Objects::Firmware & F);
         friend bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
@@ -77,6 +84,7 @@ namespace uCentral::Storage {
 		static Service      							*instance_;
 		std::unique_ptr<Poco::Data::SessionPool>        Pool_= nullptr;
 		std::unique_ptr<Poco::Data::SQLite::Connector>  SQLiteConn_= nullptr;
+		std::atomic_int64_t                             FirmwareVersion_ = 1 ;
 
 		int Create_Tables();
         int Create_Firmwares();
@@ -84,6 +92,7 @@ namespace uCentral::Storage {
         int Create_LatestFirmwareList();
 
         bool AddCallback(uCentral::Objects::Callback & C);
+        bool AddOrUpdateCallback(uCentral::Objects::Callback & C);
         bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
         bool DeleteCallback(std::string & UUID);
         bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
@@ -94,6 +103,8 @@ namespace uCentral::Storage {
         bool DeleteFirmware(std::string & UUID);
         bool GetFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
         bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
+        bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
+        uint64_t FirmwareVersion();
 
         bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
         bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);

@@ -58,6 +58,7 @@ namespace uCentral::Objects {
         std::string Token;
         std::string TokenType;
         std::string Creator;
+        std::string Topics;
         uint64_t    Created;
         uint64_t    Expires;
         void to_json(Poco::JSON::Object &Obj) const;

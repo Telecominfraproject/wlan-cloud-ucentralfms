@@ -106,6 +106,8 @@ namespace uCentral::Storage {
           type: string
         tokenType:
           type: string
+        topics:
+          type: string
         created:
           type: string
           format: 'date-time'
@@ -126,6 +128,7 @@ namespace uCentral::Storage {
                     "Token TEXT,"
                     "TokenType VARCHAR(64), "
                     "Creator VARCHAR(128), "
+                    "Topics TEXT, "
                     "Created BIGINT, "
                     "Expires BIGINT)",
                     Poco::Data::Keywords::now;

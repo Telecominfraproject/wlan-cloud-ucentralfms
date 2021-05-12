@@ -2,12 +2,12 @@
 // Created by stephane bourque on 2021-05-10.
 //
 
-#ifndef UCENTRALFWS_FWMANAGER_H
-#define UCENTRALFWS_FWMANAGER_H
+#ifndef UCENTRALFWS_UFWMANAGER_H
+#define UCENTRALFWS_UFWMANAGER_H
 
 #include <queue>
 
-#include "SubSystemServer.h"
+#include "uSubSystemServer.h"
 #include <aws/s3/S3Client.h>
 #include "uAuthService.h"
 
@@ -22,7 +22,7 @@ namespace uCentral::FWManager {
         uCentral::Auth::APIKeyEntry Entry;
     };
 
-class Service : public SubSystemServer, Poco::Runnable {
+class Service : public uSubSystemServer, Poco::Runnable {
     public:
 
         Service() noexcept;
@@ -60,4 +60,4 @@ class Service : public SubSystemServer, Poco::Runnable {
 
 }   // namespace
 
-#endif //UCENTRALFWS_FWMANAGER_H
+#endif //UCENTRALFWS_UFWMANAGER_H

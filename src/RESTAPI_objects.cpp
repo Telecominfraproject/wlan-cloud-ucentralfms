@@ -41,6 +41,7 @@ namespace uCentral::Objects {
         Obj.set("creator", Creator);
         Obj.set("token", Token);
         Obj.set("tokenType", TokenType);
+        Obj.set("topics",Topics);
         Obj.set("created",RESTAPIHandler::to_RFC3339(Created));
         Obj.set("expires",RESTAPIHandler::to_RFC3339(Expires));
     }

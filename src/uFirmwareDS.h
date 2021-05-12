@@ -2,8 +2,8 @@
 // Created by stephane bourque on 2021-05-07.
 //
 
-#ifndef UCENTRALFWS_FIRMWAREDS_H
-#define UCENTRALFWS_FIRMWAREDS_H
+#ifndef UCENTRALFWS_UFIRMWAREDS_H
+#define UCENTRALFWS_UFIRMWAREDS_H
 
 #include "Poco/Util/Application.h"
 #include "Poco/Util/ServerApplication.h"
@@ -61,4 +61,4 @@ namespace uCentral {
 
     Daemon * instance();
 }
-#endif //UCENTRALFWS_FIRMWAREDS_H
+#endif //UCENTRALFWS_UFIRMWAREDS_H

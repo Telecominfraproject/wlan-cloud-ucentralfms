@@ -11,14 +11,14 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/NetException.h"
 
-#include "SubSystemServer.h"
+#include "uSubSystemServer.h"
 
 namespace uCentral::RESTAPI {
 
     int Start();
     void Stop();
 
-    class Service : public SubSystemServer {
+    class Service : public uSubSystemServer {
 
     public:
         Service() noexcept;

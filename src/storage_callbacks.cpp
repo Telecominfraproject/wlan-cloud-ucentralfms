@@ -10,6 +10,10 @@ namespace uCentral::Storage {
         return Service::instance()->AddCallback(C);
     }
 
+    bool AddOrUpdateCallback(uCentral::Objects::Callback & C) {
+        return Service::instance()->AddOrUpdateCallback(C);
+    }
+
     bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C) {
         return Service::instance()->UpdateCallback(UUID, C);
     }
@@ -57,6 +61,7 @@ namespace uCentral::Storage {
             std::string,
             std::string,
             std::string,
+            std::string,
             uint64_t,
             uint64_t
     >   CallbackRecordTuple;
@@ -69,6 +74,7 @@ namespace uCentral::Storage {
                     "Token TEXT,"
                     "TokenType VARCHAR(64), ",
                     "Creator VARCHAR(128), "
+                    "Topics TEXT, "
                     "Created BIGINT, "
                     "Expires BIGINT",
  */
@@ -79,8 +85,8 @@ namespace uCentral::Storage {
             Poco::Data::Statement   Insert(Sess);
 
             std::string st{"INSERT INTO Callbacks ("
-                           "UUID, URI, Location, Token, TokenType, Creator, Created, Expires"
-                           ") VALUES(?,?,?,?,?,?,?,?)"
+                           "UUID, URI, Location, Token, TokenType, Creator, Topics, Created, Expires"
+                           ") VALUES(?,?,?,?,?,?,?,?,?)"
             };
 
             Insert  << ConvertParams(st),
@@ -90,6 +96,7 @@ namespace uCentral::Storage {
                         Poco::Data::Keywords::use(C.Token),
                         Poco::Data::Keywords::use(C.TokenType),
                         Poco::Data::Keywords::use(C.Creator),
+                        Poco::Data::Keywords::use(C.Topics),
                         Poco::Data::Keywords::use(C.Created),
                         Poco::Data::Keywords::use(C.Expires);
             Insert.execute();
@@ -105,8 +112,8 @@ namespace uCentral::Storage {
             Poco::Data::Session Sess = Pool_->get();
             Poco::Data::Statement   Update(Sess);
 
-            std::string st{ "UPDATE Callbacks "
-                            " SET URI=?, Location=?, Token=?, TokenType=?, Creator=?, Created=?, Expires=?"
+            std::string st{"UPDATE Callbacks "
+                            " SET URI=?, Location=?, Token=?, TokenType=?, Creator=?, Topics=?, Created=?, Expires=?"
                             " WHERE UUID=?"
             };
 
@@ -116,13 +123,37 @@ namespace uCentral::Storage {
                     Poco::Data::Keywords::use(C.Token),
                     Poco::Data::Keywords::use(C.TokenType),
                     Poco::Data::Keywords::use(C.Creator),
+                    Poco::Data::Keywords::use(C.Topics),
                     Poco::Data::Keywords::use(C.Created),
-                    Poco::Data::Keywords::use(C.Expires);
-                    Poco::Data::Keywords::use(C.UUID),
+                    Poco::Data::Keywords::use(C.Expires),
+                    Poco::Data::Keywords::use(C.UUID);
             Update.execute();
             return true;
 
         } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
+    bool Service::AddOrUpdateCallback(uCentral::Objects::Callback & C) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Select(Sess);
+
+            std::string st{"SELECT UUID FROM Callbacks WHERE UUID=?"};
+            std::string TmpUUID;
+            Select <<   ConvertParams(st),
+                        Poco::Data::Keywords::into(TmpUUID),
+                        Poco::Data::Keywords::use(C.UUID);
+            Select.execute();
+            if(TmpUUID.empty()) {
+                return AddCallback(C);
+            }
+            else {
+                return UpdateCallback(TmpUUID, C);
+            }
+        }  catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
         return false;
@@ -152,7 +183,7 @@ namespace uCentral::Storage {
             Poco::Data::Statement   Select(Sess);
 
             std::string st{"SELECT "
-                           "UUID, URI, Location, Token, TokenType, Creator, Created, Expires"
+                           "UUID, URI, Location, Token, TokenType, Creator, Topics, Created, Expires"
                            " FROM Callbacks WHERE UUID=?"
             };
             Select  << ConvertParams(st),
@@ -162,6 +193,7 @@ namespace uCentral::Storage {
                     Poco::Data::Keywords::into(C.Token),
                     Poco::Data::Keywords::into(C.TokenType),
                     Poco::Data::Keywords::into(C.Creator),
+                    Poco::Data::Keywords::into(C.Topics),
                     Poco::Data::Keywords::into(C.Created),
                     Poco::Data::Keywords::into(C.Expires),
                     Poco::Data::Keywords::use(UUID);
@@ -179,9 +211,9 @@ namespace uCentral::Storage {
             Poco::Data::Session Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT "
-                           "UUID, URI, Location, Token, TokenType, Creator, Created, Expires"
-                           " FROM Callbacks"
+            std::string st{ "SELECT "
+                                " UUID, URI, Location, Token, TokenType, Creator, Topics, Created, Expires"
+                                " FROM Callbacks"
             };
             Select  << ConvertParams(st),
                         Poco::Data::Keywords::into(Records),
@@ -196,8 +228,9 @@ namespace uCentral::Storage {
                     .Token = i.get<3>(),
                     .TokenType = i.get<4>(),
                     .Creator = i.get<5>(),
-                    .Created = i.get<6>(),
-                    .Expires = i.get<7>()
+                    .Topics = i.get<6>(),
+                    .Created = i.get<7>(),
+                    .Expires = i.get<8>()
                 };
 
                 Callbacks.push_back(C);

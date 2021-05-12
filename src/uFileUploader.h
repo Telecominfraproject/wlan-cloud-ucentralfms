@@ -9,7 +9,7 @@
 #ifndef UCENTRAL_UFILEUPLOADER_H
 #define UCENTRAL_UFILEUPLOADER_H
 
-#include "SubSystemServer.h"
+#include "uSubSystemServer.h"
 
 #include "Poco/Net/HTTPServer.h"
 #include "Poco/Net/HTTPRequestHandler.h"
@@ -22,7 +22,7 @@ namespace uCentral::uFileUploader {
     const std::string & FullName();
     const std::string & Path();
 
-    class Service : public SubSystemServer {
+    class Service : public uSubSystemServer {
     public:
         Service() noexcept;
 

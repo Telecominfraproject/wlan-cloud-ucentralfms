@@ -16,11 +16,12 @@
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/Socket.h"
 
-#include "FirmwareDS.h"
+#include "uFirmwareDS.h"
 #include "uStorageService.h"
 #include "RESTAPI_server.h"
 #include "uFileUploader.h"
-#include "FWManager.h"
+#include "uFWManager.h"
+#include "uNotificationMgr.h"
 
 namespace uCentral {
 
@@ -83,6 +84,7 @@ namespace uCentral {
         addSubsystem(uCentral::RESTAPI::Service::instance());
         addSubsystem(uCentral::uFileUploader::Service::instance());
         addSubsystem(uCentral::FWManager::Service::instance());
+        addSubsystem(uCentral::NotificationMgr::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -198,6 +200,7 @@ namespace uCentral {
             uCentral::RESTAPI::Start();
             uCentral::uFileUploader::Start();
             uCentral::FWManager::Start();
+            uCentral::NotificationMgr::Start();
 
             Poco::Thread::sleep(2000);
 
@@ -206,6 +209,7 @@ namespace uCentral {
 
             App.waitForTerminationRequest();
 
+            uCentral::NotificationMgr::Stop();
             uCentral::FWManager::Stop();
             uCentral::uFileUploader::Stop();
             uCentral::RESTAPI::Stop();

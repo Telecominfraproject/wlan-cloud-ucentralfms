@@ -11,9 +11,9 @@
 #include <cstdio>
 
 #include "uFileUploader.h"
-#include "FirmwareDS.h"
+#include "uFirmwareDS.h"
 #include "uStorageService.h"
-#include "FWManager.h"
+#include "uFWManager.h"
 
 #include "Poco/Net/HTTPServerParams.h"
 #include "Poco/Net/HTTPServerResponse.h"
@@ -26,7 +26,7 @@
 #include "Poco/Exception.h"
 #include "poco/File.h"
 
-#include "utils.h"
+#include "uUtils.h"
 
 namespace uCentral::uFileUploader {
     Service *Service::instance_ = nullptr;
@@ -48,7 +48,7 @@ namespace uCentral::uFileUploader {
     }
 
     Service::Service() noexcept:
-            SubSystemServer("FileUploader", "FILE-UPLOAD", "ucentralfws.fileuploader")
+            uSubSystemServer("FileUploader", "FILE-UPLOAD", "ucentralfws.fileuploader")
     {
 		SubMutexGuard		Guard(Mutex_);
     }
@@ -146,10 +146,10 @@ namespace uCentral::uFileUploader {
         /// Return a HTML document with the current date and time.
     {
     public:
-        explicit FormRequestHandler(std::string UUID, Poco::Logger & L, const uCentral::Auth::APIKeyEntry & Entry):
+        explicit FormRequestHandler(std::string UUID, Poco::Logger & L, uCentral::Auth::APIKeyEntry Entry):
             UUID_(std::move(UUID)),
             Logger_(L),
-            Entry_(Entry)
+            Entry_(std::move(Entry))
         {
         }
 
@@ -197,7 +197,7 @@ namespace uCentral::uFileUploader {
     private:
         std::string                 UUID_;
         Poco::Logger                & Logger_;
-        const uCentral::Auth::APIKeyEntry & Entry_;
+        uCentral::Auth::APIKeyEntry Entry_;
     };
 
     Poco::Net::HTTPRequestHandler *RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest & Request) {

@@ -20,9 +20,10 @@
 #include <aws/s3/model/PutBucketAclRequest.h>
 #include <aws/s3/model/GetBucketAclRequest.h>
 
-#include "FWManager.h"
+#include "uFWManager.h"
 #include "uFileUploader.h"
-#include "FirmwareDS.h"
+#include "uFirmwareDS.h"
+#include "uNotificationMgr.h"
 
 #include "uStorageService.h"
 #include "RESTAPI_objects.h"
@@ -43,7 +44,7 @@ namespace uCentral::FWManager {
     }
 
     Service::Service() noexcept:
-            SubSystemServer("FirmwareMgr", "FWR-MGR", "firmwaremgr")
+            uSubSystemServer("FirmwareMgr", "FWR-MGR", "firmwaremgr")
     {
     }
 
@@ -76,11 +77,17 @@ namespace uCentral::FWManager {
 
         const std::string & Path = uCentral::uFileUploader::Path();
 
+        auto Uploads=0;
+
         while(Running_) {
-            bool RemoveJob=false;
+            bool RemoveJob = false;
 
             if(Jobs_.empty()) {
-                Poco::Thread::sleep(2000);
+                if (Uploads!=0) {
+                    uCentral::NotificationMgr::Update();
+                    Uploads = 0;
+                }
+                Poco::Thread::sleep(10000);
             } else {
                 JobId JobEntry;
                 {
@@ -133,6 +140,7 @@ namespace uCentral::FWManager {
                                         Logger_.information(
                                                 Poco::format("JOB(%s): Added to firmware DB.", JobEntry.UUID));
                                         RemoveJob = true;
+                                        Uploads++;
                                     } else {
                                         Logger_.error(Poco::format("JOB(%s): Could not add the DB entry.",JobEntry.UUID));
                                     }
@@ -167,29 +175,35 @@ namespace uCentral::FWManager {
     }
 
     bool Service::SendObjectToS3(std::shared_ptr<Aws::S3::S3Client> & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
-        Aws::S3::Model::PutObjectRequest request;
+        try {
+            Aws::S3::Model::PutObjectRequest request;
 
-        request.SetBucket(S3BucketName_.c_str());
-        request.SetKey(ObjectName.c_str());
-        request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
+            request.SetBucket(S3BucketName_.c_str());
+            request.SetKey(ObjectName.c_str());
+            request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
 
-        std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region " << S3Region_ << std::endl;
-        std::shared_ptr<Aws::IOStream> input_data =
-                Aws::MakeShared<Aws::FStream>("AriliaTag",ObjectFileName.c_str(),std::ios_base::in | std::ios_base::binary);
-        request.SetBody(input_data);
+            std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region "
+                      << S3Region_ << std::endl;
+            std::shared_ptr<Aws::IOStream> input_data =
+                    Aws::MakeShared<Aws::FStream>("AriliaTag", ObjectFileName.c_str(),
+                                                  std::ios_base::in | std::ios_base::binary);
+            request.SetBody(input_data);
 
-        Aws::S3::Model::PutObjectOutcome outcome =
-                Client->PutObject(request);
+            Aws::S3::Model::PutObjectOutcome outcome =
+                    Client->PutObject(request);
 
-        if (outcome.IsSuccess()) {
-            std::cout << "Added:" << ObjectName << std::endl;
-            return true;
-        } else {
-            std::cout << "Putobject error: "
-                      << outcome.GetError().GetExceptionName() << " - "
-                      << outcome.GetError().GetMessage() << std::endl;
-            return false;
+            if (outcome.IsSuccess()) {
+                Logger_.information(Poco::format("S3-UPLOADER: uploaded %s", ObjectName));
+                return true;
+            } else {
+                Logger_.error(Poco::format("S3-UPLOADER: could not upload %s. Exception: %s. Message: %s", ObjectName,
+                                           outcome.GetError().GetExceptionName(), outcome.GetError().GetMessage()));
+                return false;
+            }
+        } catch (...) {
+            Logger_.error("Exception while uploading to S3.");
         }
+        return false;
     }
 
 
@@ -211,9 +225,7 @@ namespace uCentral::FWManager {
                 return true;
             }
         }
-
         Aws::ShutdownAPI(options);
-
         return false;
     }
 
@@ -222,6 +234,7 @@ namespace uCentral::FWManager {
 
         JobId   NewJob{ .UUID = UUID,
                         .Entry = Entry};
+
         Jobs_.push(NewJob);
 
         return true;

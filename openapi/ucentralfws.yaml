@@ -112,6 +112,8 @@ components:
           type: string
         creator:
           type: string
+        topics:
+          type: string
         location:
           type: string
           format: uri
@@ -236,6 +238,12 @@ components:
           type: boolean
         PortalLogin:
           type: boolean
+
+    AnyPayload:
+      type: object
+      properties:
+        Document:
+          type: string
 
 paths:
   /oauth2:
@@ -532,7 +540,7 @@ paths:
       tags:
         - Callbacks
       summary: Update A New firmware
-      operationId: upodateFirmware
+      operationId: upodateCallback
       parameters:
         - in: path
           name: uuid
@@ -656,3 +664,51 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+  /callbackChannel:
+    post:
+      tags:
+        - Callback
+      summary: Generic callback hook
+      operationId: postCallback
+      parameters:
+        - in: query
+          name: subscribe
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: uri
+          schema:
+            type: string
+            format: uri
+        - in: query
+          name: key
+          schema:
+            type: string
+        - in: query
+          name: topics
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+        - in: query
+          name: topic
+          schema:
+            type: string
+      requestBody:
+        description: A generic JSONDocument, may be empty too {}
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnyPayload'
+
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'

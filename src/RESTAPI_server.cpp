@@ -5,7 +5,7 @@
 #include "Poco/URI.h"
 
 #include "RESTAPI_server.h"
-#include "utils.h"
+#include "uUtils.h"
 #include "RESTAPI_handler.h"
 
 #include "RESTAPI_unknownRequestHandler.h"
@@ -15,6 +15,7 @@
 #include "RESTAPI_firmwareHandler.h"
 #include "RESTAPI_firmwaresHandler.h"
 #include "RESTAPI_latestFirmwareListHandler.h"
+#include "RESTAPI_callbackChannel.h"
 
 namespace uCentral::RESTAPI {
 
@@ -29,7 +30,7 @@ namespace uCentral::RESTAPI {
     }
 
     Service::Service() noexcept:
-            SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
+            uSubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
     {
     }
 
@@ -85,6 +86,8 @@ namespace uCentral::RESTAPI {
             return new RESTAPI_callbackHandler(bindings, Logger_);
         } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/latestFirmwareList", bindings)) {
             return new RESTAPI_latestFirmwareListHandler(bindings, Logger_);
+        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/callbackChannel", bindings)) {
+            return new RESTAPI_callbackChannel(bindings, Logger_);
         } else
             return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
     }

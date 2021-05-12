@@ -34,11 +34,11 @@ include_directories(/usr/local/include  /usr/local/opt/openssl/include src inclu
 
 add_executable(ucentralfws
                     build
-                    src/FirmwareDS.cpp src/FirmwareDS.h src/RESTAPI_objects.h src/RESTAPI_objects.cpp
+        src/uFirmwareDS.cpp src/uFirmwareDS.h src/RESTAPI_objects.h src/RESTAPI_objects.cpp
                     src/uStorageService.cpp src/uStorageService.h src/storage_tables.cpp
-                    src/storage_sqlite.cpp src/SubSystemServer.cpp src/SubSystemServer.h
+                    src/storage_sqlite.cpp src/uSubSystemServer.cpp src/uSubSystemServer.h
                     src/uAuthService.h src/uAuthService.cpp src/RESTAPI_handler.cpp src/RESTAPI_handler.h
-                    src/utils.cpp src/utils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
+        src/uUtils.cpp src/uUtils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
                     src/storage_latestfirmware.cpp src/RESTAPI_server.cpp src/RESTAPI_server.h
                     src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h src/RESTAPI_unknownRequestHandler.cpp
                     src/RESTAPI_unknownRequestHandler.h
@@ -47,7 +47,7 @@ add_executable(ucentralfws
                     src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h
                     src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp
                     src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp
-                    src/RESTAPI_latestFirmwareListHandler.h src/FWManager.cpp src/FWManager.h)
+                    src/RESTAPI_latestFirmwareListHandler.h src/uFWManager.cpp src/uFWManager.h src/RESTAPI_callbackChannel.cpp src/RESTAPI_callbackChannel.h src/uNotificationMgr.cpp src/uNotificationMgr.h)
 
 target_link_libraries(ucentralfws PUBLIC
         ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} aws-cpp-sdk-s3 aws-cpp-sdk-core)

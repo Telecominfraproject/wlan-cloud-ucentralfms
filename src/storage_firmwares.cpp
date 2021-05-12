@@ -3,6 +3,7 @@
 //
 
 #include "uStorageService.h"
+#include "RESTAPI_handler.h"
 
 namespace uCentral::Storage {
 
@@ -26,7 +27,16 @@ namespace uCentral::Storage {
         return Service::instance()->GetFirmwares(From, HowMany, Firmwares);
     }
 
-/*
+    bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t &Version) {
+        return Service::instance()->BuildFirmwareManifest(Manifest, Version);
+    }
+
+    uint64_t FirmwareVersion() {
+        return Service::instance()->FirmwareVersion();
+    }
+
+
+    /*
         std::string UUID;
         std::string Description;
         std::string FirmwareFileName;
@@ -64,6 +74,10 @@ namespace uCentral::Storage {
             uint64_t
             >   FirmwareRecordTuple;
     typedef std::vector<FirmwareRecordTuple>  FirmwareRecordList;
+
+    uint64_t Service::FirmwareVersion() {
+        return FirmwareVersion_;
+    }
 
     bool Service::AddFirmware(uCentral::Objects::Firmware & F) {
         try {
@@ -112,6 +126,7 @@ namespace uCentral::Storage {
                             Poco::Data::Keywords::use(F.DownloadCount),
                             Poco::Data::Keywords::use(F.Size);
             Insert.execute();
+            FirmwareVersion_++;
             return true;
 
         } catch (const Poco::Exception &E) {
@@ -148,8 +163,9 @@ namespace uCentral::Storage {
                     Poco::Data::Keywords::use(F.DownloadCount),
                     Poco::Data::Keywords::use(F.Size);
                     Poco::Data::Keywords::use(F.UUID);
-
             Update.execute();
+            FirmwareVersion_++;
+            return true;
 
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
@@ -167,6 +183,7 @@ namespace uCentral::Storage {
             Delete <<   ConvertParams(st),
                         Poco::Data::Keywords::use(UUID);
             Delete.execute();
+            FirmwareVersion_++;
             return true;
 
         } catch (const Poco::Exception &E) {
@@ -260,6 +277,69 @@ namespace uCentral::Storage {
         }
         return false;
     }
+
+
+/*
+    "DeviceType VARCHAR(128), "
+    "Uploader VARCHAR(128), "
+    "FirmwareVersion VARCHAR(128), "
+    "S3URI TEXT )",
+    "Uploaded BIGINT, "
+    "Size BIGINT, "
+    "FirmwareDate BIGINT, "
+ */
+
+    typedef Poco::Tuple<
+            std::string,
+            std::string,
+            std::string,
+            std::string,
+            uint64_t,
+            uint64_t,
+            uint64_t
+    >   FirmwareManifestTuple;
+    typedef std::vector<FirmwareManifestTuple>  FirmwareManifestList;
+
+
+    bool Service::BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version) {
+        try {
+            SubMutexGuard           Guard(Mutex_);
+            FirmwareManifestList    Records;
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Select(Sess);
+
+            std::string st{"SELECT DeviceType,Uploader,FirmwareVersion,S3URI,Uploaded,Size,FirmwareDate FROM Firmwares"};
+
+            Select <<   ConvertParams(st),
+                        Poco::Data::Keywords::into(Records);
+            Select.execute();
+
+            Poco::JSON::Array   Elements;
+            for(const auto &i:Records) {
+                Poco::JSON::Object  Obj;
+
+                Obj.set("deviceType", i.get<0>());
+                Obj.set("uploader",i.get<1>());
+                Obj.set("version",i.get<2>());
+                Obj.set("uri",i.get<3>());
+                Obj.set("uploaded",RESTAPIHandler::to_RFC3339(i.get<4>()));
+                Obj.set("size",i.get<5>());
+                Obj.set("date", RESTAPIHandler::to_RFC3339(i.get<6>()));
+
+                Elements.add(Obj);
+            }
+
+            Manifest.set("firmwares",Elements);
+            Version = FirmwareVersion_;
+
+            return true;
+
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
 
 }
 
