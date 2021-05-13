@@ -6,6 +6,8 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
+#include <aws/core/Aws.h>
+
 #include "Poco/Util/Application.h"
 #include "Poco/Util/ServerApplication.h"
 #include "Poco/Util/Option.h"
@@ -254,7 +256,13 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
     try {
-        return uCentral::App.run(argc, argv);
+
+        Aws::SDKOptions options;
+        Aws::InitAPI(options);
+        auto ExitCode = uCentral::App.run(argc, argv);
+        Aws::ShutdownAPI(options);
+
+        return ExitCode;
     } catch (Poco::Exception &exc) {
         std::cerr << exc.displayText() << std::endl;
         return Poco::Util::Application::EXIT_SOFTWARE;

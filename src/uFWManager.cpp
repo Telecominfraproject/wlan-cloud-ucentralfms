@@ -217,9 +217,9 @@ namespace uCentral::FWManager {
     bool Service::SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
                            const std::string & ImageObjectName, const std::string & ImageFileName) {
         std::cout << __LINE__ << std::endl;
-        Aws::SDKOptions options;
+//        Aws::SDKOptions options;
         std::cout << __LINE__ << std::endl;
-        Aws::InitAPI(options);
+//        Aws::InitAPI(options);
         {
             std::cout << __LINE__ << std::endl;
             Aws::Client::ClientConfiguration config;
@@ -239,7 +239,7 @@ namespace uCentral::FWManager {
                 return true;
             }
         }
-        Aws::ShutdownAPI(options);
+//        Aws::ShutdownAPI(options);
         return false;
     }
 
