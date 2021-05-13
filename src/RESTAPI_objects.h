@@ -36,7 +36,7 @@ namespace uCentral::Objects {
         std::string Description;
         std::string Owner;
         std::string Location;
-        std::string DeviceType;
+        std::string Compatible;
         std::string Uploader;
         std::string Digest;
         std::string FirmwareFileName;
@@ -48,6 +48,7 @@ namespace uCentral::Objects {
         uint64_t    Uploaded;
         uint64_t    DownloadCount;
         uint64_t    Size;
+        uint64_t    Latest;
         void to_json(Poco::JSON::Object &Obj) const;
     };
 
@@ -66,7 +67,7 @@ namespace uCentral::Objects {
     };
 
     struct LatestFirmware {
-        std::string DeviceType;
+        std::string Compatible;
         std::string UUID;
         uint64_t    LastUpdated;
         void to_json(Poco::JSON::Object &Obj) const;

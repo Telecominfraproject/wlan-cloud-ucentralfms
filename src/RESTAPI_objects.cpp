@@ -30,7 +30,8 @@ namespace uCentral::Objects {
         Obj.set("size", Size);
         Obj.set("digest", Digest);
         Obj.set("s3uri", S3URI);
-        Obj.set("deviceType", DeviceType);
+        Obj.set("Compatible", Compatible);
+        Obj.set("latest", (bool) (Latest ? true : false) );
         EmbedDocument("firmwareLatestDoc",Obj,FirmwareLatestDoc);
     }
 
@@ -64,7 +65,7 @@ namespace uCentral::Objects {
     }
 
     void LatestFirmware::to_json(Poco::JSON::Object &Obj) const {
-        Obj.set("deviceType", DeviceType);
+        Obj.set("Compatible", Compatible);
         Obj.set("uuid", UUID);
         Obj.set("lastUpdated", RESTAPIHandler::to_RFC3339(LastUpdated));
     }

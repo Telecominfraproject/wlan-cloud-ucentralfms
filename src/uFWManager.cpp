@@ -96,7 +96,7 @@ namespace uCentral::FWManager {
                 }
 
                 try {
-                    Poco::File JSONFileName(Path + "/" + JobEntry.UUID + "/latest.json");
+                    Poco::File JSONFileName(Path + "/" + JobEntry.UUID + "/latest-upgrade.json");
 
                     if (JSONFileName.exists() && JSONFileName.isFile()) {
                         std::ifstream  in(JSONFileName.path(),std::ios_base::in);
@@ -130,11 +130,12 @@ namespace uCentral::FWManager {
                                     F.Size = ImageFileName.getSize();
                                     F.DownloadCount = 0;
                                     F.Uploaded = time(nullptr);
-                                    F.DeviceType = ds["compatible"].toString();
+                                    F.Compatible = ds["compatible"].toString();
                                     F.FirmwareVersion = ds["revision"].toString();
                                     F.FirmwareFileName = ds["image"].toString();
                                     F.Uploader = JobEntry.Entry.Description;
                                     F.S3URI = "https://s3-" + S3Region_ + ".amazonaws.com/" + S3BucketName_ + "/" + ImageName;
+                                    F.Latest = 1;
 
                                     if(uCentral::Storage::AddFirmware(F)) {
                                         Logger_.information(

@@ -6,16 +6,16 @@
 
 namespace uCentral::Storage {
 
-    bool AddLatestFirmware(std::string & DeviceType, std::string &UUID) {
-        return Service::instance()->AddLatestFirmware(DeviceType, UUID);
+    bool AddLatestFirmware(std::string & Compatible, std::string &UUID) {
+        return Service::instance()->AddLatestFirmware(Compatible, UUID);
     }
 
-    bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L) {
-        return Service::instance()->GetLatestFirmware(DeviceType, L);
+    bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L) {
+        return Service::instance()->GetLatestFirmware(Compatible, L);
     }
 
-    bool DeleteLatestFirmware(std::string & DeviceType) {
-        return Service::instance()->DeleteLatestFirmware(DeviceType);
+    bool DeleteLatestFirmware(std::string & Compatible) {
+        return Service::instance()->DeleteLatestFirmware(Compatible);
     }
 
     bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList) {
@@ -28,36 +28,36 @@ namespace uCentral::Storage {
             uint64_t> LatestFirmwareRecordTuple;
     typedef std::vector<LatestFirmwareRecordTuple>  LatestFirmwareRecordList;
 
-    bool Service::AddLatestFirmware(std::string & DeviceType, std::string &UUID) {
+    bool Service::AddLatestFirmware(std::string & Compatible, std::string &UUID) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
             std::string TmpUUID;
-            std::string st{"SELECT UUID From LatestFirmwares WHERE DeviceType=?"};
+            std::string st{"SELECT UUID From LatestFirmwares WHERE Compatible=?"};
 
             Select << ConvertParams(st) ,
                 Poco::Data::Keywords::into(TmpUUID),
-                Poco::Data::Keywords::use(DeviceType);
+                Poco::Data::Keywords::use(Compatible);
             Select.execute();
 
             uint64_t    LastUpdated = time(nullptr);
 
             if(TmpUUID.empty()) {
                 Poco::Data::Statement   Insert(Sess);
-                std::string st1{"INSERT INTO LatestFirmwares (DeviceType, UUID, LastUpdated) VALUES(?,?,?)"};
+                std::string st1{"INSERT INTO LatestFirmwares (Compatible, UUID, LastUpdated) VALUES(?,?,?)"};
                 Insert << ConvertParams(st1),
-                    Poco::Data::Keywords::use(DeviceType),
+                    Poco::Data::Keywords::use(Compatible),
                     Poco::Data::Keywords::use(UUID),
                     Poco::Data::Keywords::use(LastUpdated);
                 Insert.execute();
             } else {
                 Poco::Data::Statement   Update(Sess);
-                std::string st1{"UPDATE LatestFirmwares SET UUID=?, LastUpdated=? WHERE DeviceType=?"};
+                std::string st1{"UPDATE LatestFirmwares SET UUID=?, LastUpdated=? WHERE Compatible=?"};
                 Update << ConvertParams(st1),
                         Poco::Data::Keywords::use(UUID),
                         Poco::Data::Keywords::use(LastUpdated),
-                        Poco::Data::Keywords::use(DeviceType);
+                        Poco::Data::Keywords::use(Compatible);
                 Update.execute();
             }
             return true;
@@ -67,19 +67,19 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L) {
+    bool Service::GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L) {
         try {
             Poco::Data::Session Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
             std::string TmpUUID;
-            std::string st{"SELECT DeviceType, UUID, LastUpdated From LatestFirmwares WHERE DeviceType=?"};
+            std::string st{"SELECT Compatible, UUID, LastUpdated From LatestFirmwares WHERE Compatible=?"};
 
             Select << ConvertParams(st) ,
-                    Poco::Data::Keywords::into(L.DeviceType),
+                    Poco::Data::Keywords::into(L.Compatible),
                     Poco::Data::Keywords::into(L.UUID),
                     Poco::Data::Keywords::into(L.LastUpdated),
-                    Poco::Data::Keywords::use(DeviceType);
+                    Poco::Data::Keywords::use(Compatible);
             Select.execute();
 
             return !L.UUID.empty();
@@ -90,16 +90,16 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::DeleteLatestFirmware(std::string & DeviceType) {
+    bool Service::DeleteLatestFirmware(std::string & Compatible) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Delete(Sess);
 
             std::string TmpUUID;
-            std::string st{"DELETE From LatestFirmwares WHERE DeviceType=?"};
+            std::string st{"DELETE From LatestFirmwares WHERE Compatible=?"};
 
             Delete <<   ConvertParams(st),
-                        Poco::Data::Keywords::use(DeviceType);
+                        Poco::Data::Keywords::use(Compatible);
             Delete.execute();
             return true;
         } catch (const Poco::Exception &E) {
@@ -114,7 +114,7 @@ namespace uCentral::Storage {
             Poco::Data::Session         Sess = Pool_->get();
             Poco::Data::Statement       Select(Sess);
 
-            std::string st{"SELECT DeviceType, UUID FROM LatestFirmwares"};
+            std::string st{"SELECT Compatible, UUID FROM LatestFirmwares"};
 
             Select <<   ConvertParams(st),
                         Poco::Data::Keywords::into(Records),
@@ -123,7 +123,7 @@ namespace uCentral::Storage {
 
             for(const auto &i:Records) {
                 uCentral::Objects::LatestFirmware   L{
-                    .DeviceType = i.get<0>(),
+                    .Compatible = i.get<0>(),
                     .UUID = i.get<1>()
                 };
                 LatestFirmwareList.push_back(L);

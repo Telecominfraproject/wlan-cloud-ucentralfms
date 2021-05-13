@@ -45,7 +45,7 @@ namespace uCentral::Storage {
         std::string FirmwareLatestDoc;
         std::string Owner;
         std::string Location;
-        std::string DeviceType;
+        std::string Compatible;
         std::string Uploader;
         std::string Digest;
         std::string S3URI;
@@ -53,6 +53,7 @@ namespace uCentral::Storage {
         uint64_t    Size;
         uint64_t    Uploaded;
         uint64_t    FirmwareDate;
+        uint64_t    Latest;
  */
 
     typedef Poco::Tuple<
@@ -68,6 +69,7 @@ namespace uCentral::Storage {
             std::string,
             std::string,
             std::string,
+            uint64_t,
             uint64_t,
             uint64_t,
             uint64_t,
@@ -89,7 +91,7 @@ namespace uCentral::Storage {
                     "Description VARCHAR(128), "
                     "Owner VARCHAR(128), "
                     "Location TEXT, ",
-                    "DeviceType VARCHAR(128), "
+                    "Compatible VARCHAR(128), "
                     "Uploader VARCHAR(128), "
                     "Digest TEXT, "
                     "FirmwareFileName TEXT, "
@@ -100,20 +102,32 @@ namespace uCentral::Storage {
                     "FirmwareDate BIGINT, "
                     "Uploaded BIGINT, "
                     "DownloadCount BIGINT, "
-                    "Size BIGINT, "
+                    "Size BIGINT,
+                    "Latest BIGINT"
  */
+
+            // find the older software and change to latest = 0
+            if(F.Latest)
+            {
+                Poco::Data::Statement   Update(Sess);
+                std::string st{"UPDATE Firmwares SET Latest=0 WHERE Compatible=? AND Latest=1"};
+                Update <<   ConvertParams(st),
+                            Poco::Data::Keywords::use(F.Compatible);
+                Update.execute();
+            }
+
             std::string st{"INSERT INTO Firmwares ("
-                               "UUID, Description, Owner, Location, DeviceType, Uploader, Digest, "
+                               "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
                                "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                               "S3URI, FirmwareDate, Uploaded, DownloadCount, Size "
-                            ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"};
+                               "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
+                            ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"};
 
             Insert      <<  ConvertParams(st),
                             Poco::Data::Keywords::use(F.UUID),
                             Poco::Data::Keywords::use(F.Description),
                             Poco::Data::Keywords::use(F.Owner),
                             Poco::Data::Keywords::use(F.Location),
-                            Poco::Data::Keywords::use(F.DeviceType),
+                            Poco::Data::Keywords::use(F.Compatible),
                             Poco::Data::Keywords::use(F.Uploader),
                             Poco::Data::Keywords::use(F.Digest),
                             Poco::Data::Keywords::use(F.FirmwareFileName),
@@ -124,7 +138,8 @@ namespace uCentral::Storage {
                             Poco::Data::Keywords::use(F.FirmwareDate),
                             Poco::Data::Keywords::use(F.Uploaded),
                             Poco::Data::Keywords::use(F.DownloadCount),
-                            Poco::Data::Keywords::use(F.Size);
+                            Poco::Data::Keywords::use(F.Size),
+                            Poco::Data::Keywords::use(F.Latest);
             Insert.execute();
             FirmwareVersion_++;
             return true;
@@ -141,16 +156,16 @@ namespace uCentral::Storage {
             Poco::Data::Statement   Update(Sess);
 
             std::string st{"UPDATE Firmwares "
-                           "Description, Owner, Location, DeviceType, Uploader, Digest, "
-                           "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size "
+                           " Description, Owner, Location, Compatible, Uploader, Digest, "
+                           " FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
+                           " S3URI, FirmwareDate, Uploaded, DownloadCount, Size"
                            " WHERE UUID=?"};
 
             Update      <<  ConvertParams(st),
                     Poco::Data::Keywords::use(F.Description),
                     Poco::Data::Keywords::use(F.Owner),
                     Poco::Data::Keywords::use(F.Location),
-                    Poco::Data::Keywords::use(F.DeviceType),
+                    Poco::Data::Keywords::use(F.Compatible),
                     Poco::Data::Keywords::use(F.Uploader),
                     Poco::Data::Keywords::use(F.Digest),
                     Poco::Data::Keywords::use(F.FirmwareFileName),
@@ -161,7 +176,7 @@ namespace uCentral::Storage {
                     Poco::Data::Keywords::use(F.FirmwareDate),
                     Poco::Data::Keywords::use(F.Uploaded),
                     Poco::Data::Keywords::use(F.DownloadCount),
-                    Poco::Data::Keywords::use(F.Size);
+                    Poco::Data::Keywords::use(F.Size),
                     Poco::Data::Keywords::use(F.UUID);
             Update.execute();
             FirmwareVersion_++;
@@ -198,29 +213,30 @@ namespace uCentral::Storage {
             Poco::Data::Statement   Select(Sess);
 
             std::string st{"SELECT "
-                           "UUID, Description, Owner, Location, DeviceType, Uploader, Digest, "
+                           "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
                            "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size "
+                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
                            " FROM Firmwares WHERE UUID=?"};
 
             Select      <<  ConvertParams(st),
-                    Poco::Data::Keywords::into(F.UUID),
-                    Poco::Data::Keywords::into(F.Description),
-                    Poco::Data::Keywords::into(F.Owner),
-                    Poco::Data::Keywords::into(F.Location),
-                    Poco::Data::Keywords::into(F.DeviceType),
-                    Poco::Data::Keywords::into(F.Uploader),
-                    Poco::Data::Keywords::into(F.Digest),
-                    Poco::Data::Keywords::into(F.FirmwareFileName),
-                    Poco::Data::Keywords::into(F.FirmwareVersion),
-                    Poco::Data::Keywords::into(F.FirmwareHash),
-                    Poco::Data::Keywords::into(F.FirmwareLatestDoc),
-                    Poco::Data::Keywords::into(F.S3URI),
-                    Poco::Data::Keywords::into(F.FirmwareDate),
-                    Poco::Data::Keywords::into(F.Uploaded),
-                    Poco::Data::Keywords::into(F.DownloadCount),
-                    Poco::Data::Keywords::into(F.Size);
-                    Poco::Data::Keywords::use(UUID);
+                        Poco::Data::Keywords::into(F.UUID),
+                        Poco::Data::Keywords::into(F.Description),
+                        Poco::Data::Keywords::into(F.Owner),
+                        Poco::Data::Keywords::into(F.Location),
+                        Poco::Data::Keywords::into(F.Compatible),
+                        Poco::Data::Keywords::into(F.Uploader),
+                        Poco::Data::Keywords::into(F.Digest),
+                        Poco::Data::Keywords::into(F.FirmwareFileName),
+                        Poco::Data::Keywords::into(F.FirmwareVersion),
+                        Poco::Data::Keywords::into(F.FirmwareHash),
+                        Poco::Data::Keywords::into(F.FirmwareLatestDoc),
+                        Poco::Data::Keywords::into(F.S3URI),
+                        Poco::Data::Keywords::into(F.FirmwareDate),
+                        Poco::Data::Keywords::into(F.Uploaded),
+                        Poco::Data::Keywords::into(F.DownloadCount),
+                        Poco::Data::Keywords::into(F.Size),
+                        Poco::Data::Keywords::into(F.Latest),
+                        Poco::Data::Keywords::use(UUID);
             Select.execute();
 
             return !F.UUID.empty();
@@ -238,9 +254,9 @@ namespace uCentral::Storage {
             Poco::Data::Statement   Select(Sess);
 
             std::string st{"SELECT "
-                           "UUID, Description, Owner, Location, DeviceType, Uploader, Digest, "
+                           "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
                            "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size "
+                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
                            " FROM Firmwares"};
 
             Select << ConvertParams(st),
@@ -254,7 +270,7 @@ namespace uCentral::Storage {
                     .Description= i.get<1>(),
                     .Owner= i.get<2>(),
                     .Location= i.get<3>(),
-                    .DeviceType= i.get<4>(),
+                    .Compatible= i.get<4>(),
                     .Uploader= i.get<5>(),
                     .Digest= i.get<6>(),
                     .FirmwareFileName= i.get<7>(),
@@ -265,7 +281,8 @@ namespace uCentral::Storage {
                     .FirmwareDate= i.get<12>(),
                     .Uploaded= i.get<13>(),
                     .DownloadCount= i.get<14>(),
-                    .Size= i.get<15>()
+                    .Size= i.get<15>(),
+                    .Latest = (bool) (i.get<16>()!=0)
                 };
                 Firmwares.push_back(F);
             }
@@ -280,7 +297,7 @@ namespace uCentral::Storage {
 
 
 /*
-    "DeviceType VARCHAR(128), "
+    "Compatible VARCHAR(128), "
     "Uploader VARCHAR(128), "
     "FirmwareVersion VARCHAR(128), "
     "S3URI TEXT )",
@@ -296,6 +313,7 @@ namespace uCentral::Storage {
             std::string,
             uint64_t,
             uint64_t,
+            uint64_t,
             uint64_t
     >   FirmwareManifestTuple;
     typedef std::vector<FirmwareManifestTuple>  FirmwareManifestList;
@@ -308,7 +326,7 @@ namespace uCentral::Storage {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT DeviceType,Uploader,FirmwareVersion,S3URI,Uploaded,Size,FirmwareDate FROM Firmwares"};
+            std::string st{"SELECT Compatible,Uploader,FirmwareVersion,S3URI,Uploaded,Size,FirmwareDate,Latest FROM Firmwares"};
 
             Select <<   ConvertParams(st),
                         Poco::Data::Keywords::into(Records);
@@ -318,13 +336,14 @@ namespace uCentral::Storage {
             for(const auto &i:Records) {
                 Poco::JSON::Object  Obj;
 
-                Obj.set("deviceType", i.get<0>());
+                Obj.set("compatible", i.get<0>());
                 Obj.set("uploader",i.get<1>());
                 Obj.set("version",i.get<2>());
                 Obj.set("uri",i.get<3>());
                 Obj.set("uploaded",RESTAPIHandler::to_RFC3339(i.get<4>()));
                 Obj.set("size",i.get<5>());
                 Obj.set("date", RESTAPIHandler::to_RFC3339(i.get<6>()));
+                Obj.set("latest", (bool) (i.get<7>() != 0));
 
                 Elements.add(Obj);
             }

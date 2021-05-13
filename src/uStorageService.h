@@ -37,9 +37,9 @@ namespace uCentral::Storage {
     bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t &Version);
     uint64_t FirmwareVersion();
 
-    bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-    bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
-    bool DeleteLatestFirmware(std::string & DeviceType);
+    bool AddLatestFirmware(std::string & Compatible, std::string &UUID);
+    bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L);
+    bool DeleteLatestFirmware(std::string & Compatible);
     bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
 
@@ -67,9 +67,9 @@ namespace uCentral::Storage {
         friend bool GetFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
         friend bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
 
-        friend bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-        friend bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
-        friend bool DeleteLatestFirmware(std::string & DeviceType);
+        friend bool AddLatestFirmware(std::string & Compatible, std::string &UUID);
+        friend bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L);
+        friend bool DeleteLatestFirmware(std::string & Compatible);
         friend bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
 
@@ -106,9 +106,9 @@ namespace uCentral::Storage {
         bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
         uint64_t FirmwareVersion();
 
-        bool AddLatestFirmware(std::string & DeviceType, std::string &UUID);
-        bool GetLatestFirmware(std::string & DeviceType, uCentral::Objects::LatestFirmware &L);
-        bool DeleteLatestFirmware(std::string & DeviceType);
+        bool AddLatestFirmware(std::string & Compatible, std::string &UUID);
+        bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L);
+        bool DeleteLatestFirmware(std::string & Compatible);
         bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
         int 	Start() override;

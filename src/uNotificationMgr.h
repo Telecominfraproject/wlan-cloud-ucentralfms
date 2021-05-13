@@ -48,7 +48,7 @@ namespace uCentral::NotificationMgr {
         std::map<std::string,NotifyEndPoint>    EndPoints_;
 
         std::string                             CurrentManifest_;
-        uint64_t                                ManifestVersion_;
+        uint64_t                                ManifestVersion_=0;
 
         int Start() override;
         void Stop() override;

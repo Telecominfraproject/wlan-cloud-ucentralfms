@@ -44,7 +44,7 @@ namespace uCentral::Storage {
         location:
           type: string
           format: uri
-        deviceType:
+        Compatible:
           type: string
         downloadCount:
           type: integer
@@ -69,7 +69,7 @@ namespace uCentral::Storage {
                     "Description VARCHAR(128), "
                     "Owner VARCHAR(128), "
                     "Location TEXT, "
-                    "DeviceType VARCHAR(128), "
+                    "Compatible VARCHAR(128), "
                     "Uploader VARCHAR(128), "
                     "Uploaded BIGINT, "
                     "DownloadCount BIGINT, "
@@ -80,7 +80,9 @@ namespace uCentral::Storage {
                     "FirmwareVersion VARCHAR(128), "
                     "FirmwareHash VARCHAR(32), "
                     "FirmwareLatestDoc TEXT, "
-                    "S3URI TEXT )",
+                    "S3URI TEXT, "
+                    "Latest BIGINT"
+                    ")",
                 Poco::Data::Keywords::now;
 			return 0;
 		} catch(const Poco::Exception &E) {
@@ -143,7 +145,7 @@ namespace uCentral::Storage {
     LatestFirmware:
     type: object
         properties:
-            deviceType:
+            Compatible:
             type: string
         uuid:
             type: string
@@ -157,7 +159,7 @@ namespace uCentral::Storage {
             Poco::Data::Session Sess = Pool_->get();
 
             Sess << "CREATE TABLE IF NOT EXISTS LatestFirmwares ("
-                    "DeviceType     VARCHAR(128) PRIMARY KEY, "
+                    "Compatible     VARCHAR(128) PRIMARY KEY, "
                     "UUID           TEXT, "
                     "LastUpdated    BIGINT"
                     ")",

@@ -93,6 +93,8 @@ components:
           type: string
         s3uri:
           type: string
+        latest:
+          type: boolean
 
     FirmwareDetailsList:
       type: object
