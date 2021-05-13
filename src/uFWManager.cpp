@@ -177,11 +177,17 @@ namespace uCentral::FWManager {
 
     bool Service::SendObjectToS3(std::shared_ptr<Aws::S3::S3Client> & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
         try {
+            std::cout << __LINE__ << std::endl;
+
             Aws::S3::Model::PutObjectRequest request;
+            std::cout << __LINE__ << std::endl;
 
             request.SetBucket(S3BucketName_.c_str());
+            std::cout << __LINE__ << std::endl;
             request.SetKey(ObjectName.c_str());
+            std::cout << __LINE__ << std::endl;
             request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
+            std::cout << __LINE__ << std::endl;
 
             std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region "
                       << S3Region_ << std::endl;
@@ -210,19 +216,26 @@ namespace uCentral::FWManager {
 
     bool Service::SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
                            const std::string & ImageObjectName, const std::string & ImageFileName) {
+        std::cout << __LINE__ << std::endl;
         Aws::SDKOptions options;
+        std::cout << __LINE__ << std::endl;
         Aws::InitAPI(options);
         {
+            std::cout << __LINE__ << std::endl;
             Aws::Client::ClientConfiguration config;
+            std::cout << __LINE__ << std::endl;
             if(!S3Region_.empty())
                 config.region = S3Region_;
 
+            std::cout << __LINE__ << std::endl;
             std::shared_ptr<Aws::S3::S3Client> Client = Aws::MakeShared<Aws::S3::S3Client>(
                     "arilia.com",
                     Aws::Auth::AWSCredentials(S3Key_.c_str(),S3Secret_.c_str()), config);
 
+            std::cout << __LINE__ << std::endl;
             if( SendObjectToS3(Client,JSONObjectName,JSONDocFileName) &&
                 SendObjectToS3(Client,ImageObjectName,ImageFileName) ) {
+                std::cout << __LINE__ << std::endl;
                 return true;
             }
         }
