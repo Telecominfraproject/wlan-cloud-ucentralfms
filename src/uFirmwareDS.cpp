@@ -194,10 +194,6 @@ namespace uCentral {
     }
 
     int Daemon::main(const ArgVec &args) {
-
-        Aws::SDKOptions options;
-        Aws::InitAPI(options);
-
         Poco::ErrorHandler::set(&AppErrorHandler_);
 
         if (!HelpRequested_) {
@@ -233,10 +229,6 @@ namespace uCentral {
 
             logger.notice("Stopped uCentralFWS...");
         }
-
-        Aws::ShutdownAPI(options);
-
-
         return Application::EXIT_OK;
     }
 
@@ -272,6 +264,8 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
     try {
+        Aws::SDKOptions options;
+        Aws::InitAPI(options);
 
         auto App = uCentral::Daemon::instance();
 
@@ -280,7 +274,7 @@ int main(int argc, char **argv) {
         DBGLINE
         delete App;
 
-        Aws::Utils::Memory::ShutdownAWSMemorySystem();
+        Aws::ShutdownAPI(options);
         DBGLINE
 
         return ExitCode;

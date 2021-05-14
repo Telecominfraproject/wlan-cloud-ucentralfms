@@ -79,6 +79,10 @@ namespace uCentral::FWManager {
         Logger_.information("Stopping ");
         Running_ = false;
         Worker_.join();
+
+        delete S3Client_;
+        delete AwsCreds_;
+        delete AwsConfig_;
     }
 
     void Service::run() {
