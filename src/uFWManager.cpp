@@ -211,11 +211,17 @@ namespace uCentral::FWManager {
                       << S3Region_ << std::endl;
             std::cout << __LINE__ << std::endl;
 
-            std::shared_ptr<Aws::FStream> input_data =
-                    Aws::MakeShared<Aws::FStream>("AriliaTag", ObjectFileName.c_str(),
+            std::shared_ptr<Aws::IOStream> Body =
+                    Aws::MakeShared<Aws::FStream>(ObjectFileName.c_str(), ObjectFileName.c_str(),
                                                   std::ios_base::in | std::ios_base::binary);
+/*            Aws::FStream B2(ObjectFileName.c_str(),
+            std::ios_base::in | std::ios_base::binary);
+
+            std::shared_ptr<Aws::IOStream> B3 = Aws::MakeShared<Aws::IOStream>(&B2);
+*/
+
             std::cout << __LINE__ << std::endl;
-            Request.SetBody(input_data);
+            Request.SetBody(Body);
             std::cout << __LINE__ << std::endl;
 
             Aws::S3::Model::PutObjectOutcome outcome =
