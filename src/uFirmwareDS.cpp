@@ -279,8 +279,12 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
     try {
+        DBGLINE
+
         Aws::SDKOptions options;
+        DBGLINE
         Aws::InitAPI(options);
+        DBGLINE
 
         auto App = uCentral::Daemon::instance();
 
