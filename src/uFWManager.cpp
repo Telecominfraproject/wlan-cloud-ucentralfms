@@ -24,11 +24,9 @@
 #include "uFileUploader.h"
 #include "uFirmwareDS.h"
 #include "uNotificationMgr.h"
-
 #include "uStorageService.h"
 #include "RESTAPI_objects.h"
-
-#define DBGLINE         std::cout << "F:" << __func__ << " L:" << __LINE__ << std::endl;
+#include "uUtils.h"
 
 namespace uCentral::FWManager {
     Service *Service::instance_ = nullptr;
@@ -130,40 +128,28 @@ namespace uCentral::FWManager {
                                 if(SendToS3(JSONObjectName, JSONRealFileName.path(),
                                             ImageName, ImageFileName.path())) {
                                     RemoveJob = true;
-                                    DBGLINE
-
                                     //  create the new firmware entry
                                     uCentral::Objects::Firmware F;
-                                    DBGLINE
 
                                     F.UUID = uCentral::instance()->CreateUUID();
                                     F.Owner = JobEntry.Entry.Owner;
-                                    DBGLINE
                                     F.FirmwareDate = ds["timestamp"];
-                                    DBGLINE
                                     F.Size = ImageFileName.getSize();
                                     F.DownloadCount = 0;
                                     F.Uploaded = time(nullptr);
-                                    DBGLINE
                                     F.Compatible = ds["compatible"].toString();
-                                    DBGLINE
                                     F.FirmwareVersion = ds["revision"].toString();
-                                    DBGLINE
                                     F.FirmwareFileName = ds["image"].toString();
-                                    DBGLINE
                                     F.Uploader = JobEntry.Entry.Description;
-                                    DBGLINE
                                     F.S3URI = "https://s3-" + S3Region_ + ".amazonaws.com/" + S3BucketName_ + "/" + ImageName;
                                     F.Latest = 1;
 
                                     if(uCentral::Storage::AddFirmware(F)) {
-                                        DBGLINE
                                         Logger_.information(
                                                 Poco::format("JOB(%s): Added to firmware DB.", JobEntry.UUID));
                                         RemoveJob = true;
                                         Uploads++;
                                     } else {
-                                        DBGLINE
                                         Logger_.error(Poco::format("JOB(%s): Could not add the DB entry.",JobEntry.UUID));
                                     }
                                 } else {
@@ -172,29 +158,24 @@ namespace uCentral::FWManager {
 
                             } else {
                                 RemoveJob = true;
-                                DBGLINE
                                 Logger_.information(Poco::format("JOB(%s): Missing image file %s",JobEntry.UUID,ImageFileName.path()));
                             }
 
                         } else {
                             Logger_.information(Poco::format("JOB(%s): missing some JSON field(s).",JobEntry.UUID));
-                            DBGLINE
                             RemoveJob = true;
                         }
                     } else {
                         Logger_.information(Poco::format("JOB(%s): No JSON document.",JobEntry.UUID));
-                        DBGLINE
                         RemoveJob = true;
                     }
                 } catch (const Poco::Exception &E) {
                     Logger_.log(E);
                     RemoveJob = true;
-                    DBGLINE
                 }
 
                 if(RemoveJob) {
                     SubMutexGuard G(Mutex_);
-                    DBGLINE
                     Jobs_.pop();
                 }
             }
@@ -204,53 +185,31 @@ namespace uCentral::FWManager {
     bool Service::SendObjectToS3(const std::string &ObjectName, const std::string & ObjectFileName) {
         try {
 
-            std::cout << __LINE__ << std::endl;
             Aws::S3::Model::PutObjectRequest Request;
-            std::cout << __LINE__ << std::endl;
-
             Request.SetBucket(S3BucketName_.c_str());
-            std::cout << __LINE__ << std::endl;
             Request.SetKey(ObjectName.c_str());
-            std::cout << __LINE__ << std::endl;
             Request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
-            std::cout << __LINE__ << std::endl;
 
             std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region "
                       << S3Region_ << std::endl;
-            std::cout << __LINE__ << std::endl;
 
             std::shared_ptr<Aws::IOStream> Body =
                     Aws::MakeShared<Aws::FStream>(ObjectFileName.c_str(), ObjectFileName.c_str(),
                                                   std::ios_base::in | std::ios_base::binary);
-/*            Aws::FStream B2(ObjectFileName.c_str(),
-            std::ios_base::in | std::ios_base::binary);
-
-            std::shared_ptr<Aws::IOStream> B3 = Aws::MakeShared<Aws::IOStream>(&B2);
-*/
-
-            std::cout << __LINE__ << std::endl;
             Request.SetBody(Body);
-            std::cout << __LINE__ << std::endl;
-
             Aws::S3::Model::PutObjectOutcome outcome = S3Client_->PutObject(Request);
-            std::cout << __LINE__ << std::endl;
 
             if (outcome.IsSuccess()) {
-                std::cout << __LINE__ << std::endl;
                 Logger_.information(Poco::format("S3-UPLOADER: uploaded %s", ObjectName));
                 return true;
             } else {
-                std::cout << __LINE__ << std::endl;
                 Logger_.error(Poco::format("S3-UPLOADER: could not upload %s. Exception: %s. Message: %s", ObjectName,
                                            outcome.GetError().GetExceptionName(), outcome.GetError().GetMessage()));
                 return false;
             }
-            std::cout << __LINE__ << std::endl;
         } catch (...) {
-            std::cout << __LINE__ << std::endl;
             Logger_.error("Exception while uploading to S3.");
         }
-        std::cout << __LINE__ << std::endl;
         return false;
     }
 

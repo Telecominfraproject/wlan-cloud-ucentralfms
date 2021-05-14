@@ -12,6 +12,8 @@
 #include <vector>
 #include <string>
 
+#define DBGLINE  std::cout << "M:" << __FILE__ << "F:" << __func__ << " L:" << __LINE__ << std::endl;
+
 namespace uCentral::Utils {
 
 	[[nodiscard]] std::vector<std::string> Split(const std::string &List, char Delimiter=',');
