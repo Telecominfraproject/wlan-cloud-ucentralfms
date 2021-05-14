@@ -33,6 +33,7 @@
 #include "uFileUploader.h"
 #include "uFWManager.h"
 #include "uNotificationMgr.h"
+#include "uUtils.h"
 
 namespace uCentral {
 
@@ -271,7 +272,14 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
     try {
+
+
+        DBGLINE
         auto ExitCode = uCentral::App.run(argc, argv);
+        DBGLINE
+        Aws::Utils::Memory::ShutdownAWSMemorySystem();
+        DBGLINE
+
         return ExitCode;
     } catch (Poco::Exception &exc) {
         std::cerr << exc.displayText() << std::endl;
