@@ -1,5 +1,5 @@
 //
-// Created by stephane bourque on 2021-05-07.
+// Created by Stephane Bourque on 2021-05-07.
 //
 
 #include <cstdlib>
@@ -259,7 +259,9 @@ int main(int argc, char **argv) {
 
         Aws::SDKOptions options;
         Aws::InitAPI(options);
+
         auto ExitCode = uCentral::App.run(argc, argv);
+
         Aws::ShutdownAPI(options);
 
         return ExitCode;

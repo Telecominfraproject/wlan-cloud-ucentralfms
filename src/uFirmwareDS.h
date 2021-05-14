@@ -38,7 +38,7 @@ namespace uCentral {
         static std::string Version();
         const Poco::SharedPtr<Poco::Crypto::RSAKey> & Key() { return AppKey_; }
         std::string CreateUUID();
-        void Exit(int Reason);
+        static void Exit(int Reason);
 
     private:
         bool     HelpRequested_ = false;
