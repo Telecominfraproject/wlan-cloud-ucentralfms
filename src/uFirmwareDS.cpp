@@ -36,24 +36,24 @@
 #include "uUtils.h"
 
 namespace uCentral {
+    Daemon *Daemon::instance_ = nullptr;
 
-    Daemon App;
-    Daemon * instance() { return &App; }
+    Daemon * instance() { return uCentral::Daemon::instance(); }
 
     void MyErrorHandler::exception(const Poco::Exception & E) {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        App.logger().log(E);
-        App.logger().error(Poco::format("Exception occurred in %s",CurrentThread->getName()));
+        instance()->logger().log(E);
+        instance()->logger().error(Poco::format("Exception occurred in %s",CurrentThread->getName()));
     }
 
     void MyErrorHandler::exception(const std::exception & E) {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        App.logger().warning(Poco::format("std::exception on %s",CurrentThread->getName()));
+        instance()->logger().warning(Poco::format("std::exception on %s",CurrentThread->getName()));
     }
 
     void MyErrorHandler::exception() {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        App.logger().warning(Poco::format("exception on %s",CurrentThread->getName()));
+        instance()->logger().warning(Poco::format("exception on %s",CurrentThread->getName()));
     }
 
     void Daemon::Exit(int Reason) {
@@ -222,7 +222,7 @@ namespace uCentral {
 //            uCentral::Auth::APIKeyEntry E = uCentral::Auth::Service::instance()->GetFirst();
 //            uCentral::FWManager::AddJob("job1", E);
 
-            App.waitForTerminationRequest();
+            instance()->waitForTerminationRequest();
 
             uCentral::NotificationMgr::Stop();
             uCentral::FWManager::Stop();
@@ -243,28 +243,28 @@ namespace uCentral {
     namespace ServiceConfig {
 
         uint64_t GetInt(const std::string &Key,uint64_t Default) {
-            return (uint64_t) App.config().getInt64(Key,Default);
+            return (uint64_t) instance()->config().getInt64(Key,Default);
         }
 
         uint64_t GetInt(const std::string &Key) {
-            return App.config().getInt(Key);
+            return instance()->config().getInt(Key);
         }
 
         uint64_t GetBool(const std::string &Key,bool Default) {
-            return App.config().getBool(Key,Default);
+            return instance()->config().getBool(Key,Default);
         }
 
         uint64_t GetBool(const std::string &Key) {
-            return App.config().getBool(Key);
+            return instance()->config().getBool(Key);
         }
 
         std::string GetString(const std::string &Key,const std::string & Default) {
-            std::string R = App.config().getString(Key, Default);
+            std::string R = instance()->config().getString(Key, Default);
             return Poco::Path::expand(R);
         }
 
         std::string GetString(const std::string &Key) {
-            std::string R = App.config().getString(Key);
+            std::string R = instance()->config().getString(Key);
             return Poco::Path::expand(R);
         }
     }
@@ -273,10 +273,13 @@ namespace uCentral {
 int main(int argc, char **argv) {
     try {
 
+        auto App = uCentral::Daemon::instance();
 
         DBGLINE
-        auto ExitCode = uCentral::App.run(argc, argv);
+        auto ExitCode = App->run(argc, argv);
         DBGLINE
+        delete App;
+
         Aws::Utils::Memory::ShutdownAWSMemorySystem();
         DBGLINE
 

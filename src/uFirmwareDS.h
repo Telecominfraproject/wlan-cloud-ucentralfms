@@ -40,7 +40,16 @@ namespace uCentral {
         std::string CreateUUID();
         static void Exit(int Reason);
 
+        static Daemon *instance() {
+            if (instance_ == nullptr) {
+                instance_ = new Daemon;
+            }
+            return instance_;
+        }
+
+
     private:
+        static Daemon          *instance_;
         bool     HelpRequested_ = false;
         std::string             LogDir_;
         std::string             ConfigFileName_;
