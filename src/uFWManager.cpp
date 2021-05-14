@@ -177,8 +177,8 @@ namespace uCentral::FWManager {
 
     bool Service::SendObjectToS3(Aws::S3::S3Client & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
         try {
-            std::cout << __LINE__ << std::endl;
 
+            std::cout << __LINE__ << std::endl;
             Aws::S3::Model::PutObjectRequest Request;
             std::cout << __LINE__ << std::endl;
 
@@ -191,27 +191,36 @@ namespace uCentral::FWManager {
 
             std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region "
                       << S3Region_ << std::endl;
+            std::cout << __LINE__ << std::endl;
 
             std::shared_ptr<Aws::IOStream> input_data =
                     Aws::MakeShared<Aws::FStream>("AriliaTag", ObjectFileName.c_str(),
                                                   std::ios_base::in | std::ios_base::binary);
+            std::cout << __LINE__ << std::endl;
             Request.SetBody(input_data);
+            std::cout << __LINE__ << std::endl;
 
             Aws::S3::Model::PutObjectOutcome outcome =
                     Client.PutObject(Request);
+            std::cout << __LINE__ << std::endl;
 
 
             if (outcome.IsSuccess()) {
+                std::cout << __LINE__ << std::endl;
                 Logger_.information(Poco::format("S3-UPLOADER: uploaded %s", ObjectName));
                 return true;
             } else {
+                std::cout << __LINE__ << std::endl;
                 Logger_.error(Poco::format("S3-UPLOADER: could not upload %s. Exception: %s. Message: %s", ObjectName,
                                            outcome.GetError().GetExceptionName(), outcome.GetError().GetMessage()));
                 return false;
             }
+            std::cout << __LINE__ << std::endl;
         } catch (...) {
+            std::cout << __LINE__ << std::endl;
             Logger_.error("Exception while uploading to S3.");
         }
+        std::cout << __LINE__ << std::endl;
         return false;
     }
 
@@ -219,26 +228,18 @@ namespace uCentral::FWManager {
     bool Service::SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
                            const std::string & ImageObjectName, const std::string & ImageFileName) {
         try {
-            std::cout << __LINE__ << std::endl;
             Aws::Client::ClientConfiguration Config;
-            std::cout << __LINE__ << std::endl;
             if(!S3Region_.empty())
                 Config.region = S3Region_;
-
-            std::cout << __LINE__ << std::endl;
-            std::shared_ptr<Aws::S3::S3Client> Client = Aws::MakeShared<Aws::S3::S3Client>(
-                    "arilia.com",
-                    Aws::Auth::AWSCredentials(S3Key_.c_str(),S3Secret_.c_str()), Config);
 
             Aws::Auth::AWSCredentials    Creds;
             Creds.SetAWSAccessKeyId(S3Key_.c_str());
             Creds.SetAWSSecretKey(S3Secret_.c_str());
             Aws::S3::S3Client   C3(Creds,Config);
 
-            std::cout << __LINE__ << std::endl;
             if( SendObjectToS3(C3,JSONObjectName,JSONDocFileName) &&
                 SendObjectToS3(C3,ImageObjectName,ImageFileName) ) {
-                std::cout << __LINE__ << std::endl;
+                std::cout << "All objects sent..." << std::endl;
                 return true;
             }
         } catch(const Poco::Exception &E) {
