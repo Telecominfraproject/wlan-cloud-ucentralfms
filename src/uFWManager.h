@@ -51,10 +51,14 @@ class Service : public uSubSystemServer, Poco::Runnable {
         std::string             S3Key_;
         std::string             S3Secret_;
         uint64_t                S3Retry_;
+/*
         Aws::UniquePtr<Aws::Client::ClientConfiguration>    AwsConfig_;
         Aws::UniquePtr<Aws::Auth::AWSCredentials>           AwsCreds_;
         Aws::UniquePtr<Aws::S3::S3Client>                   S3Client_;
-
+*/
+        Aws::Client::ClientConfiguration *    AwsConfig_;
+        Aws::Auth::AWSCredentials *            AwsCreds_;
+        Aws::S3::S3Client *                    S3Client_;
     int Start() override;
         void Stop() override;
         bool AddJob(const std::string &UUID, const uCentral::Auth::APIKeyEntry & Entry);

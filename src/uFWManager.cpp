@@ -57,13 +57,15 @@ namespace uCentral::FWManager {
         S3Key_ = uCentral::ServiceConfig::GetString("s3.key");
         S3Retry_ = uCentral::ServiceConfig::GetInt("s3.retry",60);
 
-        AwsConfig_ = Aws::MakeUnique<Aws::Client::ClientConfiguration>("fws");
+//        AwsConfig_ = Aws::MakeUnique<Aws::Client::ClientConfiguration>("fws");
+        AwsConfig_ = new Aws::Client::ClientConfiguration();
         if(!S3Region_.empty())
             AwsConfig_->region = S3Region_;
-        AwsCreds_ = Aws::MakeUnique<Aws::Auth::AWSCredentials>("fws");
+//        AwsCreds_ = Aws::MakeUnique<Aws::Auth::AWSCredentials>("fws");
+        AwsCreds_ = new Aws::Auth::AWSCredentials();
         AwsCreds_->SetAWSAccessKeyId(S3Key_.c_str());
         AwsCreds_->SetAWSSecretKey(S3Secret_.c_str());
-        S3Client_ = Aws::MakeUnique<Aws::S3::S3Client>("fws",*AwsCreds_,*AwsConfig_);
+        S3Client_ = new Aws::S3::S3Client(*AwsCreds_,*AwsConfig_);
 
         Logger_.information("Starting ");
         Worker_.start(*this);
