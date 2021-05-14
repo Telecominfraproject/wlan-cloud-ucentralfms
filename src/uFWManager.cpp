@@ -59,6 +59,13 @@ namespace uCentral::FWManager {
         S3Key_ = uCentral::ServiceConfig::GetString("s3.key");
         S3Retry_ = uCentral::ServiceConfig::GetInt("s3.retry",60);
 
+        if(!S3Region_.empty())
+            AwsConfig_.region = S3Region_;
+
+        AwsCreds_.SetAWSAccessKeyId(S3Key_.c_str());
+        AwsCreds_.SetAWSSecretKey(S3Secret_.c_str());
+        S3Client_ = std::make_unique<Aws::S3::S3Client>(AwsCreds_,AwsConfig_);
+
         Logger_.information("Starting ");
         Worker_.start(*this);
 
@@ -193,7 +200,7 @@ namespace uCentral::FWManager {
         }
     }
 
-    bool Service::SendObjectToS3(Aws::S3::S3Client & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
+    bool Service::SendObjectToS3(const std::string &ObjectName, const std::string & ObjectFileName) {
         try {
 
             std::cout << __LINE__ << std::endl;
@@ -224,10 +231,8 @@ namespace uCentral::FWManager {
             Request.SetBody(Body);
             std::cout << __LINE__ << std::endl;
 
-            Aws::S3::Model::PutObjectOutcome outcome =
-                    Client.PutObject(Request);
+            Aws::S3::Model::PutObjectOutcome outcome = S3Client_->PutObject(Request);
             std::cout << __LINE__ << std::endl;
-
 
             if (outcome.IsSuccess()) {
                 std::cout << __LINE__ << std::endl;
@@ -252,17 +257,9 @@ namespace uCentral::FWManager {
     bool Service::SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
                            const std::string & ImageObjectName, const std::string & ImageFileName) {
         try {
-            Aws::Client::ClientConfiguration Config;
-            if(!S3Region_.empty())
-                Config.region = S3Region_;
 
-            Aws::Auth::AWSCredentials    Creds;
-            Creds.SetAWSAccessKeyId(S3Key_.c_str());
-            Creds.SetAWSSecretKey(S3Secret_.c_str());
-            Aws::S3::S3Client   C3(Creds,Config);
-
-            if( SendObjectToS3(C3,JSONObjectName,JSONDocFileName) &&
-                SendObjectToS3(C3,ImageObjectName,ImageFileName) ) {
+            if( SendObjectToS3(JSONObjectName,JSONDocFileName) &&
+                SendObjectToS3(ImageObjectName,ImageFileName) ) {
                 std::cout << "All objects sent..." << std::endl;
                 return true;
             }

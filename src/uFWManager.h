@@ -8,7 +8,9 @@
 #include <queue>
 
 #include "uSubSystemServer.h"
+#include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
+#include <aws/core/auth/AWSCredentials.h>
 #include "uAuthService.h"
 
 namespace uCentral::FWManager {
@@ -49,13 +51,17 @@ class Service : public uSubSystemServer, Poco::Runnable {
         std::string             S3Key_;
         std::string             S3Secret_;
         uint64_t                S3Retry_;
-        int Start() override;
+        Aws::Client::ClientConfiguration    AwsConfig_;
+        Aws::Auth::AWSCredentials           AwsCreds_;
+        std::unique_ptr<Aws::S3::S3Client>  S3Client_;
+
+    int Start() override;
         void Stop() override;
         bool AddJob(const std::string &UUID, const uCentral::Auth::APIKeyEntry & Entry);
 
         bool SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
              const std::string & ImageObjectName, const std::string & ImageFileName);
-        bool SendObjectToS3(Aws::S3::S3Client & Client, const std::string &ObjectName, const std::string & ObjectFileName);
+        bool SendObjectToS3(const std::string &ObjectName, const std::string & ObjectFileName);
     };
 
 }   // namespace
