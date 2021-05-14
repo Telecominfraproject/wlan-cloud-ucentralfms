@@ -28,6 +28,8 @@
 #include "uStorageService.h"
 #include "RESTAPI_objects.h"
 
+#define DBGLINE         std::cout << "F:" << __func__ << " L:" __LINE__ << std::endl;
+
 namespace uCentral::FWManager {
     Service *Service::instance_ = nullptr;
 
@@ -120,29 +122,40 @@ namespace uCentral::FWManager {
                                 if(SendToS3(JSONObjectName, JSONRealFileName.path(),
                                             ImageName, ImageFileName.path())) {
                                     RemoveJob = true;
+                                    DBGLINE
 
                                     //  create the new firmware entry
                                     uCentral::Objects::Firmware F;
+                                    DBGLINE
 
                                     F.UUID = uCentral::instance()->CreateUUID();
                                     F.Owner = JobEntry.Entry.Owner;
+                                    DBGLINE
                                     F.FirmwareDate = ds["timestamp"];
+                                    DBGLINE
                                     F.Size = ImageFileName.getSize();
                                     F.DownloadCount = 0;
                                     F.Uploaded = time(nullptr);
+                                    DBGLINE
                                     F.Compatible = ds["compatible"].toString();
+                                    DBGLINE
                                     F.FirmwareVersion = ds["revision"].toString();
+                                    DBGLINE
                                     F.FirmwareFileName = ds["image"].toString();
+                                    DBGLINE
                                     F.Uploader = JobEntry.Entry.Description;
+                                    DBGLINE
                                     F.S3URI = "https://s3-" + S3Region_ + ".amazonaws.com/" + S3BucketName_ + "/" + ImageName;
                                     F.Latest = 1;
 
                                     if(uCentral::Storage::AddFirmware(F)) {
+                                        DBGLINE
                                         Logger_.information(
                                                 Poco::format("JOB(%s): Added to firmware DB.", JobEntry.UUID));
                                         RemoveJob = true;
                                         Uploads++;
                                     } else {
+                                        DBGLINE
                                         Logger_.error(Poco::format("JOB(%s): Could not add the DB entry.",JobEntry.UUID));
                                     }
                                 } else {
@@ -151,24 +164,29 @@ namespace uCentral::FWManager {
 
                             } else {
                                 RemoveJob = true;
+                                DBGLINE
                                 Logger_.information(Poco::format("JOB(%s): Missing image file %s",JobEntry.UUID,ImageFileName.path()));
                             }
 
                         } else {
                             Logger_.information(Poco::format("JOB(%s): missing some JSON field(s).",JobEntry.UUID));
+                            DBGLINE
                             RemoveJob = true;
                         }
                     } else {
                         Logger_.information(Poco::format("JOB(%s): No JSON document.",JobEntry.UUID));
+                        DBGLINE
                         RemoveJob = true;
                     }
                 } catch (const Poco::Exception &E) {
                     Logger_.log(E);
                     RemoveJob = true;
+                    DBGLINE
                 }
 
                 if(RemoveJob) {
                     SubMutexGuard G(Mutex_);
+                    DBGLINE
                     Jobs_.pop();
                 }
             }
