@@ -51,9 +51,9 @@ class Service : public uSubSystemServer, Poco::Runnable {
         std::string             S3Key_;
         std::string             S3Secret_;
         uint64_t                S3Retry_;
-        Aws::Client::ClientConfiguration    AwsConfig_;
-        Aws::Auth::AWSCredentials           AwsCreds_;
-        std::unique_ptr<Aws::S3::S3Client>  S3Client_;
+        std::unique_ptr<Aws::Client::ClientConfiguration>    AwsConfig_;
+        std::unique_ptr<Aws::Auth::AWSCredentials>           AwsCreds_;
+        std::unique_ptr<Aws::S3::S3Client>                   S3Client_;
 
     int Start() override;
         void Stop() override;
