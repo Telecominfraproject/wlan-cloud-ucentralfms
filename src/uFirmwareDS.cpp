@@ -7,6 +7,15 @@
 #include <boost/algorithm/string.hpp>
 
 #include <aws/core/Aws.h>
+#include <aws/s3/S3Client.h>
+#include <aws/core/auth/AWSCredentials.h>
+#include <aws/s3/model/CreateBucketRequest.h>
+#include <aws/s3/model/PutObjectRequest.h>
+#include <aws/s3/model/Owner.h>
+#include <aws/s3/model/AccessControlPolicy.h>
+#include <aws/s3/model/PutBucketAclRequest.h>
+#include <aws/s3/model/GetBucketAclRequest.h>
+
 
 #include "Poco/Util/Application.h"
 #include "Poco/Util/ServerApplication.h"
