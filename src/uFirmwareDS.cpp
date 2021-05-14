@@ -194,11 +194,17 @@ namespace uCentral {
     }
 
     int Daemon::main(const ArgVec &args) {
+
+        DBGLINE
         Poco::ErrorHandler::set(&AppErrorHandler_);
+        DBGLINE
 
         if (!HelpRequested_) {
+            DBGLINE
             Poco::Logger &logger = Poco::Logger::get("uCentralFWS");
+            DBGLINE
             logger.notice(Poco::format("Starting uCentralFWS version %s.",Version()));
+            DBGLINE
 
             if(Poco::Net::Socket::supportsIPv6()) {
                 logger.information("System supports IPv6.");
@@ -206,19 +212,28 @@ namespace uCentral {
             else
                 logger.information("System does NOT supported IPv6.");
 
+            DBGLINE
             uCentral::Storage::Start();
+            DBGLINE
             uCentral::Auth::Start();
+            DBGLINE
             uCentral::RESTAPI::Start();
+            DBGLINE
             uCentral::uFileUploader::Start();
+            DBGLINE
             uCentral::FWManager::Start();
+            DBGLINE
             uCentral::NotificationMgr::Start();
+            DBGLINE
 
             Poco::Thread::sleep(2000);
 
 //            uCentral::Auth::APIKeyEntry E = uCentral::Auth::Service::instance()->GetFirst();
 //            uCentral::FWManager::AddJob("job1", E);
+            DBGLINE
 
             instance()->waitForTerminationRequest();
+            DBGLINE
 
             uCentral::NotificationMgr::Stop();
             uCentral::FWManager::Stop();
