@@ -175,29 +175,31 @@ namespace uCentral::FWManager {
         }
     }
 
-    bool Service::SendObjectToS3(std::shared_ptr<Aws::S3::S3Client> & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
+    bool Service::SendObjectToS3(Aws::S3::S3Client & Client, const std::string &ObjectName, const std::string & ObjectFileName) {
         try {
             std::cout << __LINE__ << std::endl;
 
-            Aws::S3::Model::PutObjectRequest request;
+            Aws::S3::Model::PutObjectRequest Request;
             std::cout << __LINE__ << std::endl;
 
-            request.SetBucket(S3BucketName_.c_str());
+            Request.SetBucket(S3BucketName_.c_str());
             std::cout << __LINE__ << std::endl;
-            request.SetKey(ObjectName.c_str());
+            Request.SetKey(ObjectName.c_str());
             std::cout << __LINE__ << std::endl;
-            request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
+            Request.SetACL(Aws::S3::Model::ObjectCannedACL::public_read);
             std::cout << __LINE__ << std::endl;
 
             std::cout << "Attempting to add " << ObjectName << " to the bucket " << S3BucketName_ << " in region "
                       << S3Region_ << std::endl;
+
             std::shared_ptr<Aws::IOStream> input_data =
                     Aws::MakeShared<Aws::FStream>("AriliaTag", ObjectFileName.c_str(),
                                                   std::ios_base::in | std::ios_base::binary);
-            request.SetBody(input_data);
+            Request.SetBody(input_data);
 
             Aws::S3::Model::PutObjectOutcome outcome =
-                    Client->PutObject(request);
+                    Client.PutObject(Request);
+
 
             if (outcome.IsSuccess()) {
                 Logger_.information(Poco::format("S3-UPLOADER: uploaded %s", ObjectName));
@@ -216,30 +218,34 @@ namespace uCentral::FWManager {
 
     bool Service::SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
                            const std::string & ImageObjectName, const std::string & ImageFileName) {
-        std::cout << __LINE__ << std::endl;
-//        Aws::SDKOptions options;
-        std::cout << __LINE__ << std::endl;
-//        Aws::InitAPI(options);
-        {
+        try {
             std::cout << __LINE__ << std::endl;
-            Aws::Client::ClientConfiguration config;
+            Aws::Client::ClientConfiguration Config;
             std::cout << __LINE__ << std::endl;
             if(!S3Region_.empty())
-                config.region = S3Region_;
+                Config.region = S3Region_;
 
             std::cout << __LINE__ << std::endl;
             std::shared_ptr<Aws::S3::S3Client> Client = Aws::MakeShared<Aws::S3::S3Client>(
                     "arilia.com",
-                    Aws::Auth::AWSCredentials(S3Key_.c_str(),S3Secret_.c_str()), config);
+                    Aws::Auth::AWSCredentials(S3Key_.c_str(),S3Secret_.c_str()), Config);
+
+            Aws::Auth::AWSCredentials    Creds;
+            Creds.SetAWSAccessKeyId(S3Key_.c_str());
+            Creds.SetAWSSecretKey(S3Secret_.c_str());
+            Aws::S3::S3Client   C3(Creds,Config);
 
             std::cout << __LINE__ << std::endl;
-            if( SendObjectToS3(Client,JSONObjectName,JSONDocFileName) &&
-                SendObjectToS3(Client,ImageObjectName,ImageFileName) ) {
+            if( SendObjectToS3(C3,JSONObjectName,JSONDocFileName) &&
+                SendObjectToS3(C3,ImageObjectName,ImageFileName) ) {
                 std::cout << __LINE__ << std::endl;
                 return true;
             }
+        } catch(const Poco::Exception &E) {
+            Logger_.log(E);
+        } catch(...) {
+            Logger_.error(Poco::format("S3 Exception while sending %s",JSONDocFileName));
         }
-//        Aws::ShutdownAPI(options);
         return false;
     }
 

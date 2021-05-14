@@ -55,7 +55,7 @@ class Service : public uSubSystemServer, Poco::Runnable {
 
         bool SendToS3(const std::string & JSONObjectName , const std::string & JSONDocFileName,
              const std::string & ImageObjectName, const std::string & ImageFileName);
-        bool SendObjectToS3(std::shared_ptr<Aws::S3::S3Client> & Client, const std::string &ObjectName, const std::string & ObjectFileName);
+        bool SendObjectToS3(Aws::S3::S3Client & Client, const std::string &ObjectName, const std::string & ObjectFileName);
     };
 
 }   // namespace
