@@ -28,7 +28,7 @@
 #include "uStorageService.h"
 #include "RESTAPI_objects.h"
 
-#define DBGLINE         std::cout << "F:" << __func__ << " L:" __LINE__ << std::endl;
+#define DBGLINE         std::cout << "F:" << __func__ << " L:" << __LINE__ << std::endl;
 
 namespace uCentral::FWManager {
     Service *Service::instance_ = nullptr;
