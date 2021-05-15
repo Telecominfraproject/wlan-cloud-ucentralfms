@@ -221,7 +221,7 @@ namespace uCentral {
             DBGLINE
             uCentral::uFileUploader::Start();
             DBGLINE
-            uCentral::FWManager::Start();
+//            uCentral::FWManager::Start();
             DBGLINE
             uCentral::NotificationMgr::Start();
             DBGLINE
@@ -236,7 +236,7 @@ namespace uCentral {
             DBGLINE
 
             uCentral::NotificationMgr::Stop();
-            uCentral::FWManager::Stop();
+//            uCentral::FWManager::Stop();
             uCentral::uFileUploader::Stop();
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
