@@ -52,17 +52,15 @@ namespace uCentral::Storage {
 
     int Service::Start() {
 		SubMutexGuard		Guard(Mutex_);
-
 		Logger_.setLevel(Poco::Message::PRIO_NOTICE);
         Logger_.notice("Starting.");
-
         Setup_SQLite();
 		Create_Tables();
-
 		return 0;
     }
 
     void Service::Stop() {
+        SubMutexGuard		Guard(Mutex_);
         Logger_.notice("Stopping.");
     }
 }

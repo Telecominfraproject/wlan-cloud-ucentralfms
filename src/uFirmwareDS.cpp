@@ -7,11 +7,8 @@
 #include <boost/algorithm/string.hpp>
 
 #include <aws/core/Aws.h>
-#include <aws/s3/S3Client.h>
-#include <aws/core/auth/AWSCredentials.h>
 #include <aws/s3/model/CreateBucketRequest.h>
 #include <aws/s3/model/PutObjectRequest.h>
-#include <aws/s3/model/Owner.h>
 #include <aws/s3/model/AccessControlPolicy.h>
 #include <aws/s3/model/PutBucketAclRequest.h>
 #include <aws/s3/model/GetBucketAclRequest.h>
@@ -194,44 +191,29 @@ namespace uCentral {
     }
 
     int Daemon::main(const ArgVec &args) {
-
-        DBGLINE
         Poco::ErrorHandler::set(&AppErrorHandler_);
-        DBGLINE
 
         if (!HelpRequested_) {
-            DBGLINE
             Poco::Logger &logger = Poco::Logger::get("uCentralFWS");
-            DBGLINE
             logger.notice(Poco::format("Starting uCentralFWS version %s.",Version()));
-            DBGLINE
 
             if(Poco::Net::Socket::supportsIPv6()) {
                 logger.information("System supports IPv6.");
             }
-            else
+            else {
                 logger.information("System does NOT supported IPv6.");
+            }
 
-            DBGLINE
             uCentral::Storage::Start();
-            DBGLINE
             uCentral::Auth::Start();
-            DBGLINE
             uCentral::RESTAPI::Start();
-            DBGLINE
             uCentral::uFileUploader::Start();
-            DBGLINE
             uCentral::FWManager::Start();
-            DBGLINE
             uCentral::NotificationMgr::Start();
-            DBGLINE
 
             Poco::Thread::sleep(2000);
 
-            DBGLINE
-
             instance()->waitForTerminationRequest();
-            DBGLINE
 
             uCentral::NotificationMgr::Stop();
             uCentral::FWManager::Stop();
@@ -239,24 +221,7 @@ namespace uCentral {
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
             uCentral::Storage::Stop();
-
             logger.notice("Stopped uCentralFWS...");
-            DBGLINE
-
-            delete uCentral::NotificationMgr::Service::instance();
-            DBGLINE
-            delete uCentral::FWManager::Service::instance();
-            DBGLINE
-            delete uCentral::uFileUploader::Service::instance();
-            DBGLINE
-            delete uCentral::RESTAPI::Service::instance();
-            DBGLINE
-            delete uCentral::Auth::Service::instance();
-            DBGLINE
-            delete uCentral::Storage::Service::instance();
-            DBGLINE
-
-
         }
         return Application::EXIT_OK;
     }
@@ -293,29 +258,14 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
     try {
-//        DBGLINE
-
         Aws::SDKOptions AwsOptions;
-//        options.memoryManagementOptions.memoryManager = nullptr;
-//        options.httpOptions.initAndCleanupCurl = true;
-//        options.cryptoOptions.initAndCleanupOpenSSL = true;
-//        options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Trace;
-        DBGLINE
         Aws::InitAPI(AwsOptions);
-        DBGLINE
 
         auto App = uCentral::Daemon::instance();
-
-        DBGLINE
         auto ExitCode = App->run(argc, argv);
-        DBGLINE
-        delete App;
-        DBGLINE
-
-        Aws::ShutdownAPI(AwsOptions);
-        DBGLINE
 
         return ExitCode;
+
     } catch (Poco::Exception &exc) {
         std::cerr << exc.displayText() << std::endl;
         return Poco::Util::Application::EXIT_SOFTWARE;
