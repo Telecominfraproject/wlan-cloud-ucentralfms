@@ -282,6 +282,10 @@ int main(int argc, char **argv) {
         DBGLINE
 
         Aws::SDKOptions options;
+        options.memoryManagementOptions.memoryManager = nullptr;
+        options.httpOptions.initAndCleanupCurl = true;
+        options.cryptoOptions.initAndCleanupOpenSSL = true;
+        options.loggingOptions.logLevel = Aws::Utils::Logging::LogLevel::Trace;
         DBGLINE
         Aws::InitAPI(options);
         DBGLINE
