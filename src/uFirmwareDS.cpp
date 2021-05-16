@@ -221,22 +221,20 @@ namespace uCentral {
             DBGLINE
             uCentral::uFileUploader::Start();
             DBGLINE
-//            uCentral::FWManager::Start();
+            uCentral::FWManager::Start();
             DBGLINE
             uCentral::NotificationMgr::Start();
             DBGLINE
 
             Poco::Thread::sleep(2000);
 
-//            uCentral::Auth::APIKeyEntry E = uCentral::Auth::Service::instance()->GetFirst();
-//            uCentral::FWManager::AddJob("job1", E);
             DBGLINE
 
             instance()->waitForTerminationRequest();
             DBGLINE
 
             uCentral::NotificationMgr::Stop();
-//            uCentral::FWManager::Stop();
+            uCentral::FWManager::Stop();
             uCentral::uFileUploader::Stop();
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
