@@ -294,6 +294,7 @@ int main(int argc, char **argv) {
         auto ExitCode = App->run(argc, argv);
         DBGLINE
         delete App;
+        DBGLINE
 
         Aws::ShutdownAPI(AwsOptions);
         DBGLINE
