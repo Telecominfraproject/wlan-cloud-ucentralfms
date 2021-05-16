@@ -241,6 +241,22 @@ namespace uCentral {
             uCentral::Storage::Stop();
 
             logger.notice("Stopped uCentralFWS...");
+            DBGLINE
+
+            delete uCentral::NotificationMgr::Service::instance();
+            DBGLINE
+            delete uCentral::FWManager::Service::instance();
+            DBGLINE
+            delete uCentral::uFileUploader::Service::instance();
+            DBGLINE
+            delete uCentral::RESTAPI::Service::instance();
+            DBGLINE
+            delete uCentral::Auth::Service::instance();
+            DBGLINE
+            delete uCentral::Storage::Service::instance();
+            DBGLINE
+
+
         }
         return Application::EXIT_OK;
     }
