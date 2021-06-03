@@ -43,7 +43,7 @@ namespace uCentral {
         Aws::String             S3Key_;
         Aws::String             S3Secret_;
         uint64_t                S3Retry_;
-        Aws::Client::ClientConfiguration    AwsConfig_;
+        Aws::Client::ClientConfiguration    AwsConfig_{"ARILIA"};
         Aws::Auth::AWSCredentials           AwsCreds_;
         BucketContent           BucketContent_;
     };
