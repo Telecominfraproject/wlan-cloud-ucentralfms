@@ -31,12 +31,6 @@ namespace uCentral::ManifestCreator {
     void Service::run() {
         Running_ = true;
 
-        DBGLINE
-        Aws::SDKOptions AwsOptions;
-        DBGLINE
-        Aws::InitAPI(AwsOptions);
-        DBGLINE
-
         uCentral::S3BucketReader BR;
         DBGLINE
         BR.Initialize();
@@ -52,9 +46,6 @@ namespace uCentral::ManifestCreator {
             ComputeManifest(BucketList);
             Print(BucketList);
         }
-
-        ShutdownAPI(AwsOptions);
-
     }
 
     bool Service::ComputeManifest(uCentral::BucketContent &BucketContent) {

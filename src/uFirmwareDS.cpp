@@ -271,8 +271,8 @@ namespace uCentral {
 }
 
 int main(int argc, char **argv) {
-//    Aws::SDKOptions AwsOptions;
-//    Aws::InitAPI(AwsOptions);
+    Aws::SDKOptions AwsOptions;
+    Aws::InitAPI(AwsOptions);
     DBGLINE
 
     int ExitCode=0;
@@ -285,6 +285,6 @@ int main(int argc, char **argv) {
     }
     DBGLINE
 
-//    ShutdownAPI(AwsOptions);
+    ShutdownAPI(AwsOptions);
     return ExitCode;
 }
