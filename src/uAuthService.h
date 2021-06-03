@@ -38,7 +38,7 @@ namespace uCentral::Auth {
 	    NONE,
 	    ALL,
 	    CALLBACK,
-	    UPLOADER
+	    NEWFIRMWARENOTIFIER
 	};
 
 	struct APIKeyEntry {

@@ -109,8 +109,8 @@ namespace uCentral::Auth {
                     E.Access = ALL;
                 else if (Access == "CALLBACK")
                     E.Access = CALLBACK;
-                else if (Access == "UPLOADER")
-                    E.Access = UPLOADER;
+                else if (Access == "NEWFIRMWARENOTIFIER")
+                    E.Access = NEWFIRMWARENOTIFIER;
                 else
                     E.Access = NONE;
                 APIKeys_[E.Key] = E;

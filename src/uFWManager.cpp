@@ -21,7 +21,6 @@
 #include <aws/s3/model/GetBucketAclRequest.h>
 
 #include "uFWManager.h"
-#include "uFileUploader.h"
 #include "uFirmwareDS.h"
 #include "uNotificationMgr.h"
 #include "uStorageService.h"
@@ -84,7 +83,8 @@ namespace uCentral::FWManager {
 
         Running_ = true;
 
-        const std::string & Path = uCentral::uFileUploader::Path();
+        // const std::string & Path = uCentral::uFileUploader::Path();
+        std::string Path;
 
         auto Uploads=0;
 

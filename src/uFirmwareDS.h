@@ -9,6 +9,7 @@
 #include "Poco/Util/ServerApplication.h"
 #include "Poco/ErrorHandler.h"
 #include "Poco/UUIDGenerator.h"
+#include "Poco/Crypto/RSAKey.h"
 
 namespace uCentral {
 

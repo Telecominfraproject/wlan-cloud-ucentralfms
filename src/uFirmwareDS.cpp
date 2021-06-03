@@ -27,10 +27,11 @@
 #include "uFirmwareDS.h"
 #include "uStorageService.h"
 #include "RESTAPI_server.h"
-#include "uFileUploader.h"
-#include "uFWManager.h"
 #include "uNotificationMgr.h"
+#include "uManifestCreator.h"
+
 #include "uUtils.h"
+
 
 namespace uCentral {
     Daemon *Daemon::instance_ = nullptr;
@@ -91,9 +92,8 @@ namespace uCentral {
         addSubsystem(uCentral::Storage::Service::instance());
         addSubsystem(uCentral::Auth::Service::instance());
         addSubsystem(uCentral::RESTAPI::Service::instance());
-        addSubsystem(uCentral::uFileUploader::Service::instance());
-        addSubsystem(uCentral::FWManager::Service::instance());
         addSubsystem(uCentral::NotificationMgr::Service::instance());
+        addSubsystem(uCentral::ManifestCreator::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -191,7 +191,9 @@ namespace uCentral {
     }
 
     int Daemon::main(const ArgVec &args) {
+        DBGLINE
         Poco::ErrorHandler::set(&AppErrorHandler_);
+        DBGLINE
 
         if (!HelpRequested_) {
             Poco::Logger &logger = Poco::Logger::get("uCentralFWS");
@@ -204,23 +206,35 @@ namespace uCentral {
                 logger.information("System does NOT supported IPv6.");
             }
 
+            DBGLINE
             uCentral::Storage::Start();
+            DBGLINE
             uCentral::Auth::Start();
+            DBGLINE
             uCentral::RESTAPI::Start();
-            uCentral::uFileUploader::Start();
-            uCentral::FWManager::Start();
+            DBGLINE
             uCentral::NotificationMgr::Start();
+            DBGLINE
+            uCentral::ManifestCreator::Start();
+            DBGLINE
 
             Poco::Thread::sleep(2000);
 
+            uCentral::ManifestCreator::Update();
+
             instance()->waitForTerminationRequest();
 
+            DBGLINE
+            uCentral::ManifestCreator::Stop();
+            DBGLINE
             uCentral::NotificationMgr::Stop();
-            uCentral::FWManager::Stop();
-            uCentral::uFileUploader::Stop();
+            DBGLINE
             uCentral::RESTAPI::Stop();
+            DBGLINE
             uCentral::Auth::Stop();
+            DBGLINE
             uCentral::Storage::Stop();
+            DBGLINE
             logger.notice("Stopped uCentralFWS...");
         }
         return Application::EXIT_OK;
@@ -257,17 +271,20 @@ namespace uCentral {
 }
 
 int main(int argc, char **argv) {
-    try {
-        Aws::SDKOptions AwsOptions;
-        Aws::InitAPI(AwsOptions);
+//    Aws::SDKOptions AwsOptions;
+//    Aws::InitAPI(AwsOptions);
+    DBGLINE
 
+    int ExitCode=0;
+    {
+        DBGLINE
         auto App = uCentral::Daemon::instance();
-        auto ExitCode = App->run(argc, argv);
-
-        return ExitCode;
-
-    } catch (Poco::Exception &exc) {
-        std::cerr << exc.displayText() << std::endl;
-        return Poco::Util::Application::EXIT_SOFTWARE;
+        DBGLINE
+        ExitCode = App->run(argc, argv);
+        DBGLINE
     }
+    DBGLINE
+
+//    ShutdownAPI(AwsOptions);
+    return ExitCode;
 }

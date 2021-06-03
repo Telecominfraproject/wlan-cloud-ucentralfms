@@ -16,17 +16,18 @@
 #include "RESTAPI_firmwaresHandler.h"
 #include "RESTAPI_latestFirmwareListHandler.h"
 #include "RESTAPI_callbackChannel.h"
+#include "RESTAPI_newFirmwareAvailable.h"
 
 namespace uCentral::RESTAPI {
 
     Service *Service::instance_ = nullptr;
 
     int Start() {
-        return uCentral::RESTAPI::Service::instance()->Start();
+        return Service::instance()->Start();
     }
 
     void Stop() {
-        uCentral::RESTAPI::Service::instance()->Stop();
+        Service::instance()->Stop();
     }
 
     Service::Service() noexcept:
@@ -88,6 +89,8 @@ namespace uCentral::RESTAPI {
             return new RESTAPI_latestFirmwareListHandler(bindings, Logger_);
         } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/callbackChannel", bindings)) {
             return new RESTAPI_callbackChannel(bindings, Logger_);
+        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/newFirmwareAvailable", bindings)) {
+            return new RESTAPI_newFirmwareAvailable(bindings, Logger_);
         } else
             return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
     }

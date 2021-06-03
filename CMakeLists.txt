@@ -40,14 +40,17 @@ add_executable(ucentralfws
                     src/uAuthService.h src/uAuthService.cpp src/RESTAPI_handler.cpp src/RESTAPI_handler.h
                     src/uUtils.cpp src/uUtils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
                     src/storage_latestfirmware.cpp src/RESTAPI_server.cpp src/RESTAPI_server.h
-                    src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h src/RESTAPI_unknownRequestHandler.cpp
-                    src/RESTAPI_unknownRequestHandler.h
-                    src/uFileUploader.cpp src/uFileUploader.h
+                    src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h
+                    src/RESTAPI_unknownRequestHandler.cpp src/RESTAPI_unknownRequestHandler.h
                     src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h
                     src/RESTAPI_callbacksHandler.cpp src/RESTAPI_callbacksHandler.h
-                    src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h src/RESTAPI_firmwareHandler.cpp
-                    src/RESTAPI_firmwareHandler.h src/RESTAPI_latestFirmwareListHandler.cpp
-                    src/RESTAPI_latestFirmwareListHandler.h src/uFWManager.cpp src/uFWManager.h src/RESTAPI_callbackChannel.cpp src/RESTAPI_callbackChannel.h src/uNotificationMgr.cpp src/uNotificationMgr.h)
+                    src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h
+                    src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h
+                    src/RESTAPI_latestFirmwareListHandler.cpp src/RESTAPI_latestFirmwareListHandler.h
+#                    src/uFWManager.cpp src/uFWManager.h
+                    src/RESTAPI_callbackChannel.cpp src/RESTAPI_callbackChannel.h
+                    src/uNotificationMgr.cpp src/uNotificationMgr.h
+                    src/s3bucketreader.cpp src/s3bucketreader.h src/RESTAPI_newFirmwareAvailable.cpp src/RESTAPI_newFirmwareAvailable.h src/uManifestCreator.cpp src/uManifestCreator.h)
 
 target_link_libraries(ucentralfws PUBLIC
         ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES})
