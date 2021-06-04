@@ -77,14 +77,18 @@ namespace uCentral {
                 DBGLINE
                 std::string FileName{Object.GetKey()};
 
+
                 //  if the file ends with .json, ignore it...
                 if(FileName.substr(FileName.size()-5)!=".json") {
                     BucketEntry B;
+
+                    DBGLINE
 
                     B.S3Name = FileName;
                     B.S3Size = Object.GetSize();
                     B.S3TimeStamp = (Object.GetLastModified().Millis() / 1000);
                     BucketContent_[FileName] = B;
+                    DBGLINE
                 }
             }
         }
