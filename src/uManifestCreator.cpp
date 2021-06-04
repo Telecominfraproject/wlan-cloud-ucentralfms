@@ -37,7 +37,7 @@ namespace uCentral::ManifestCreator {
         DBGLINE
 
         while(Running_) {
-            Poco::Thread::trySleep(10000);
+            Poco::Thread::trySleep(60000);
             DBGLINE
             if(!Running_)
                 break;
@@ -89,9 +89,7 @@ namespace uCentral::ManifestCreator {
 
     int Service::Start() {
         BucketReader_.Initialize();
-
         Worker_.start(*this);
-
         return 0;
     }
 
