@@ -192,9 +192,7 @@ namespace uCentral {
     }
 
     int Daemon::main(const ArgVec &args) {
-        DBGLINE
         Poco::ErrorHandler::set(&AppErrorHandler_);
-        DBGLINE
 
         if (!HelpRequested_) {
             Poco::Logger &logger = Poco::Logger::get("uCentralFWS");
@@ -207,45 +205,28 @@ namespace uCentral {
                 logger.information("System does NOT supported IPv6.");
             }
 
-            DBGLINE
             uCentral::Storage::Start();
-            DBGLINE
             uCentral::Auth::Start();
-            DBGLINE
             uCentral::RESTAPI::Start();
-            DBGLINE
             uCentral::NotificationMgr::Start();
-            DBGLINE
             uCentral::ManifestCreator::Start();
-            DBGLINE
 
             Poco::Thread::sleep(2000);
-            DBGLINE
 
             uCentral::ManifestCreator::Update();
-            DBGLINE
 
             uCentral::NLBHealthCheck::Service   NLB;
-            DBGLINE
             NLB.Start();
 
-            DBGLINE
             instance()->waitForTerminationRequest();
-            DBGLINE
 
             NLB.Stop();
 
-            DBGLINE
             uCentral::ManifestCreator::Stop();
-            DBGLINE
             uCentral::NotificationMgr::Stop();
-            DBGLINE
             uCentral::RESTAPI::Stop();
-            DBGLINE
             uCentral::Auth::Stop();
-            DBGLINE
             uCentral::Storage::Stop();
-            DBGLINE
             logger.notice("Stopped uCentralFWS...");
         }
         return Application::EXIT_OK;
@@ -282,26 +263,19 @@ namespace uCentral {
 }
 
 int main(int argc, char **argv) {
-
     SSL_library_init();
-    DBGLINE
     Aws::SDKOptions AwsOptions;
     AwsOptions.memoryManagementOptions.memoryManager = nullptr;
     AwsOptions.cryptoOptions.initAndCleanupOpenSSL = false;
     AwsOptions.httpOptions.initAndCleanupCurl = true;
-    DBGLINE
+
     Aws::InitAPI(AwsOptions);
-    DBGLINE
 
     int ExitCode=0;
     {
-        DBGLINE
         auto App = uCentral::Daemon::instance();
-        DBGLINE
         ExitCode = App->run(argc, argv);
-        DBGLINE
     }
-    DBGLINE
 
     ShutdownAPI(AwsOptions);
     return ExitCode;

@@ -32,26 +32,17 @@ namespace uCentral::ManifestCreator {
         Running_ = true;
 
         uCentral::S3BucketReader BR;
-        DBGLINE
         BR.Initialize();
-        DBGLINE
 
         while(Running_) {
             Poco::Thread::trySleep(60000);
-            DBGLINE
             if(!Running_)
                 break;
-            DBGLINE
             uCentral::BucketContent BucketList;
-            DBGLINE
             BR.ReadBucket();
-            DBGLINE
             BucketList = BR.Bucket();
-            DBGLINE
             ComputeManifest(BucketList);
-            DBGLINE
             Print(BucketList);
-            DBGLINE
         }
     }
 
@@ -94,13 +85,9 @@ namespace uCentral::ManifestCreator {
     }
 
     void Service::Stop() {
-        DBGLINE
         Running_ = false;
-        DBGLINE
         Worker_.wakeUp();
-        DBGLINE
         Worker_.join();
-        DBGLINE
     }
 
     bool Service::Update() {

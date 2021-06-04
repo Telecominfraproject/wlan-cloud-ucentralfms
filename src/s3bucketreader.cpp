@@ -56,60 +56,40 @@ namespace uCentral {
 
         BucketContent_.clear();
 
-        DBGLINE
-
         Aws::S3::Model::ListObjectsRequest Request;
         Request.WithBucket(S3BucketName_.c_str());
-        DBGLINE
-
         Aws::S3::S3Client S3Client(AwsCreds_,AwsConfig_);
-        DBGLINE
 
         auto Outcome = S3Client.ListObjects(Request);
-        DBGLINE
 
         if(Outcome.IsSuccess()) {
-            DBGLINE
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
-            DBGLINE
             for (const auto & Object : objects)
             {
-                DBGLINE
                 std::string FileName{Object.GetKey()};
-
 
                 //  if the file ends with .json, ignore it...
                 if(FileName.substr(FileName.size()-5)!=".json") {
                     BucketEntry B;
 
-                    DBGLINE
-
                     B.S3Name = FileName;
                     B.S3Size = Object.GetSize();
                     B.S3TimeStamp = (Object.GetLastModified().Millis() / 1000);
                     BucketContent_[FileName] = B;
-                    DBGLINE
                 }
             }
         }
-        DBGLINE
 
         //  OK, now read the content os all the files that end with .json
         for(auto Element = BucketContent_.begin(); Element !=BucketContent_.end();) {
-            DBGLINE
             std::string ObjectName = Element->second.S3Name + ".json";
             if(!GetObjectContent(S3Client,ObjectName,Element->second.S3ContentManifest)) {
-                DBGLINE
                 BucketContent_.erase(Element++);
-                DBGLINE
             }
             else {
-                DBGLINE
                 Element++;
-                DBGLINE
             }
         }
-        DBGLINE
         return true;
     }
 
