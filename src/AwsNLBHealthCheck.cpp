@@ -48,7 +48,7 @@ void AwsNLBHealthCheck::Stop() {
         DBGLINE
 		Running_ = false;
         DBGLINE
-		Sock_.impl()->close();
+		close(Sock_.impl()->sockfd());
         DBGLINE
 		Th_.join();
         DBGLINE
