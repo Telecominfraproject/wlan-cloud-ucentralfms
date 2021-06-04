@@ -5,6 +5,7 @@
 #include "AwsNLBHealthCheck.h"
 
 #include "uFirmwareDS.h"
+#include "uUtils.h"
 
 void AwsNLBHealthCheck::run() {
 
@@ -17,16 +18,22 @@ void AwsNLBHealthCheck::run() {
 
 	while(Running_) {
 		try {
+		    DBGLINE
 			auto NewSock = Sock_.acceptConnection();
+            DBGLINE
 			if (Running_) {
+                DBGLINE
 				auto b = NewSock.sendBytes(NLBResponse.c_str(), (int)NLBResponse.size());
 				NewSock.shutdown();
 				NewSock.close();
+                DBGLINE
 			}
 		} catch(const Poco::Exception &E) {
+            DBGLINE
 			break;
 		}
 	}
+    DBGLINE
 }
 
 int AwsNLBHealthCheck::Start() {
@@ -38,8 +45,12 @@ int AwsNLBHealthCheck::Start() {
 
 void AwsNLBHealthCheck::Stop() {
 	if(Running_) {
+        DBGLINE
 		Running_ = false;
+        DBGLINE
 		Sock_.close();
+        DBGLINE
 		Th_.join();
+        DBGLINE
 	}
 }
