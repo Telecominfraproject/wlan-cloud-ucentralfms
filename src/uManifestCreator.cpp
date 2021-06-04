@@ -38,13 +38,20 @@ namespace uCentral::ManifestCreator {
 
         while(Running_) {
             Poco::Thread::trySleep(10000);
+            DBGLINE
             if(!Running_)
                 break;
+            DBGLINE
             uCentral::BucketContent BucketList;
+            DBGLINE
             BR.ReadBucket();
+            DBGLINE
             BucketList = BR.Bucket();
+            DBGLINE
             ComputeManifest(BucketList);
+            DBGLINE
             Print(BucketList);
+            DBGLINE
         }
     }
 
