@@ -225,7 +225,7 @@ namespace uCentral {
             uCentral::ManifestCreator::Update();
             DBGLINE
 
-            AwsNLBHealthCheck   NLB;
+            uCentral::NLBHealthCheck::Service   NLB;
             DBGLINE
             NLB.Start();
 
@@ -283,9 +283,7 @@ namespace uCentral {
 
 int main(int argc, char **argv) {
 
-
     SSL_library_init();
-
     DBGLINE
     Aws::SDKOptions AwsOptions;
     AwsOptions.memoryManagementOptions.memoryManager = nullptr;
