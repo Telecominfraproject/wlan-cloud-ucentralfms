@@ -271,10 +271,14 @@ namespace uCentral {
 }
 
 int main(int argc, char **argv) {
+
+
+    SSL_library_init();
+
     DBGLINE
     Aws::SDKOptions AwsOptions;
     AwsOptions.memoryManagementOptions.memoryManager = nullptr;
-    AwsOptions.cryptoOptions.initAndCleanupOpenSSL = true;
+    AwsOptions.cryptoOptions.initAndCleanupOpenSSL = false;
     AwsOptions.httpOptions.initAndCleanupCurl = true;
     DBGLINE
     Aws::InitAPI(AwsOptions);
