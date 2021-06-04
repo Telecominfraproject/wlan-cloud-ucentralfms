@@ -8,6 +8,8 @@
 #include <aws/s3/model/ListObjectsRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
 
+#include "uUtils.h"
+
 namespace uCentral {
 
     bool S3BucketReader::Initialize() {
@@ -54,17 +56,25 @@ namespace uCentral {
 
         BucketContent_.clear();
 
+        DBGLINE
+
         Aws::S3::Model::ListObjectsRequest Request;
         Request.WithBucket(S3BucketName_.c_str());
+        DBGLINE
 
         Aws::S3::S3Client S3Client(AwsCreds_,AwsConfig_);
+        DBGLINE
 
         auto Outcome = S3Client.ListObjects(Request);
+        DBGLINE
 
         if(Outcome.IsSuccess()) {
+            DBGLINE
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
+            DBGLINE
             for (const auto & Object : objects)
             {
+                DBGLINE
                 std::string FileName{Object.GetKey()};
 
                 //  if the file ends with .json, ignore it...
@@ -78,13 +88,16 @@ namespace uCentral {
                 }
             }
         }
+        DBGLINE
 
         //  OK, now read the content os all the files that end with .json
         for(auto &[Name, Entry]:BucketContent_) {
+            DBGLINE
             std::string ObjectName = Entry.S3Name + ".json";
             if(!GetObjectContent(S3Client,ObjectName,Entry.S3ContentManifest))
                 BucketContent_.erase(Name);
         }
+        DBGLINE
         return true;
     }
 
