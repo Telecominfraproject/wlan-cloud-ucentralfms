@@ -12,10 +12,6 @@ void AwsNLBHealthCheck::run() {
 	static std::string NLBMessage{"uCentralGW is here.\r\n"};
 	static std::string NLBResponse{"HTTP/1.1 200 OK\r\nServer: NLB Healthcheck\r\nConnection: close\r\nContent-Length : " + std::to_string(NLBMessage.length()) +"\r\n\r\n"+NLBMessage};
 
-	Running_ = true;
-	Sock_.bind(uCentral::ServiceConfig::GetInt("nlb.port",15016));
-	Sock_.listen();
-
 	while(Running_) {
 		try {
 		    DBGLINE
@@ -38,6 +34,9 @@ void AwsNLBHealthCheck::run() {
 
 int AwsNLBHealthCheck::Start() {
 	if(uCentral::ServiceConfig::GetBool("nlb.enable",false)) {
+        Running_ = true;
+        Sock_.bind(uCentral::ServiceConfig::GetInt("nlb.port",15016));
+        Sock_.listen();
 		Th_.start(*this);
 	}
 	return 0;
