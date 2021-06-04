@@ -29,6 +29,7 @@
 #include "RESTAPI_server.h"
 #include "uNotificationMgr.h"
 #include "uManifestCreator.h"
+#include "AwsNLBHealthCheck.h"
 
 #include "uUtils.h"
 
@@ -222,7 +223,12 @@ namespace uCentral {
 
             uCentral::ManifestCreator::Update();
 
+            AwsNLBHealthCheck   NLB;
+            NLB.Start();
+
             instance()->waitForTerminationRequest();
+
+            NLB.Stop();
 
             DBGLINE
             uCentral::ManifestCreator::Stop();

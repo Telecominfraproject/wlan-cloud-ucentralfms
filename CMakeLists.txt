@@ -47,7 +47,7 @@ add_executable(ucentralfws
                     src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h
                     src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h
                     src/RESTAPI_latestFirmwareListHandler.cpp src/RESTAPI_latestFirmwareListHandler.h
-#                    src/uFWManager.cpp src/uFWManager.h
+                    src/AwsNLBHealthCheck.cpp src/AwsNLBHealthCheck.h
                     src/RESTAPI_callbackChannel.cpp src/RESTAPI_callbackChannel.h
                     src/uNotificationMgr.cpp src/uNotificationMgr.h
                     src/s3bucketreader.cpp src/s3bucketreader.h src/RESTAPI_newFirmwareAvailable.cpp src/RESTAPI_newFirmwareAvailable.h src/uManifestCreator.cpp src/uManifestCreator.h)

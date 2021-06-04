@@ -90,7 +90,7 @@ namespace uCentral::ManifestCreator {
     int Service::Start() {
         BucketReader_.Initialize();
 
-        Worker_.start(this);
+        Worker_.start(*this);
 
         return 0;
     }
