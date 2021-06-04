@@ -95,11 +95,19 @@ namespace uCentral {
         DBGLINE
 
         //  OK, now read the content os all the files that end with .json
-        for(auto &[Name, Entry]:BucketContent_) {
+        for(auto Element = BucketContent_.begin(); Element !=BucketContent_.end();) {
             DBGLINE
-            std::string ObjectName = Entry.S3Name + ".json";
-            if(!GetObjectContent(S3Client,ObjectName,Entry.S3ContentManifest))
-                BucketContent_.erase(Name);
+            std::string ObjectName = Element->second.S3Name + ".json";
+            if(!GetObjectContent(S3Client,ObjectName,Element->second.S3ContentManifest)) {
+                DBGLINE
+                BucketContent_.erase(Element++);
+                DBGLINE
+            }
+            else {
+                DBGLINE
+                Element++;
+                DBGLINE
+            }
         }
         DBGLINE
         return true;
