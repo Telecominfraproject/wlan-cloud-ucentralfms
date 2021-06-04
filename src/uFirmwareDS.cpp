@@ -220,13 +220,18 @@ namespace uCentral {
             DBGLINE
 
             Poco::Thread::sleep(2000);
+            DBGLINE
 
             uCentral::ManifestCreator::Update();
+            DBGLINE
 
             AwsNLBHealthCheck   NLB;
+            DBGLINE
             NLB.Start();
 
+            DBGLINE
             instance()->waitForTerminationRequest();
+            DBGLINE
 
             NLB.Stop();
 
