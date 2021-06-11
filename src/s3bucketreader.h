@@ -24,6 +24,7 @@ namespace uCentral {
         std::string     Image;
         std::string     Compatible;
         uint64_t        Timestamp = 0;
+        std::string     URI;
         void            Print() const;
     };
     typedef std::map<std::string, BucketEntry>    BucketContent;

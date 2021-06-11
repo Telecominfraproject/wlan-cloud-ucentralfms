@@ -7,11 +7,11 @@
 
 #include <queue>
 
-#include "uSubSystemServer.h"
+#include "SubSystemServer.h"
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
 #include <aws/core/auth/AWSCredentials.h>
-#include "uAuthService.h"
+#include "AuthService.h"
 
 namespace uCentral::FWManager {
 

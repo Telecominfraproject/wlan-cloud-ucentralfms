@@ -25,20 +25,22 @@ add_definitions(-DAPP_VERSION="${CMAKE_PROJECT_VERSION}" -DBUILD_NUMBER="${BUILD
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost REQUIRED system)
-find_package(OpenSSL REQUIRED)
-find_package(AWSSDK REQUIRED COMPONENTS s3)
-find_package(Poco REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
+
+find_package(Boost      REQUIRED system)
+find_package(OpenSSL    REQUIRED)
+find_package(AWSSDK     REQUIRED COMPONENTS s3)
+find_package(CppKafka   REQUIRED)
+find_package(Poco       REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka)
 
 add_executable(ucentralfws
                     build
-                    src/uFirmwareDS.cpp src/uFirmwareDS.h src/RESTAPI_objects.h src/RESTAPI_objects.cpp
-                    src/uStorageService.cpp src/uStorageService.h src/storage_tables.cpp
-                    src/storage_sqlite.cpp src/uSubSystemServer.cpp src/uSubSystemServer.h
-                    src/uAuthService.h src/uAuthService.cpp src/RESTAPI_handler.cpp src/RESTAPI_handler.h
-                    src/uUtils.cpp src/uUtils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
+        src/Daemon.cpp src/Daemon.h src/RESTAPI_objects.h src/RESTAPI_objects.cpp
+        src/StorageService.cpp src/StorageService.h src/storage_tables.cpp
+                    src/storage_sqlite.cpp src/SubSystemServer.cpp src/SubSystemServer.h
+        src/AuthService.h src/AuthService.cpp src/RESTAPI_handler.cpp src/RESTAPI_handler.h
+        src/Utils.cpp src/Utils.h src/storage_callbacks.cpp src/storage_firmwares.cpp
                     src/storage_latestfirmware.cpp src/RESTAPI_server.cpp src/RESTAPI_server.h
                     src/RESTAPI_oauth2Handler.cpp src/RESTAPI_oauth2Handler.h
                     src/RESTAPI_unknownRequestHandler.cpp src/RESTAPI_unknownRequestHandler.h
@@ -47,12 +49,12 @@ add_executable(ucentralfws
                     src/RESTAPI_callbackHandler.cpp src/RESTAPI_callbackHandler.h
                     src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h
                     src/RESTAPI_latestFirmwareListHandler.cpp src/RESTAPI_latestFirmwareListHandler.h
-                    src/AwsNLBHealthCheck.cpp src/AwsNLBHealthCheck.h
+                    src/ALBHealthCheckServer.h
                     src/RESTAPI_callbackChannel.cpp src/RESTAPI_callbackChannel.h
-                    src/uNotificationMgr.cpp src/uNotificationMgr.h
-                    src/s3bucketreader.cpp src/s3bucketreader.h src/RESTAPI_newFirmwareAvailable.cpp src/RESTAPI_newFirmwareAvailable.h src/uManifestCreator.cpp src/uManifestCreator.h)
+        src/NotificationMgr.cpp src/NotificationMgr.h
+                    src/s3bucketreader.cpp src/s3bucketreader.h
+                    src/RESTAPI_newFirmwareAvailable.cpp src/RESTAPI_newFirmwareAvailable.h src/ManifestCreator.cpp src/ManifestCreator.h src/KafkaNotifier.cpp src/KafkaNotifier.h)
 
 target_link_libraries(ucentralfws PUBLIC
-        ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES})
+        ${Poco_LIBRARIES} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES} CppKafka::cppkafka )
 
-# ${AWSSDK_LINK_LIBRARIES}

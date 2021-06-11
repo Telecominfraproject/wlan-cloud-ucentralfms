@@ -5,7 +5,7 @@
 #include "Poco/URI.h"
 
 #include "RESTAPI_server.h"
-#include "uUtils.h"
+#include "Utils.h"
 #include "RESTAPI_handler.h"
 
 #include "RESTAPI_unknownRequestHandler.h"
@@ -31,7 +31,7 @@ namespace uCentral::RESTAPI {
     }
 
     Service::Service() noexcept:
-            uSubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
+            SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
     {
     }
 

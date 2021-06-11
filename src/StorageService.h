@@ -14,8 +14,8 @@
 #include "Poco/Data/SQLite/Connector.h"
 
 #include "RESTAPI_objects.h"
-#include "uSubSystemServer.h"
-#include "uAuthService.h"
+#include "SubSystemServer.h"
+#include "AuthService.h"
 
 namespace uCentral::Storage {
 
@@ -43,7 +43,7 @@ namespace uCentral::Storage {
     bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
 
-    class Service : public uSubSystemServer {
+    class Service : public SubSystemServer {
 
     public:
         Service() noexcept;

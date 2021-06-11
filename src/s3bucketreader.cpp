@@ -3,12 +3,15 @@
 //
 
 #include "s3bucketreader.h"
-#include "uFirmwareDS.h"
+#include "Daemon.h"
 
 #include <aws/s3/model/ListObjectsRequest.h>
 #include <aws/s3/model/GetObjectRequest.h>
 
-#include "uUtils.h"
+#include "Poco/JSON/Object.h"
+#include "Poco/JSON/Parser.h"
+
+#include "Utils.h"
 
 namespace uCentral {
 
@@ -54,6 +57,12 @@ namespace uCentral {
 
     bool S3BucketReader::ReadBucket() {
 
+        static const std::string JSON(".json");
+        static const std::string UPGRADE("-upgrade.bin");
+
+        std::string     URIBase = "https://";
+                        URIBase += uCentral::ServiceConfig::GetString("s3.bucket.uri/");
+
         BucketContent_.clear();
 
         Aws::S3::Model::ListObjectsRequest Request;
@@ -64,30 +73,51 @@ namespace uCentral {
 
         if(Outcome.IsSuccess()) {
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
-            for (const auto & Object : objects)
-            {
+            for (const auto &Object : objects) {
                 std::string FileName{Object.GetKey()};
-
-                //  if the file ends with .json, ignore it...
-                if(FileName.substr(FileName.size()-5)!=".json") {
-                    BucketEntry B;
-
-                    B.S3Name = FileName;
-                    B.S3Size = Object.GetSize();
-                    B.S3TimeStamp = (Object.GetLastModified().Millis() / 1000);
-                    BucketContent_[FileName] = B;
+                if (FileName.size() > JSON.size() && FileName.substr(FileName.size() - JSON.size()) == JSON) {
+                    std::string Release = FileName.substr(0, FileName.size() - JSON.size());
+                    std::string Content;
+                    if (GetObjectContent(S3Client, FileName, Content)) {
+                        Poco::JSON::Parser P;
+                        auto ParsedContent = P.parse(Content).extract<Poco::JSON::Object::Ptr>();
+                        if (ParsedContent->has("image") &&
+                            ParsedContent->has("compatible") &&
+                            ParsedContent->has("revision") &&
+                            ParsedContent->has("timestamp")) {
+                            auto It = BucketContent_.find(Release);
+                            if (It != BucketContent_.end()) {
+                                It->second.Timestamp = ParsedContent->get("timestamp");
+                                It->second.Compatible = ParsedContent->get("compatible").toString();
+                                It->second.Revision = ParsedContent->get("revision").toString();
+                                It->second.Image = ParsedContent->get("image").toString();
+                                It->second.S3ContentManifest = Content;
+                            } else {
+                                BucketContent_.emplace(Release, BucketEntry{
+                                        .S3ContentManifest = Content,
+                                        .Revision = ParsedContent->get("revision").toString(),
+                                        .Image = ParsedContent->get("image").toString(),
+                                        .Compatible = ParsedContent->get("compatible").toString(),
+                                        .Timestamp = ParsedContent->get("timestamp")});
+                            }
+                        }
+                    }
+                } else if (FileName.size() > UPGRADE.size() && FileName.substr(FileName.size() - UPGRADE.size()) == UPGRADE) {
+                    std::string Release = FileName.substr(0, FileName.size() - UPGRADE.size());
+                    auto It = BucketContent_.find(Release);
+                    if(It != BucketContent_.end()) {
+                        It->second.S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
+                        It->second.S3Size = Object.GetSize();
+                        It->second.S3Name = FileName;
+                        It->second.URI = URIBase + FileName;
+                    } else {
+                        BucketContent_.emplace(Release, BucketEntry{
+                                                            .S3Name = FileName,
+                                                            .S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000),
+                                                            .S3Size = (uint64_t ) Object.GetSize(),
+                                                            .URI = URIBase + FileName });
+                    }
                 }
-            }
-        }
-
-        //  OK, now read the content os all the files that end with .json
-        for(auto Element = BucketContent_.begin(); Element !=BucketContent_.end();) {
-            std::string ObjectName = Element->second.S3Name + ".json";
-            if(!GetObjectContent(S3Client,ObjectName,Element->second.S3ContentManifest)) {
-                BucketContent_.erase(Element++);
-            }
-            else {
-                Element++;
             }
         }
         return true;
@@ -98,7 +128,7 @@ namespace uCentral {
     };
 
     void BucketEntry::Print() const {
-        std::cout << "Name: " << S3Name << std::endl;
+        std::cout << "  Name: " << S3Name << std::endl;
         std::cout << "  Size: " << S3Size << std::endl;
         std::cout << "  Date: " << S3TimeStamp << std::endl;
         std::cout << "  Latest: " << S3ContentManifest << std::endl;
@@ -106,10 +136,13 @@ namespace uCentral {
         std::cout << "  Revision: " << Revision << std::endl;
         std::cout << "  Compatible: " << Compatible << std::endl;
         std::cout << "  Timestamp: " << Timestamp << std::endl;
+        std::cout << "  URI: " << URI << std::endl;
      }
 
     void Print(const uCentral::BucketContent &B) {
-        for(const auto &[Name,Entry]:B)
+        for(const auto &[Name,Entry]:B) {
+            std::cout << "Release:" << Name << std::endl;
             Entry.Print();
+        }
     }
 }

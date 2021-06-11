@@ -6,8 +6,8 @@
 //	Arilia Wireless Inc.
 //
 
-#include "uStorageService.h"
-#include "uFirmwareDS.h"
+#include "StorageService.h"
+#include "Daemon.h"
 
 namespace uCentral::Storage {
 	int Service::Setup_SQLite() {

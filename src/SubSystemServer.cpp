@@ -6,8 +6,8 @@
 //	Arilia Wireless Inc.
 //
 
-#include "uSubSystemServer.h"
-#include "uFirmwareDS.h"
+#include "SubSystemServer.h"
+#include "Daemon.h"
 
 #include "Poco/Net/X509Certificate.h"
 #include "Poco/DateTimeFormatter.h"
@@ -15,7 +15,7 @@
 
 #include "openssl/ssl.h"
 
-uSubSystemServer::uSubSystemServer( std::string Name,
+SubSystemServer::SubSystemServer( std::string Name,
                                   const std::string & LoggingPrefix,
                                   std::string SubSystemConfigPrefix )
     :   Name_(std::move(Name)),
@@ -25,7 +25,7 @@ uSubSystemServer::uSubSystemServer( std::string Name,
 	Logger_.setLevel(Poco::Message::PRIO_NOTICE);
 }
 
-void uSubSystemServer::initialize(Poco::Util::Application & self)
+void SubSystemServer::initialize(Poco::Util::Application & self)
 {
     Logger_.notice("Initializing...");
     auto i=0;
@@ -84,16 +84,16 @@ void uSubSystemServer::initialize(Poco::Util::Application & self)
     }
 }
 
-void uSubSystemServer::uninitialize()
+void SubSystemServer::uninitialize()
 {
 }
 
-void uSubSystemServer::reinitialize(Poco::Util::Application & self)
+void SubSystemServer::reinitialize(Poco::Util::Application & self)
 {
     // add your own reinitialization code here
 }
 
-void uSubSystemServer::defineOptions(Poco::Util::OptionSet& options)
+void SubSystemServer::defineOptions(Poco::Util::OptionSet& options)
 {
 }
 

@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: uCentral Firmware Service API
   description: A process to manage new uCentral firmware distribution.
-  version: 0.0.1
+  version: 0.0.2
   license:
     name: BSD3
     url: https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/master/LICENSE
@@ -24,7 +24,7 @@ components:
       in: header
       name: X-API-KEY
     bearerAuth:
-      type: http
+      type: https
       scheme: bearer
       bearerFormat: JWT
 
@@ -55,46 +55,47 @@ components:
       type: object
       description: Definition of a firmware release
       properties:
-        uuid:
+        id:
+          type: integer
+          format: int64
+        deviceType:
           type: string
-          format: uuid
         description:
           type: string
-        uploaded:
+        revision:
           type: string
-          format: 'date-time'
-        firmwareDate:
+        uri:
           type: string
-          format: 'date-time'
-        firmwareFileName:
+          format: uri
+        image:
           type: string
-        firmwareVersion:
-          type: string  #the version the AP will report
+        imageDate:
+          type: integer
+          format: int64
+        size:
+          type: integer
+          format: int64
+        downloadCount:
+          type: integer
+          format: int64
         firmwareHash:
-          type: string
-        firmwareLatestDoc:
           type: string
         owner:
           type: string
         location:
           type: string
           format: uri
-        deviceType:
-          type: string
-        downloadCount:
-          type: integer
-          format: int64
         uploader:
           type: string
-        size:
-          type: integer
-          format: int64
         digest:
-          type: string
-        s3uri:
           type: string
         latest:
           type: boolean
+        notes:
+          type: string
+        created:
+          type: integer
+          format: int64
 
     FirmwareDetailsList:
       type: object
@@ -104,59 +105,141 @@ components:
           items:
             $ref: '#/components/schemas/FirmwareDetails'
 
-    CallbackHook:
+    DeviceType:
       type: object
       properties:
-        uuid:
-          type: string
-          format: uuid
-        uri:
-          type: string
-        creator:
-          type: string
-        topics:
-          type: string
-        location:
-          type: string
-          format: uri
-        token:
-          type: string
-        tokenType:
-          type: string
-        created:
-          type: string
-          format: 'date-time'
-        expires:
-          type: string
-          format: 'date-time'
-
-    CallbackHookList:
-      type: object
-      properties:
-        callbacks:
-          type: array
-          items:
-            $ref: '#/components/schemas/CallbackHook'
-
-    LatestFirmware:
-      type: object
-      properties:
+        id:
+          type: integer
+          format: int64
         deviceType:
           type: string
-        uuid:
+        manufacturer:
           type: string
-          format: uuid
-        lastUpdated:
+        model:
           type: string
-          format: 'date-time'
+        policy:
+          type: string
+        notes:
+          type: string
+        lastUpdate:
+          type: integer
+          format: int64
+        created:
+          type: integer
+          format: int64
 
-    LatestFirmwareList:
+    DeviceTypeList:
       type: object
       properties:
-        latestFirmwareList:
+        deviceTypes:
           type: array
           items:
-            $ref: '#/components/schemas/LatestFirmware'
+            $ref: '#/components/schemas/DeviceType'
+
+    DeviceEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        campaignId:
+          type: integer
+          format: int64
+        serialNumber:
+          type: string
+        commandUUID:
+          type: string
+          format: uuid
+        runAt:
+          type: integer
+          format: int64
+        submitted:
+          type: integer
+          format: int64
+        completed:
+          type: integer
+          format: int64
+
+    DeviceEntryList:
+      type: object
+      properties:
+        deviceEntries:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceEntry'
+
+    RevisionHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        serialNumber:
+          type: string
+        revisionId:
+          type: integer
+          format: int64
+        upgraded:
+          type: integer
+          format: int64
+        commandUUID:
+          type: string
+          format: uuid
+
+    RevisionHistoryEntryList:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            $ref: '#/components/schemas/RevisionHistoryEntry'
+
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        started:
+          type: integer
+          format: int64
+        canceled:
+          type: integer
+          format: int64
+        startDate:
+          type: integer
+          format: int64
+        schedule:
+          type: string
+        completed:
+          type: integer
+          format: int64
+        deviceCount:
+          type: integer
+        completedDevices:
+          type: integer
+        submittedDevices:
+          type: integer
+        notes:
+          type: string
+        lastUpdate:
+          type: integer
+          format: int64
+        created:
+          type: integer
+          format: int64
+
+    CampaignList:
+      type: object
+      properties:
+        campaigns:
+          type: array
+          items:
+            $ref: '#/components/schemas/Campaign'
 
     GenericErrorResponse:
       description: Typical error response
@@ -324,6 +407,12 @@ paths:
           schema:
             type: string
           required: false
+        - in: query
+          name: latestOnly
+          description: Return only the latest firwares
+          schema:
+            type: boolean
+          required: false
       responses:
         200:
           description: List firmwares
@@ -336,7 +425,7 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
-  /firmware/{uuid}:
+  /firmware/{id}:
     get:
       tags:
         - Firmware
@@ -345,9 +434,10 @@ paths:
       operationId: getFirmware
       parameters:
         - in: path
-          name: uuid
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
       responses:
         200:
@@ -368,12 +458,12 @@ paths:
       operationId: createFirmware
       parameters:
         - in: path
-          name: uuid
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
       requestBody:
-        description: User id and password
         required: true
         content:
           application/json:
@@ -381,7 +471,7 @@ paths:
               $ref: '#/components/schemas/FirmwareDetails'
       responses:
         200:
-          description: Successfully deleted commands for the device.
+          description: Created a firmware entry.
           content:
             application/json:
               schema:
@@ -398,12 +488,13 @@ paths:
       operationId: upodateFirmware
       parameters:
         - in: path
-          name: uuid
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
       requestBody:
-        description: User id and password
+        description: Firmware details
         required: true
         content:
           application/json:
@@ -428,9 +519,10 @@ paths:
       operationId: deleteFirmware
       parameters:
         - in: path
-          name: uuid
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
       responses:
         200:
@@ -444,13 +536,12 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
-  /callbacks:
+  /deviceTypes:
     get:
       tags:
-        - Callbacks
-      summary: Returns a list of callbacks
-      description: Get a list of callbacks
-      operationId: getCallBackList
+        - DeviceTypes
+      summary: List all the defined device types
+      operationId: getDeviceTypes
       parameters:
         - in: query
           description: Pagination start (starts at 1. If not specified, 1 is assumed)
@@ -472,67 +563,58 @@ paths:
           required: false
       responses:
         200:
-          description: A callback list definition
+          description: List of known device types.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CallbackHookList'
+                $ref: '#/components/schemas/DeviceTypeList'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
 
-
-  /callback/{uuid}:
+  /deviceType/{id}:
     get:
       tags:
-        - Callbacks
-      summary: Returns a callback
-      description: Get a callback.
-      operationId: getCallback
+        - DeviceTypes
+      summary: Get a specific DeviceType
+      operationId: getDeviceType
       parameters:
         - in: path
-          name: uuid
+          description: ID of deviceType to retrieve
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
       responses:
         200:
-          description: A callback definition
+          description: Get a single device type.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CallbackHook'
+                $ref: '#/components/schemas/DeviceType'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
 
-    post:
+    delete:
       tags:
-        - Callbacks
-      summary: Delete some commands
-      operationId: createCallback
+        - DeviceTypes
+      summary: Delete a specific DeviceType
+      operationId: deleteDeviceType
       parameters:
         - in: path
-          name: uuid
+          description: ID of deviceType to retrieve
+          name: id
           schema:
-            type: string
+            type: integer
+            format: int64
           required: true
-      requestBody:
-        description: User id and password
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CallbackHook'
       responses:
         200:
-          description: Successfully deleted commands for the device.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericGoodAnswer'
+          $ref: '#/components/responses/Success'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:
@@ -540,173 +622,165 @@ paths:
 
     put:
       tags:
-        - Callbacks
-      summary: Update A New firmware
-      operationId: upodateCallback
+        - DeviceTypes
+      summary: Modify a specific DeviceType
+      operationId: modifyDeviceType
       parameters:
         - in: path
-          name: uuid
-          schema:
-            type: string
-          required: true
-      requestBody:
-        description: User id and password
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CallbackHook'
-      responses:
-        200:
-          description: Successfully updated callback
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CallbackHook'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-    delete:
-      tags:
-        - Callbacks
-      summary: Delete some commands
-      operationId: deleteCallback
-      parameters:
-        - in: path
-          name: uuid
-          schema:
-            type: string
-          required: true
-      responses:
-        200:
-          description: Successfully deleted commands for the device.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericGoodAnswer'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-  /latestFirmwareList:
-    get:
-      tags:
-        - Firmware
-      summary: Returns the list of latest firmwares
-      description: Returns the list of latest firmwares
-      operationId: getLatestFirmwareList
-      responses:
-        200:
-          description: Returns the list of latest firmwares
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LatestFirmwareList'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-  /file/{uuid}:
-    get:
-      tags:
-        - Files
-      summary: Get a file from the upload directory
-      operationId: getUploadFile
-      parameters:
-        - in: path
-          name: uuid
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: serialNumber
-          schema:
-            type: string
-          required: true
-      responses:
-        200:
-          description: Succesfull file retrieval
-          content:
-            application/octet-stream:
-              schema:
-                type: string
-                format: binary
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-    delete:
-      tags:
-        - Files
-      summary: Delete a file from the upload directory
-      operationId: deleteUploadFidelete
-      parameters:
-        - in: path
-          name: uuid
-          schema:
-            type: string
-            format: uuid
-          required: true
-        - in: query
-          name: serialNumber
-          schema:
-            type: string
-          required: true
-      responses:
-        200:
-          $ref: '#/components/responses/Success'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-  /callbackChannel:
-    post:
-      tags:
-        - Callback
-      summary: Generic callback hook
-      operationId: postCallback
-      parameters:
-        - in: query
-          name: subscribe
-          schema:
-            type: boolean
-          required: false
-        - in: query
-          name: uri
-          schema:
-            type: string
-            format: uri
-        - in: query
-          name: key
-          schema:
-            type: string
-        - in: query
-          name: topics
-          schema:
-            type: string
-        - in: query
+          description: ID of deviceType to modify
           name: id
           schema:
-            type: string
-        - in: query
-          name: topic
-          schema:
-            type: string
+            type: integer
+            format: int64
+          required: true
       requestBody:
-        description: A generic JSONDocument, may be empty too {}
+        description: Modifications for the DeviceType
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AnyPayload'
+              $ref: '#/components/schemas/DeviceType'
+      responses:
+        200:
+          description: Get a single device type.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceType'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
 
+  /revisionHistory/{serialNumber}:
+    get:
+      tags:
+        - RevisionHistory
+      summary: List all the defined device revision history
+      operationId: getRevisionHistory
+      parameters:
+        - in: path
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: List of device history upgrade.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevisionHistoryEntryList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /campaigns:
+    get:
+      tags:
+        - Campaign
+      summary: List all cmapaigns
+      operationId: getCampaigns
+      parameters:
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: startDate
+          schema:
+            type: integer
+            format: int64
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: endDate
+          schema:
+            type: integer
+            format: int64
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+
+      responses:
+        200:
+          description: List of campaigns.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /campaign/{id}:
+    get:
+      tags:
+        - Campaign
+      summary: Get a single campaign definition
+      operationId: getCampaign
+      parameters:
+        - in: path
+          description: ID of the campaign
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        200:
+          $ref: '#/components/schemas/Campaign'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Campaign
+      summary: Delete a single campaign definition
+      operationId: deleteCampaign
+      parameters:
+        - in: path
+          description: ID of the campaign
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
       responses:
         200:
           $ref: '#/components/responses/Success'
@@ -714,3 +788,168 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
+
+    post:
+      tags:
+        - Campaign
+      summary: Create a single campaign definition
+      operationId: createCampaign
+      parameters:
+        - in: path
+          description: ID of the campaign
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        description: Canpaign creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Campaign'
+      responses:
+        200:
+          $ref: '#/components/schemas/Campaign'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+        - Campaign
+      summary: Create a single campaign definition
+      operationId: updateCampaign
+      parameters:
+        - in: path
+          description: ID of the campaign
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        description: Canpaign modification details
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Campaign'
+      responses:
+        200:
+          $ref: '#/components/schemas/Campaign'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /campaign/{id}/entries:
+    get:
+      tags:
+        - Campaign
+      summary: List all campaign entries
+      operationId: getCampaignEntries
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: startDate
+          schema:
+            type: integer
+            format: int64
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: endDate
+          schema:
+            type: integer
+            format: int64
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          $ref: '#/components/schemas/DeviceEntryList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /campaign/{id}/entry/{serialNumber}:
+    post:
+      tags:
+        - Campaign
+      operationId: createSingleEntry
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - in: path
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceEntryList'
+      responses:
+        200:
+          $ref: '#/components/schemas/DeviceEntryList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags:
+        - Campaign
+      operationId: deleteSingleEntry
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+            format: int64
+          required: true
+        - in: path
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+

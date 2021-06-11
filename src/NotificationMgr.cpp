@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "uNotificationMgr.h"
-#include "uStorageService.h"
+#include "NotificationMgr.h"
+#include "StorageService.h"
 #include "RESTAPI_objects.h"
 
 #include "Poco/JSON/Object.h"
@@ -32,7 +32,7 @@ namespace uCentral::NotificationMgr {
     }
 
     Service::Service() noexcept:
-            uSubSystemServer("NotificationMgr", "NOTIFY-MGR", "nodifymgr") {
+            SubSystemServer("NotificationMgr", "NOTIFY-MGR", "nodifymgr") {
     }
 
     int Service::Start() {

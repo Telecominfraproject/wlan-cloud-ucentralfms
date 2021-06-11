@@ -6,7 +6,7 @@
 //	Arilia Wireless Inc.
 //
 
-#include "uStorageService.h"
+#include "StorageService.h"
 
 namespace uCentral::Storage {
 

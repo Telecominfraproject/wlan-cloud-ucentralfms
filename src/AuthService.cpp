@@ -14,11 +14,11 @@
 #include "Poco/JWT/Token.h"
 #include "Poco/JWT/Signer.h"
 
-#include "uAuthService.h"
-#include "uFirmwareDS.h"
+#include "AuthService.h"
+#include "Daemon.h"
 #include "RESTAPI_handler.h"
-#include "uUtils.h"
-#include "uStorageService.h"
+#include "Utils.h"
+#include "StorageService.h"
 
 namespace uCentral::Auth {
     Service *Service::instance_ = nullptr;
@@ -43,7 +43,7 @@ namespace uCentral::Auth {
 	}
 
     Service::Service() noexcept:
-            uSubSystemServer("Authentication", "AUTH-SVR", "authentication")
+            SubSystemServer("Authentication", "AUTH-SVR", "authentication")
     {
 		std::string E{"SHA512"};
     }

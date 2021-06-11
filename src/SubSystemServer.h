@@ -82,10 +82,10 @@ private:
 	Poco::Net::Context::VerificationMode 			level_;
 };
 
-class uSubSystemServer : public Poco::Util::Application::Subsystem {
+class SubSystemServer : public Poco::Util::Application::Subsystem {
 
 public:
-    uSubSystemServer(std::string Name, const std::string & LoggingName, std::string SubSystemPrefix );
+    SubSystemServer(std::string Name, const std::string & LoggingName, std::string SubSystemPrefix );
     void initialize(Poco::Util::Application &self) override;
     void uninitialize() override;
     void reinitialize(Poco::Util::Application & self) override;
@@ -95,7 +95,8 @@ public:
     const PropertiesFileServerEntry & Host(int index) { return ConfigServersList_[index]; };
     Poco::Logger & Logger() { return Logger_;};
 	void SetLoggingLevel(Poco::Message::Priority NewPriority) { Logger_.setLevel(NewPriority); }
-	virtual int Start() = 0;
+
+    virtual int Start() = 0;
 	virtual void Stop() = 0;
 
 protected:

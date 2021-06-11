@@ -6,8 +6,8 @@
 #include "Poco/JSON/Parser.h"
 #include "Poco/JSON/Stringifier.h"
 
-#include "uManifestCreator.h"
-#include "uUtils.h"
+#include "ManifestCreator.h"
+#include "Utils.h"
 
 namespace uCentral::ManifestCreator {
     Service *Service::instance_ = nullptr;
@@ -25,7 +25,7 @@ namespace uCentral::ManifestCreator {
     }
 
     Service::Service() noexcept:
-            uSubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {
+            SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {
     }
 
     void Service::run() {
@@ -41,7 +41,7 @@ namespace uCentral::ManifestCreator {
             uCentral::BucketContent BucketList;
             BR.ReadBucket();
             BucketList = BR.Bucket();
-            ComputeManifest(BucketList);
+            // ComputeManifest(BucketList);
             Print(BucketList);
         }
     }

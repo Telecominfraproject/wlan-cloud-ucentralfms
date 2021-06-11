@@ -24,14 +24,15 @@
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/Socket.h"
 
-#include "uFirmwareDS.h"
-#include "uStorageService.h"
+#include "Daemon.h"
+#include "StorageService.h"
 #include "RESTAPI_server.h"
-#include "uNotificationMgr.h"
-#include "uManifestCreator.h"
-#include "AwsNLBHealthCheck.h"
+#include "NotificationMgr.h"
+#include "ManifestCreator.h"
+#include "ALBHealthCheckServer.h"
+#include "KafkaNotifier.h"
 
-#include "uUtils.h"
+#include "Utils.h"
 
 
 namespace uCentral {
@@ -63,14 +64,16 @@ namespace uCentral {
 
         Poco::Net::initializeSSL();
 
-        std::string Location = Poco::Environment::get("UCENTRALFWS_CONFIG",".");
+        std::string Location = Poco::Environment::get(uCentral::DAEMON_CONFIG_ENV_VAR,".");
         Poco::Path ConfigFile;
 
-        ConfigFile = ConfigFileName_.empty() ? Location + "/ucentralfws.properties" : ConfigFileName_;
+        ConfigFile = ConfigFileName_.empty() ? Location + "/" + uCentral::DAEMON_PROPERTIES_FILENAME :  ConfigFileName_;
 
         if(!ConfigFile.isFile())
         {
-            std::cerr << "uCentralFWS: Configuration " << ConfigFile.toString() << " does not seem to exist. Please set UCENTRALFWS_CONFIG env variable the path of the ucentralfws.properties file." << std::endl;
+            std::cerr   << uCentral::DAEMON_APP_NAME << ": Configuration " << ConfigFile.toString() << " does not seem to exist. Please set "
+                        << uCentral::DAEMON_ROOT_ENV_VAR << " env variable the path of the "
+                        << uCentral::DAEMON_PROPERTIES_FILENAME << " file." << std::endl;
             std::exit(Poco::Util::Application::EXIT_CONFIG);
         }
 
@@ -95,6 +98,7 @@ namespace uCentral {
         addSubsystem(uCentral::RESTAPI::Service::instance());
         addSubsystem(uCentral::NotificationMgr::Service::instance());
         addSubsystem(uCentral::ManifestCreator::Service::instance());
+        addSubsystem(uCentral::KafkaNotifier::Service::instance());
 
         ServerApplication::initialize(self);
 
@@ -183,7 +187,7 @@ namespace uCentral {
         Poco::Util::HelpFormatter helpFormatter(options());
         helpFormatter.setCommand(commandName());
         helpFormatter.setUsage("OPTIONS");
-        helpFormatter.setHeader("A uCentral gateway implementation for TIP.");
+        helpFormatter.setHeader("A " + std::string(uCentral::DAEMON_APP_NAME) + " implementation for TIP.");
         helpFormatter.format(std::cout);
     }
 
@@ -196,7 +200,7 @@ namespace uCentral {
 
         if (!HelpRequested_) {
             Poco::Logger &logger = Poco::Logger::get("uCentralFWS");
-            logger.notice(Poco::format("Starting uCentralFWS version %s.",Version()));
+            logger.notice(Poco::format("Starting %s version %s.",std::string(uCentral::DAEMON_APP_NAME), Version()));
 
             if(Poco::Net::Socket::supportsIPv6()) {
                 logger.information("System supports IPv6.");
@@ -210,24 +214,26 @@ namespace uCentral {
             uCentral::RESTAPI::Start();
             uCentral::NotificationMgr::Start();
             uCentral::ManifestCreator::Start();
+            uCentral::KafkaNotifier::Start();
 
             Poco::Thread::sleep(2000);
 
             uCentral::ManifestCreator::Update();
 
-            uCentral::NLBHealthCheck::Service   NLB;
-            NLB.Start();
+            uCentral::ALBHealthCheck::Service   ALB(logger);
 
+            ALB.Start();
             instance()->waitForTerminationRequest();
+            ALB.Stop();
 
-            NLB.Stop();
-
+            uCentral::KafkaNotifier::Stop();
             uCentral::ManifestCreator::Stop();
             uCentral::NotificationMgr::Stop();
             uCentral::RESTAPI::Stop();
             uCentral::Auth::Stop();
             uCentral::Storage::Stop();
-            logger.notice("Stopped uCentralFWS...");
+
+            logger.notice(Poco::format("Stopped %s...",std::string(uCentral::DAEMON_APP_NAME)));
         }
         return Application::EXIT_OK;
     }

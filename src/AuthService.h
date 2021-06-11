@@ -11,7 +11,7 @@
 
 #include <map>
 
-#include "uSubSystemServer.h"
+#include "SubSystemServer.h"
 
 #include "Poco/JSON/Object.h"
 #include "Poco/Net/HTTPServerRequest.h"
@@ -55,7 +55,7 @@ namespace uCentral::Auth {
     void Logout(const std::string &token);
     bool IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry);
 
-    class Service : public uSubSystemServer {
+    class Service : public SubSystemServer {
     public:
 
         Service() noexcept;

@@ -20,12 +20,12 @@
 #include <aws/s3/model/PutBucketAclRequest.h>
 #include <aws/s3/model/GetBucketAclRequest.h>
 
-#include "uFWManager.h"
-#include "uFirmwareDS.h"
-#include "uNotificationMgr.h"
-#include "uStorageService.h"
+#include "FWManager.h"
+#include "Daemon.h"
+#include "NotificationMgr.h"
+#include "StorageService.h"
 #include "RESTAPI_objects.h"
-#include "uUtils.h"
+#include "Utils.h"
 
 namespace uCentral::FWManager {
     Service *Service::instance_ = nullptr;

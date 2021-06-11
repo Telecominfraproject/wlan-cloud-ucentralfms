@@ -3,8 +3,8 @@
 //
 
 #include "RESTAPI_callbackChannel.h"
-#include "uStorageService.h"
-#include "uFirmwareDS.h"
+#include "StorageService.h"
+#include "Daemon.h"
 
 #include "Poco/JSON/Parser.h"
 

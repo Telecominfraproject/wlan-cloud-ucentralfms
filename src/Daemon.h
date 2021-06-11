@@ -2,8 +2,8 @@
 // Created by stephane bourque on 2021-05-07.
 //
 
-#ifndef UCENTRALFWS_UFIRMWAREDS_H
-#define UCENTRALFWS_UFIRMWAREDS_H
+#ifndef UCENTRALFWS_DAEMON_H
+#define UCENTRALFWS_DAEMON_H
 
 #include "Poco/Util/Application.h"
 #include "Poco/Util/ServerApplication.h"
@@ -12,6 +12,11 @@
 #include "Poco/Crypto/RSAKey.h"
 
 namespace uCentral {
+
+    static const char * DAEMON_PROPERTIES_FILENAME = "ucentralfws.properties";
+    static const char * DAEMON_ROOT_ENV_VAR = "UCENTRALFWS_ROOT";
+    static const char * DAEMON_CONFIG_ENV_VAR = "UCENTRALFWS_CONFIG";
+    static const char * DAEMON_APP_NAME = "uCentralFWS";
 
     class MyErrorHandler : public Poco::ErrorHandler {
     public:
@@ -71,4 +76,4 @@ namespace uCentral {
 
     Daemon * instance();
 }
-#endif //UCENTRALFWS_UFIRMWAREDS_H
+#endif //UCENTRALFWS_DAEMON_H

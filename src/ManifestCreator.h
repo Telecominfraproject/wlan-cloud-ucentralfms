@@ -2,10 +2,10 @@
 // Created by stephane bourque on 2021-06-02.
 //
 
-#ifndef UCENTRALFWS_UMANIFESTCREATOR_H
-#define UCENTRALFWS_UMANIFESTCREATOR_H
+#ifndef UCENTRALFWS_MANIFESTCREATOR_H
+#define UCENTRALFWS_MANIFESTCREATOR_H
 
-#include "uSubSystemServer.h"
+#include "SubSystemServer.h"
 #include "s3bucketreader.h"
 
 namespace uCentral::ManifestCreator {
@@ -13,7 +13,7 @@ namespace uCentral::ManifestCreator {
     void Stop();
     bool Update();
 
-    class Service : public uSubSystemServer, Poco::Runnable {
+    class Service : public SubSystemServer, Poco::Runnable {
     public:
 
         Service() noexcept;
@@ -46,4 +46,4 @@ namespace uCentral::ManifestCreator {
     };
 }
 
-#endif //UCENTRALFWS_UMANIFESTCREATOR_H
+#endif //UCENTRALFWS_MANIFESTCREATOR_H

@@ -9,7 +9,7 @@
 #include "Poco/JSON/Parser.h"
 
 #include "RESTAPI_oauth2Handler.h"
-#include "uAuthService.h"
+#include "AuthService.h"
 
 void RESTAPI_oauth2Handler::handleRequest(Poco::Net::HTTPServerRequest & Request, Poco::Net::HTTPServerResponse & Response)
 {

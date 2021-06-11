@@ -15,8 +15,8 @@
 #include "Poco/DateTimeParser.h"
 
 #include "RESTAPI_handler.h"
-#include "uAuthService.h"
-#include "uStorageService.h"
+#include "AuthService.h"
+#include "StorageService.h"
 
 bool RESTAPIHandler::ParseBindings(const char *p,const char *r, BindingMap & bindings)
 {

@@ -19,7 +19,7 @@
 #include "Poco/JSON/Object.h"
 
 #include "RESTAPI_objects.h"
-#include "uAuthService.h"
+#include "AuthService.h"
 
 class RESTAPIHandler: public Poco::Net::HTTPRequestHandler
 {

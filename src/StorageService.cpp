@@ -7,16 +7,16 @@
 //
 
 #include <fstream>
-#include "uStorageService.h"
+#include "StorageService.h"
 #include "Poco/Util/Application.h"
-#include "uUtils.h"
+#include "Utils.h"
 
 namespace uCentral::Storage {
 
     Service *Service::instance_ = nullptr;
 
     Service::Service() noexcept:
-            uSubSystemServer("Storage", "STORAGE-SVR", "storage")
+            SubSystemServer("Storage", "STORAGE-SVR", "storage")
     {
     }
 

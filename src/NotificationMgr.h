@@ -2,13 +2,13 @@
 // Created by stephane bourque on 2021-05-11.
 //
 
-#ifndef UCENTRALFWS_UNOTIFICATIONMGR_H
-#define UCENTRALFWS_UNOTIFICATIONMGR_H
+#ifndef UCENTRALFWS_NOTIFICATIONMGR_H
+#define UCENTRALFWS_NOTIFICATIONMGR_H
 
 #include <queue>
 
-#include "uSubSystemServer.h"
-#include "uAuthService.h"
+#include "SubSystemServer.h"
+#include "AuthService.h"
 #include "RESTAPI_objects.h"
 
 namespace uCentral::NotificationMgr {
@@ -23,7 +23,7 @@ namespace uCentral::NotificationMgr {
         uint64_t                        LastVersion;
     };
 
-    class Service : public uSubSystemServer, Poco::Runnable {
+    class Service : public SubSystemServer, Poco::Runnable {
     public:
 
         Service() noexcept;
@@ -62,4 +62,4 @@ namespace uCentral::NotificationMgr {
 }   // namespace
 
 
-#endif //UCENTRALFWS_UNOTIFICATIONMGR_H
+#endif //UCENTRALFWS_NOTIFICATIONMGR_H

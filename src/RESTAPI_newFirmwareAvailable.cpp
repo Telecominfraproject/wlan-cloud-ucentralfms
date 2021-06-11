@@ -3,7 +3,7 @@
 //
 
 #include "RESTAPI_newFirmwareAvailable.h"
-#include "uManifestCreator.h"
+#include "ManifestCreator.h"
 
 void RESTAPI_newFirmwareAvailable::handleRequest(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
 
