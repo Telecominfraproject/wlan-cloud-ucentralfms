@@ -12,8 +12,6 @@
 #include <vector>
 #include <string>
 
-#define DBGLINE  std::cout << "M:" << __FILE__ << "F:" << __func__ << " L:" << __LINE__ << std::endl;
-
 namespace uCentral::Utils {
 
 	[[nodiscard]] std::vector<std::string> Split(const std::string &List, char Delimiter=',');
@@ -24,5 +22,20 @@ namespace uCentral::Utils {
 
 	[[nodiscard]] std::string SerialToMAC(const std::string &Serial);
 	[[nodiscard]] std::string ToHex(const std::vector<unsigned char> & B);
+
+	using byte = std::uint8_t;
+
+	[[nodiscard]] std::string base64encode(const byte *input, unsigned long size);
+	std::vector<byte> base64decode(const std::string& input);
+
+//	[[nodiscard]] std::string to_RFC3339(uint64_t t);
+//	[[nodiscard]] uint64_t from_RFC3339(const std::string &t);
+
+	bool ParseTime(const std::string &Time, int & Hours, int & Minutes, int & Seconds);
+	bool ParseDate(const std::string &Time, int & Year, int & Month, int & Day);
+	bool CompareTime( int H1, int H2, int M1, int M2, int S1, int S2);
+
+	[[nodiscard]] bool ValidSerialNumber(const std::string &Serial);
+	[[nodiscard]] std::string LogLevelToString(int Level);
 }
 #endif // UCENTRALGW_UTILS_H

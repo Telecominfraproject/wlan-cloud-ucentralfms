@@ -17,25 +17,18 @@
 #include "RESTAPI_latestFirmwareListHandler.h"
 #include "RESTAPI_callbackChannel.h"
 #include "RESTAPI_newFirmwareAvailable.h"
+#include "RESTAPI_system_command.h"
 
-namespace uCentral::RESTAPI {
+namespace uCentral {
 
-    Service *Service::instance_ = nullptr;
+    class RESTAPI_server *RESTAPI_server::instance_ = nullptr;
 
-    int Start() {
-        return Service::instance()->Start();
-    }
-
-    void Stop() {
-        Service::instance()->Stop();
-    }
-
-    Service::Service() noexcept:
+    RESTAPI_server::RESTAPI_server() noexcept:
             SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
     {
     }
 
-    int Service::Start() {
+    int RESTAPI_server::Start() {
         Logger_.information("Starting.");
 
         for(const auto & Svr: ConfigServersList_) {
@@ -70,32 +63,35 @@ namespace uCentral::RESTAPI {
         Logger_.debug(Poco::format("REQUEST(%s): %s %s", uCentral::Utils::FormatIPv6(Request.clientAddress().toString()), Request.getMethod(), Request.getURI()));
 
         Poco::URI uri(Request.getURI());
-        auto *path = uri.getPath().c_str();
+        auto *Path = uri.getPath().c_str();
         RESTAPIHandler::BindingMap bindings;
 
-        if (RESTAPIHandler::ParseBindings(path, "/api/v1/oauth2", bindings)) {
+        if (RESTAPIHandler::ParseBindings(Path, "/api/v1/oauth2", bindings)) {
             return new RESTAPI_oauth2Handler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/oauth2/{token}", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/oauth2/{token}", bindings)) {
             return new RESTAPI_oauth2Handler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/firmwares", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/firmwares", bindings)) {
             return new RESTAPI_firmwaresHandler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/firmware/{uuid}", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/firmware/{uuid}", bindings)) {
             return new RESTAPI_firmwareHandler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/callbacks", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/callbacks", bindings)) {
             return new RESTAPI_callbacksHandler(bindings, Logger_);
-        }  else if (RESTAPIHandler::ParseBindings(path, "/api/v1/callback/{uuid}", bindings)) {
+        }  else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/callback/{uuid}", bindings)) {
             return new RESTAPI_callbackHandler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/latestFirmwareList", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/latestFirmwareList", bindings)) {
             return new RESTAPI_latestFirmwareListHandler(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/callbackChannel", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/callbackChannel", bindings)) {
             return new RESTAPI_callbackChannel(bindings, Logger_);
-        } else if (RESTAPIHandler::ParseBindings(path, "/api/v1/newFirmwareAvailable", bindings)) {
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/newFirmwareAvailable", bindings)) {
             return new RESTAPI_newFirmwareAvailable(bindings, Logger_);
-        } else
-            return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
+        } else if (RESTAPIHandler::ParseBindings(Path, "/api/v1/system", bindings)) {
+            return new RESTAPI_system_command(bindings, Logger_);
+        }
+
+        return new RESTAPI_UnknownRequestHandler(bindings,Logger_);
     }
 
-    void Service::Stop() {
+    void RESTAPI_server::Stop() {
         Logger_.information("Stopping ");
         for( const auto & svr : RESTServers_ )
             svr->stop();

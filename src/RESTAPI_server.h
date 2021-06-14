@@ -13,39 +13,34 @@
 
 #include "SubSystemServer.h"
 
-namespace uCentral::RESTAPI {
+namespace uCentral {
 
-    int Start();
-    void Stop();
-
-    class Service : public SubSystemServer {
+    class RESTAPI_server : public SubSystemServer {
 
     public:
-        Service() noexcept;
+        RESTAPI_server() noexcept;
 
-        friend int Start();
-        friend void Stop();
-
-        static Service *instance() {
+        static RESTAPI_server *instance() {
             if (instance_ == nullptr) {
-                instance_ = new Service;
+                instance_ = new RESTAPI_server;
             }
             return instance_;
         }
-    private:
-        static Service *instance_;
-
         int Start() override;
         void Stop() override;
 
+    private:
+        static RESTAPI_server *instance_;
         std::vector<std::unique_ptr<Poco::Net::HTTPServer>>   RESTServers_;
         Poco::ThreadPool	Pool_;
     };
 
+    inline RESTAPI_server * RESTAPI_server() { return RESTAPI_server::instance(); };
+
     class RequestHandlerFactory : public Poco::Net::HTTPRequestHandlerFactory {
         public:
             RequestHandlerFactory() :
-                    Logger_(Service::instance()->Logger()){}
+                    Logger_(RESTAPI_server::instance()->Logger()){}
 
             Poco::Net::HTTPRequestHandler *createRequestHandler(const Poco::Net::HTTPServerRequest &request) override;
         private:

@@ -20,8 +20,8 @@
 #include "Utils.h"
 #include "StorageService.h"
 
-namespace uCentral::Auth {
-    Service *Service::instance_ = nullptr;
+namespace uCentral {
+    class AuthService *AuthService::instance_ = nullptr;
 
 	ACCESS_TYPE IntToAccessType(int C) {
 		switch (C) {
@@ -42,45 +42,21 @@ namespace uCentral::Auth {
 		return 1;	// some compilers complain...
 	}
 
-    Service::Service() noexcept:
+    AuthService::AuthService() noexcept:
             SubSystemServer("Authentication", "AUTH-SVR", "authentication")
     {
 		std::string E{"SHA512"};
     }
 
-    int Start() {
-        return Service::instance()->Start();
-    }
-
-    void Stop() {
-        Service::instance()->Stop();
-    }
-
-    bool IsAuthorized(Poco::Net::HTTPServerRequest & Request,std::string &SessionToken, struct uCentral::Objects::WebToken & UserInfo ) {
-        return Service::instance()->IsAuthorized(Request,SessionToken, UserInfo);
-    }
-
-    bool Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken ) {
-        return Service::instance()->Authorize(UserName,Password,ResultToken);
-    }
-
-    void Logout(const std::string &Token) {
-        Service::instance()->Logout(Token);
-    }
-
-    bool IsValidAPIKey(const std::string &Key, APIKeyEntry & Entry) {
-	    return Service::instance()->IsValidAPIKey(Key, Entry);
-	}
-
-    int Service::Start() {
-		Signer_.setRSAKey(uCentral::instance()->Key());
+    int AuthService::Start() {
+		Signer_.setRSAKey(Daemon()->Key());
 		Signer_.addAllAlgorithms();
 		Logger_.notice("Starting...");
-        Secure_ = uCentral::ServiceConfig::GetBool(SubSystemConfigPrefix_+".enabled",true);
-        DefaultPassword_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".default.password","");
-        DefaultUserName_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".default.username","");
-        Mechanism_ = uCentral::ServiceConfig::GetString(SubSystemConfigPrefix_+".service.type","internal");
-        ApiKeyDb_ = uCentral::ServiceConfig::GetString("authentication.apikey.db","");
+        Secure_ = Daemon()->ConfigGetBool(SubSystemConfigPrefix_+".enabled",true);
+        DefaultPassword_ = Daemon()->ConfigGetString(SubSystemConfigPrefix_+".default.password","");
+        DefaultUserName_ = Daemon()->ConfigGetString(SubSystemConfigPrefix_+".default.username","");
+        Mechanism_ = Daemon()->ConfigGetString(SubSystemConfigPrefix_+".service.type","internal");
+        ApiKeyDb_ = Daemon()->ConfigGetString("authentication.apikey.db","");
         InitAPIKeys();
         return 0;
     }
@@ -88,7 +64,7 @@ namespace uCentral::Auth {
     //  apikey file:
     //  Key:Access:Owner:Description
     //  Access= NONE,ALL,UPLOADER,CALLBACK
-    void Service::InitAPIKeys() {
+    void AuthService::InitAPIKeys() {
         std::ifstream  in(ApiKeyDb_,std::ios_base::in);
 
         std::string Line;
@@ -118,11 +94,11 @@ namespace uCentral::Auth {
         }
 	}
 
-    void Service::Stop() {
+    void AuthService::Stop() {
 		Logger_.notice("Stopping...");
     }
 
-	bool Service::IsAuthorized(Poco::Net::HTTPServerRequest & Request, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  )
+	bool AuthService::IsAuthorized(Poco::Net::HTTPServerRequest & Request, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  )
     {
         if(!Secure_)
             return true;
@@ -161,12 +137,16 @@ namespace uCentral::Auth {
 		return false;
     }
 
-    void Service::Logout(const std::string &token) {
+    bool AuthService::IsValidAPIKey(Poco::Net::HTTPServerRequest & Request, APIKeyEntry & Entry) {
+	    return true;
+	}
+
+    void AuthService::Logout(const std::string &token) {
 		SubMutexGuard		Guard(Mutex_);
         Tokens_.erase(token);
     }
 
-    std::string Service::GenerateToken(const std::string & Identity, ACCESS_TYPE Type, int NumberOfDays) {
+    std::string AuthService::GenerateToken(const std::string & Identity, ACCESS_TYPE Type, int NumberOfDays) {
 		SubMutexGuard		Guard(Mutex_);
 
 		Poco::JWT::Token	T;
@@ -186,7 +166,7 @@ namespace uCentral::Auth {
 		return JWT;
     }
 
-	bool Service::ValidateToken(const std::string & Token, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  ) {
+	bool AuthService::ValidateToken(const std::string & Token, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo  ) {
 		SubMutexGuard		Guard(Mutex_);
 		Poco::JWT::Token	DecryptedToken;
 
@@ -224,7 +204,7 @@ namespace uCentral::Auth {
 		return false;
 	}
 
-    void Service::CreateToken(const std::string & UserName, uCentral::Objects::WebToken & UserInfo, uCentral::Objects::AclTemplate & ACL)
+    void AuthService::CreateToken(const std::string & UserName, uCentral::Objects::WebToken & UserInfo, uCentral::Objects::AclTemplate & ACL)
     {
 		SubMutexGuard		Guard(Mutex_);
 
@@ -244,7 +224,7 @@ namespace uCentral::Auth {
         Tokens_[UserInfo.access_token_] = UserInfo;
     }
 
-    bool Service::Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken )
+    bool AuthService::Authorize( const std::string & UserName, const std::string & Password, uCentral::Objects::WebToken & ResultToken )
     {
 		SubMutexGuard					Guard(Mutex_);
 		uCentral::Objects::AclTemplate	ACL;
@@ -261,7 +241,7 @@ namespace uCentral::Auth {
         return false;
     }
 
-    bool Service::IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry) {
+    bool AuthService::IsValidAPIKey(const std::string &APIKey, APIKeyEntry & Entry) {
 	    SubMutexGuard   Guard(Mutex_);
 
 	    SHA2_.reset();

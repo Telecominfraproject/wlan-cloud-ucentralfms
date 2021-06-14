@@ -4,31 +4,7 @@
 
 #include "StorageService.h"
 
-namespace uCentral::Storage {
-
-    bool AddCallback(uCentral::Objects::Callback & C) {
-        return Service::instance()->AddCallback(C);
-    }
-
-    bool AddOrUpdateCallback(uCentral::Objects::Callback & C) {
-        return Service::instance()->AddOrUpdateCallback(C);
-    }
-
-    bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C) {
-        return Service::instance()->UpdateCallback(UUID, C);
-    }
-
-    bool DeleteCallback(std::string & UUID) {
-        return Service::instance()->DeleteCallback(UUID);
-    }
-
-    bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C) {
-        return Service::instance()->GetCallback(UUID, C);
-    }
-
-    bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks) {
-        return Service::instance()->GetCallbacks(From, HowMany, Callbacks);
-    }
+namespace uCentral {
 
 /*
          uuid:
@@ -79,7 +55,7 @@ namespace uCentral::Storage {
                     "Expires BIGINT",
  */
 
-    bool Service::AddCallback(uCentral::Objects::Callback & C) {
+    bool Storage::AddCallback(uCentral::Objects::Callback & C) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Insert(Sess);
@@ -107,7 +83,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C) {
+    bool Storage::UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C) {
         try {
             Poco::Data::Session Sess = Pool_->get();
             Poco::Data::Statement   Update(Sess);
@@ -136,7 +112,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::AddOrUpdateCallback(uCentral::Objects::Callback & C) {
+    bool Storage::AddOrUpdateCallback(uCentral::Objects::Callback & C) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
@@ -159,7 +135,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::DeleteCallback(std::string & UUID) {
+    bool Storage::DeleteCallback(std::string & UUID) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Delete(Sess);
@@ -177,7 +153,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetCallback(std::string & UUID, uCentral::Objects::Callback & C) {
+    bool Storage::GetCallback(std::string & UUID, uCentral::Objects::Callback & C) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
@@ -205,7 +181,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks) {
+    bool Storage::GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks) {
         try {
             CallbackRecordList  Records;
             Poco::Data::Session Sess = Pool_->get();

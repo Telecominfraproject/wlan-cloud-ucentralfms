@@ -11,24 +11,16 @@
 #include "Poco/Util/Application.h"
 #include "Utils.h"
 
-namespace uCentral::Storage {
+namespace uCentral {
 
-    Service *Service::instance_ = nullptr;
+    class Storage *Storage::instance_ = nullptr;
 
-    Service::Service() noexcept:
+    Storage::Storage() noexcept:
             SubSystemServer("Storage", "STORAGE-SVR", "storage")
     {
     }
 
-    int Start() {
-        return uCentral::Storage::Service::instance()->Start();
-    }
-
-    void Stop() {
-        uCentral::Storage::Service::instance()->Stop();
-    }
-
-	std::string Service::ConvertParams(const std::string & S) const {
+	std::string Storage::ConvertParams(const std::string & S) const {
 		std::string R;
 
 		R.reserve(S.size()*2+1);
@@ -50,7 +42,7 @@ namespace uCentral::Storage {
 		return R;
 	}
 
-    int Service::Start() {
+    int Storage::Start() {
 		SubMutexGuard		Guard(Mutex_);
 		Logger_.setLevel(Poco::Message::PRIO_NOTICE);
         Logger_.notice("Starting.");
@@ -59,7 +51,7 @@ namespace uCentral::Storage {
 		return 0;
     }
 
-    void Service::Stop() {
+    void Storage::Stop() {
         SubMutexGuard		Guard(Mutex_);
         Logger_.notice("Stopping.");
     }

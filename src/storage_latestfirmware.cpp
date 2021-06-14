@@ -4,23 +4,7 @@
 
 #include "StorageService.h"
 
-namespace uCentral::Storage {
-
-    bool AddLatestFirmware(std::string & Compatible, std::string &UUID) {
-        return Service::instance()->AddLatestFirmware(Compatible, UUID);
-    }
-
-    bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L) {
-        return Service::instance()->GetLatestFirmware(Compatible, L);
-    }
-
-    bool DeleteLatestFirmware(std::string & Compatible) {
-        return Service::instance()->DeleteLatestFirmware(Compatible);
-    }
-
-    bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList) {
-        return Service::instance()->GetLatestFirmwareList(From, HowMany, LatestFirmwareList);
-    }
+namespace uCentral {
 
     typedef Poco::Tuple<
             std::string,
@@ -28,7 +12,7 @@ namespace uCentral::Storage {
             uint64_t> LatestFirmwareRecordTuple;
     typedef std::vector<LatestFirmwareRecordTuple>  LatestFirmwareRecordList;
 
-    bool Service::AddLatestFirmware(std::string & Compatible, std::string &UUID) {
+    bool Storage::AddLatestFirmware(std::string & Compatible, std::string &UUID) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
@@ -67,7 +51,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L) {
+    bool Storage::GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L) {
         try {
             Poco::Data::Session Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
@@ -90,7 +74,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::DeleteLatestFirmware(std::string & Compatible) {
+    bool Storage::DeleteLatestFirmware(std::string & Compatible) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Delete(Sess);
@@ -108,7 +92,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList) {
+    bool Storage::GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList) {
         try {
             LatestFirmwareRecordList    Records;
             Poco::Data::Session         Sess = Pool_->get();

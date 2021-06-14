@@ -5,36 +5,7 @@
 #include "StorageService.h"
 #include "RESTAPI_handler.h"
 
-namespace uCentral::Storage {
-
-    bool AddFirmware(uCentral::Objects::Firmware & F) {
-        return Service::instance()->AddFirmware(F);
-    }
-
-    bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C) {
-        return Service::instance()->UpdateFirmware(UUID, C);
-    }
-
-    bool DeleteFirmware(std::string & UUID) {
-        return Service::instance()->DeleteFirmware(UUID);
-    }
-
-    bool GetFirmware(std::string & UUID, uCentral::Objects::Firmware & C) {
-        return Service::instance()->GetFirmware(UUID, C);
-    }
-
-    bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares) {
-        return Service::instance()->GetFirmwares(From, HowMany, Firmwares);
-    }
-
-    bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t &Version) {
-        return Service::instance()->BuildFirmwareManifest(Manifest, Version);
-    }
-
-    uint64_t FirmwareVersion() {
-        return Service::instance()->FirmwareVersion();
-    }
-
+namespace uCentral {
 
     /*
         std::string UUID;
@@ -77,11 +48,11 @@ namespace uCentral::Storage {
             >   FirmwareRecordTuple;
     typedef std::vector<FirmwareRecordTuple>  FirmwareRecordList;
 
-    uint64_t Service::FirmwareVersion() {
+    uint64_t Storage::FirmwareVersion() {
         return FirmwareVersion_;
     }
 
-    bool Service::AddFirmware(uCentral::Objects::Firmware & F) {
+    bool Storage::AddFirmware(uCentral::Objects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Insert(Sess);
@@ -150,7 +121,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
+    bool Storage::UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Update(Sess);
@@ -188,7 +159,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::DeleteFirmware(std::string & UUID) {
+    bool Storage::DeleteFirmware(std::string & UUID) {
         try {
 
             Poco::Data::Session     Sess = Pool_->get();
@@ -207,7 +178,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
+    bool Storage::GetFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
@@ -247,7 +218,7 @@ namespace uCentral::Storage {
         return false;
     }
 
-    bool Service::GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares) {
+    bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares) {
         try {
             FirmwareRecordList      Records;
             Poco::Data::Session     Sess = Pool_->get();
@@ -319,7 +290,7 @@ namespace uCentral::Storage {
     typedef std::vector<FirmwareManifestTuple>  FirmwareManifestList;
 
 
-    bool Service::BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version) {
+    bool Storage::BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version) {
         try {
             SubMutexGuard           Guard(Mutex_);
             FirmwareManifestList    Records;
@@ -340,9 +311,9 @@ namespace uCentral::Storage {
                 Obj.set("uploader",i.get<1>());
                 Obj.set("version",i.get<2>());
                 Obj.set("uri",i.get<3>());
-                Obj.set("uploaded",RESTAPIHandler::to_RFC3339(i.get<4>()));
+                Obj.set("uploaded",i.get<4>());
                 Obj.set("size",i.get<5>());
-                Obj.set("date", RESTAPIHandler::to_RFC3339(i.get<6>()));
+                Obj.set("date", i.get<6>());
                 Obj.set("latest", (bool) (i.get<7>() != 0));
 
                 Elements.add(Obj);

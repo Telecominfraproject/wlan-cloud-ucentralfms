@@ -8,42 +8,38 @@
 #include "SubSystemServer.h"
 #include "s3bucketreader.h"
 
-namespace uCentral::ManifestCreator {
-    int Start();
-    void Stop();
-    bool Update();
+namespace uCentral {
 
-    class Service : public SubSystemServer, Poco::Runnable {
+    class ManifestCreator : public SubSystemServer, Poco::Runnable {
     public:
 
-        Service() noexcept;
-        friend int Start();
-        friend void Stop();
-        friend bool Update();
+        ManifestCreator() noexcept;
 
-        static Service *instance() {
+        static ManifestCreator *instance() {
             if (instance_ == nullptr) {
-                instance_ = new Service;
+                instance_ = new ManifestCreator;
             }
             return instance_;
         }
+
         void run() override;
+        int Start() override;
+        void Stop() override;
+        bool Update();
+        bool ComputeManifest(uCentral::BucketContent & BucketContent);
 
     private:
-        static Service           *instance_;
+        static ManifestCreator    *instance_;
         Poco::Thread              Worker_;
         std::atomic_bool          Running_ = false;
         std::atomic_bool          Updated_ = false;
         std::string               CurrentManifest_;
         uint64_t                  ManifestVersion_=0;
         S3BucketReader            BucketReader_;
-
-        int Start() override;
-        void Stop() override;
-
-        bool Update();
-        bool ComputeManifest(uCentral::BucketContent & BucketContent);
     };
+
+    inline ManifestCreator * ManifestCreator() { return ManifestCreator::instance(); };
+
 }
 
 #endif //UCENTRALFWS_MANIFESTCREATOR_H

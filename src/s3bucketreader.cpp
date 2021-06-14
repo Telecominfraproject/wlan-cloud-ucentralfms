@@ -16,11 +16,11 @@
 namespace uCentral {
 
     bool S3BucketReader::Initialize() {
-        S3BucketName_ = uCentral::ServiceConfig::GetString("s3.bucketname");
-        S3Region_ = uCentral::ServiceConfig::GetString("s3.region");
-        S3Secret_ = uCentral::ServiceConfig::GetString("s3.secret");
-        S3Key_ = uCentral::ServiceConfig::GetString("s3.key");
-        S3Retry_ = uCentral::ServiceConfig::GetInt("s3.retry",60);
+        S3BucketName_ = Daemon()->ConfigGetString("s3.bucketname");
+        S3Region_ = Daemon()->ConfigGetString("s3.region");
+        S3Secret_ = Daemon()->ConfigGetString("s3.secret");
+        S3Key_ = Daemon()->ConfigGetString("s3.key");
+        S3Retry_ = Daemon()->ConfigGetInt("s3.retry",60);
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;
@@ -61,7 +61,7 @@ namespace uCentral {
         static const std::string UPGRADE("-upgrade.bin");
 
         std::string     URIBase = "https://";
-                        URIBase += uCentral::ServiceConfig::GetString("s3.bucket.uri/");
+                        URIBase += Daemon()->ConfigGetString("s3.bucket.uri/");
 
         BucketContent_.clear();
 

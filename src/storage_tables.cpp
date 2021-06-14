@@ -8,9 +8,9 @@
 
 #include "StorageService.h"
 
-namespace uCentral::Storage {
+namespace uCentral {
 
-	int Service::Create_Tables() {
+	int Storage::Create_Tables() {
 
 	    Create_Firmwares();
 		Create_Callbacks();
@@ -60,7 +60,7 @@ namespace uCentral::Storage {
           type: string
  */
 
-	int Service::Create_Firmwares() {
+	int Storage::Create_Firmwares() {
 		try {
 			Poco::Data::Session Sess = Pool_->get();
 
@@ -119,7 +119,7 @@ namespace uCentral::Storage {
 
  */
 
-	int Service::Create_Callbacks() {
+	int Storage::Create_Callbacks() {
 		try {
 			Poco::Data::Session Sess = Pool_->get();
 
@@ -154,7 +154,7 @@ namespace uCentral::Storage {
             type: string
             format: 'date-time'
     */
-    int Service::Create_LatestFirmwareList() {
+    int Storage::Create_LatestFirmwareList() {
         try {
             Poco::Data::Session Sess = Pool_->get();
 

@@ -2,6 +2,8 @@
 // Created by stephane bourque on 2021-05-07.
 //
 
+#include <list>
+
 #ifndef UCENTRALFWS_DAEMON_H
 #define UCENTRALFWS_DAEMON_H
 
@@ -10,6 +12,10 @@
 #include "Poco/ErrorHandler.h"
 #include "Poco/UUIDGenerator.h"
 #include "Poco/Crypto/RSAKey.h"
+
+#include "SubSystemServer.h"
+
+#include "uCentralTypes.h"
 
 namespace uCentral {
 
@@ -41,11 +47,6 @@ namespace uCentral {
         void handleConfig(const std::string &name, const std::string &value);
         void displayHelp();
 
-        static std::string Version();
-        const Poco::SharedPtr<Poco::Crypto::RSAKey> & Key() { return AppKey_; }
-        std::string CreateUUID();
-        static void Exit(int Reason);
-
         static Daemon *instance() {
             if (instance_ == nullptr) {
                 instance_ = new Daemon;
@@ -53,6 +54,26 @@ namespace uCentral {
             return instance_;
         }
 
+        void InitializeSubSystemServers();
+        void StartSubSystemServers();
+        void StopSubSystemServers();
+        static std::string Version();
+        const Poco::SharedPtr<Poco::Crypto::RSAKey> & Key() { return AppKey_; }
+        std::string CreateUUID();
+        static void Exit(int Reason);
+        [[nodiscard]] inline const std::string & DataDir() { return DataDir_; }
+
+        bool SetSubsystemLogLevel(const std::string & SubSystem, const std::string & Level);
+        [[nodiscard]] Types::StringVec GetSubSystems() const;
+        [[nodiscard]] Types::StringPairVec GetLogLevels() const;
+        [[nodiscard]] const Types::StringVec & GetLogLevelNames() const;
+
+        uint64_t ConfigGetInt(const std::string &Key,uint64_t Default);
+        uint64_t ConfigGetInt(const std::string &Key);
+        std::string ConfigGetString(const std::string &Key,const std::string & Default);
+        std::string ConfigGetString(const std::string &Key);
+        uint64_t ConfigGetBool(const std::string &Key,bool Default);
+        uint64_t ConfigGetBool(const std::string &Key);
 
     private:
         static Daemon          *instance_;
@@ -61,19 +82,14 @@ namespace uCentral {
         std::string             ConfigFileName_;
         Poco::UUIDGenerator     UUIDGenerator_;
         MyErrorHandler          AppErrorHandler_;
+        uint64_t                    ID_ = 1;
         Poco::SharedPtr<Poco::Crypto::RSAKey>	AppKey_ = nullptr;
         bool                    DebugMode_ = false;
+        std::string 			DataDir_;
+        Types::SubSystemVec		SubSystems_;
+
     };
 
-    namespace ServiceConfig {
-        uint64_t GetInt(const std::string &Key,uint64_t Default);
-        uint64_t GetInt(const std::string &Key);
-        std::string GetString(const std::string &Key,const std::string & Default);
-        std::string GetString(const std::string &Key);
-        uint64_t GetBool(const std::string &Key,bool Default);
-        uint64_t GetBool(const std::string &Key);
-    }
-
-    Daemon * instance();
+    inline Daemon * Daemon() { return Daemon::instance(); }
 }
 #endif //UCENTRALFWS_DAEMON_H

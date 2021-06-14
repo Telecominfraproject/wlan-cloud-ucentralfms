@@ -15,27 +15,15 @@
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/MediaType.h"
 
-namespace uCentral::NotificationMgr {
+namespace uCentral {
 
-    Service *Service::instance_ = nullptr;
+    class NotificationMgr *NotificationMgr::instance_ = nullptr;
 
-    int Start() {
-        return Service::instance()->Start();
-    }
-
-    void Stop() {
-        Service::instance()->Stop();
-    }
-
-    void Update() {
-        Service::instance()->Update();
-    }
-
-    Service::Service() noexcept:
+    NotificationMgr::NotificationMgr() noexcept:
             SubSystemServer("NotificationMgr", "NOTIFY-MGR", "nodifymgr") {
     }
 
-    int Service::Start() {
+    int NotificationMgr::Start() {
         SubMutexGuard Guard(Mutex_);
 
         Logger_.information("Starting ");
@@ -44,7 +32,7 @@ namespace uCentral::NotificationMgr {
         return 0;
     }
 
-    void Service::Stop() {
+    void NotificationMgr::Stop() {
         SubMutexGuard Guard(Mutex_);
 
         Logger_.information("Stopping ");
@@ -54,7 +42,7 @@ namespace uCentral::NotificationMgr {
         Worker_.join();
     }
 
-    void Service::run() {
+    void NotificationMgr::run() {
 
         Running_ = true;
 
@@ -67,10 +55,10 @@ namespace uCentral::NotificationMgr {
                 continue;
             Updated_ = false;
 
-            if(uCentral::Storage::FirmwareVersion()!=ManifestVersion_) {
+            if(uCentral::Storage()->FirmwareVersion()!=ManifestVersion_) {
                 Poco::JSON::Object Manifest;
 
-                uCentral::Storage::BuildFirmwareManifest(Manifest, ManifestVersion_);
+                uCentral::Storage()->BuildFirmwareManifest(Manifest, ManifestVersion_);
                 std::stringstream OS;
                 Poco::JSON::Stringifier stringifier;
                 stringifier.condense(Manifest, OS);
@@ -82,14 +70,14 @@ namespace uCentral::NotificationMgr {
         }
     }
 
-    void Service::Update() {
+    void NotificationMgr::Update() {
         SubMutexGuard Guard(Mutex_);
 
         Updated_ = true;
         Worker_.wakeUp();
     }
 
-    void Service::NotifyCallers() {
+    void NotificationMgr::NotifyCallers() {
 
         std::vector<uCentral::Objects::Callback> Callbacks;
 
@@ -98,7 +86,7 @@ namespace uCentral::NotificationMgr {
         File.close();
 
         //  build the list of callbacks or update the existing callers.
-        if(uCentral::Storage::GetCallbacks(0,200,Callbacks)) {
+        if(uCentral::Storage()->GetCallbacks(0,200,Callbacks)) {
             for(const auto & i:Callbacks) {
                 auto Index = EndPoints_.find(i.UUID);
                 if(Index==EndPoints_.end()) {
@@ -137,7 +125,7 @@ namespace uCentral::NotificationMgr {
         return (Response.getStatus() == Poco::Net::HTTPResponse::HTTP_OK);
     }
 
-    bool Service::SendManifest(const uCentral::Objects::Callback &Host) {
+    bool NotificationMgr::SendManifest(const uCentral::Objects::Callback &Host) {
 
         Poco::URI Uri(Host.URI);
 

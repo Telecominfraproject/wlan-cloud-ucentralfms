@@ -5,46 +5,52 @@
 #include "RESTAPI_newFirmwareAvailable.h"
 #include "ManifestCreator.h"
 
-void RESTAPI_newFirmwareAvailable::handleRequest(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
+namespace uCentral {
+    void RESTAPI_newFirmwareAvailable::handleRequest(Poco::Net::HTTPServerRequest &Request,
+                                                     Poco::Net::HTTPServerResponse &Response) {
 
-    if (!ContinueProcessing(Request, Response))
-        return;
+        if (!ContinueProcessing(Request, Response))
+            return;
 
-    uCentral::Auth::APIKeyEntry     AuthEntry;
+        uCentral::APIKeyEntry AuthEntry;
 
-    if (!IsValidAPIKey(Request, Response, AuthEntry))
-        return;
-
-    if(AuthEntry.Access != uCentral::Auth::ALL && AuthEntry.Access !=uCentral::Auth::NEWFIRMWARENOTIFIER) {
-        UnAuthorized(Response);
-        return;
-    }
-
-    ParseParameters(Request);
-    if(Request.getMethod()==Poco::Net::HTTPRequest::HTTP_GET)
-        DoGet(Request, Response);
-    else
-        BadRequest(Response);
-}
-
-void RESTAPI_newFirmwareAvailable::DoGet(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    try {
-
-        auto Op = GetParameter("operation","");
-
-        if( Op != "notify" ) {
-            BadRequest(Response);
+        if (!AuthService()->IsValidAPIKey(Request, AuthEntry)) {
+            UnAuthorized(Request, Response);
             return;
         }
 
-        uCentral::ManifestCreator::Update();
+        if (AuthEntry.Access != uCentral::ALL && AuthEntry.Access != uCentral::NEWFIRMWARENOTIFIER) {
+            UnAuthorized(Request, Response);
+            return;
+        }
 
-        Poco::JSON::Object  O;
-        O.set("status", "updating manifest");
-        ReturnObject(O, Response);
-        return;
-    } catch (const Poco::Exception &E) {
-        Logger_.log(E);
+        ParseParameters(Request);
+        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
+            DoGet(Request, Response);
+        else
+            BadRequest(Request, Response);
     }
-    BadRequest(Response);
+
+    void RESTAPI_newFirmwareAvailable::DoGet(Poco::Net::HTTPServerRequest &Request,
+                                             Poco::Net::HTTPServerResponse &Response) {
+        try {
+
+            auto Op = GetParameter("operation", "");
+
+            if (Op != "notify") {
+                BadRequest(Request, Response);
+                return;
+            }
+
+            uCentral::ManifestCreator()->Update();
+
+            Poco::JSON::Object O;
+            O.set("status", "updating manifest");
+            ReturnObject(Request, O, Response);
+            return;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        BadRequest(Request, Response);
+    }
 }

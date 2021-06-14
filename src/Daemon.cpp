@@ -30,30 +30,28 @@
 #include "NotificationMgr.h"
 #include "ManifestCreator.h"
 #include "ALBHealthCheckServer.h"
-#include "KafkaNotifier.h"
+#include "KafkaManager.h"
 
 #include "Utils.h"
 
 
 namespace uCentral {
-    Daemon *Daemon::instance_ = nullptr;
-
-    Daemon * instance() { return uCentral::Daemon::instance(); }
+    class Daemon *Daemon::instance_ = nullptr;
 
     void MyErrorHandler::exception(const Poco::Exception & E) {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        instance()->logger().log(E);
-        instance()->logger().error(Poco::format("Exception occurred in %s",CurrentThread->getName()));
+        Daemon()->logger().log(E);
+        Daemon()->logger().error(Poco::format("Exception occurred in %s",CurrentThread->getName()));
     }
 
     void MyErrorHandler::exception(const std::exception & E) {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        instance()->logger().warning(Poco::format("std::exception on %s",CurrentThread->getName()));
+        Daemon()->logger().warning(Poco::format("std::exception on %s",CurrentThread->getName()));
     }
 
     void MyErrorHandler::exception() {
         Poco::Thread * CurrentThread = Poco::Thread::current();
-        instance()->logger().warning(Poco::format("exception on %s",CurrentThread->getName()));
+        Daemon()->logger().warning(Poco::format("exception on %s",CurrentThread->getName()));
     }
 
     void Daemon::Exit(int Reason) {
@@ -63,6 +61,15 @@ namespace uCentral {
     void Daemon::initialize(Application &self) {
 
         Poco::Net::initializeSSL();
+
+        SubSystems_ = Types::SubSystemVec{
+            Storage(),
+            AuthService(),
+            RESTAPI_server(),
+            NotificationMgr(),
+            ManifestCreator(),
+            KafkaManager(),
+            ALBHealthCheckServer()};
 
         std::string Location = Poco::Environment::get(uCentral::DAEMON_CONFIG_ENV_VAR,".");
         Poco::Path ConfigFile;
@@ -89,20 +96,21 @@ namespace uCentral {
             config().setString(LogFilePathKey, LogDir_);
         }
 
-        std::string KeyFile = Poco::Path::expand(config().getString("ucentralfws.service.key"));
-
+        Poco::Path	DataDir(config().getString("system.directory.data"));
+        try {
+            DataDir.makeDirectory();
+            DataDir_ = DataDir.toString();
+        } catch(...) {
+        }
+        std::string KeyFile = Poco::Path::expand(config().getString("ucentral.service.key"));
         AppKey_ = Poco::SharedPtr<Poco::Crypto::RSAKey>(new Poco::Crypto::RSAKey("", KeyFile, ""));
-
-        addSubsystem(uCentral::Storage::Service::instance());
-        addSubsystem(uCentral::Auth::Service::instance());
-        addSubsystem(uCentral::RESTAPI::Service::instance());
-        addSubsystem(uCentral::NotificationMgr::Service::instance());
-        addSubsystem(uCentral::ManifestCreator::Service::instance());
-        addSubsystem(uCentral::KafkaNotifier::Service::instance());
-
-        ServerApplication::initialize(self);
-
+        ID_ = config().getInt64("ucentral.system.id",1);
+        if(!DebugMode_)
+            DebugMode_ = config().getBool("ucentral.system.debug",false);
         logger().information("Starting...");
+
+        InitializeSubSystemServers();
+        ServerApplication::initialize(self);
     }
 
     void Daemon::uninitialize() {
@@ -191,8 +199,96 @@ namespace uCentral {
         helpFormatter.format(std::cout);
     }
 
+    void Daemon::InitializeSubSystemServers() {
+        for(auto i:SubSystems_)
+            addSubsystem(i);
+    }
+
+    void Daemon::StartSubSystemServers() {
+        for(auto i:SubSystems_)
+            i->Start();
+    }
+
+    void Daemon::StopSubSystemServers() {
+        for(auto i=SubSystems_.rbegin(); i!=SubSystems_.rend(); ++i)
+            (*i)->Stop();
+    }
+
     std::string Daemon::CreateUUID() {
         return UUIDGenerator_.create().toString();
+    }
+
+    bool Daemon::SetSubsystemLogLevel(const std::string &SubSystem, const std::string &Level) {
+        try {
+            auto P = Poco::Logger::parseLevel(Level);
+            auto Sub = Poco::toLower(SubSystem);
+
+            if (Sub == "all") {
+                for (auto i : SubSystems_) {
+                    i->Logger().setLevel(P);
+                }
+                return true;
+            } else {
+                std::cout << "Sub:" << SubSystem << " Level:" << Level << std::endl;
+                for (auto i : SubSystems_) {
+                    if (Sub == Poco::toLower(i->Name())) {
+                        i->Logger().setLevel(P);
+                        return true;
+                    }
+                }
+            }
+        } catch (const Poco::Exception & E) {
+            std::cout << "Exception" << std::endl;
+        }
+        return false;
+    }
+
+    Types::StringVec Daemon::GetSubSystems() const {
+        Types::StringVec Result;
+        for(auto i:SubSystems_)
+            Result.push_back(i->Name());
+        return Result;
+    }
+
+    Types::StringPairVec Daemon::GetLogLevels() const {
+        Types::StringPairVec Result;
+
+        for(auto &i:SubSystems_) {
+            auto P = std::make_pair( i->Name(), Utils::LogLevelToString(i->GetLoggingLevel()));
+            Result.push_back(P);
+        }
+        return Result;
+    }
+
+    const Types::StringVec & Daemon::GetLogLevelNames() const {
+        static Types::StringVec LevelNames{"none", "fatal", "critical", "error", "warning", "notice", "information", "debug", "trace" };
+        return LevelNames;
+    }
+
+    uint64_t Daemon::ConfigGetInt(const std::string &Key,uint64_t Default) {
+        return (uint64_t) config().getInt64(Key,Default);
+    }
+
+    uint64_t Daemon::ConfigGetInt(const std::string &Key) {
+        return config().getInt(Key);
+    }
+
+    uint64_t Daemon::ConfigGetBool(const std::string &Key,bool Default) {
+        return config().getBool(Key,Default);
+    }
+
+    uint64_t Daemon::ConfigGetBool(const std::string &Key) {
+        return config().getBool(Key);
+    }
+
+    std::string Daemon::ConfigGetString(const std::string &Key,const std::string & Default) {
+        std::string R = config().getString(Key, Default);
+        return Poco::Path::expand(R);
+    }
+
+    std::string Daemon::ConfigGetString(const std::string &Key) {
+        std::string R = config().getString(Key);
+        return Poco::Path::expand(R);
     }
 
     int Daemon::main(const ArgVec &args) {
@@ -209,62 +305,14 @@ namespace uCentral {
                 logger.information("System does NOT supported IPv6.");
             }
 
-            uCentral::Storage::Start();
-            uCentral::Auth::Start();
-            uCentral::RESTAPI::Start();
-            uCentral::NotificationMgr::Start();
-            uCentral::ManifestCreator::Start();
-            uCentral::KafkaNotifier::Start();
-
+            StartSubSystemServers();
             Poco::Thread::sleep(2000);
-
-            uCentral::ManifestCreator::Update();
-
-            uCentral::ALBHealthCheck::Service   ALB(logger);
-
-            ALB.Start();
             instance()->waitForTerminationRequest();
-            ALB.Stop();
-
-            uCentral::KafkaNotifier::Stop();
-            uCentral::ManifestCreator::Stop();
-            uCentral::NotificationMgr::Stop();
-            uCentral::RESTAPI::Stop();
-            uCentral::Auth::Stop();
-            uCentral::Storage::Stop();
+            StopSubSystemServers();
 
             logger.notice(Poco::format("Stopped %s...",std::string(uCentral::DAEMON_APP_NAME)));
         }
         return Application::EXIT_OK;
-    }
-
-    namespace ServiceConfig {
-
-        uint64_t GetInt(const std::string &Key,uint64_t Default) {
-            return (uint64_t) instance()->config().getInt64(Key,Default);
-        }
-
-        uint64_t GetInt(const std::string &Key) {
-            return instance()->config().getInt(Key);
-        }
-
-        uint64_t GetBool(const std::string &Key,bool Default) {
-            return instance()->config().getBool(Key,Default);
-        }
-
-        uint64_t GetBool(const std::string &Key) {
-            return instance()->config().getBool(Key);
-        }
-
-        std::string GetString(const std::string &Key,const std::string & Default) {
-            std::string R = instance()->config().getString(Key, Default);
-            return Poco::Path::expand(R);
-        }
-
-        std::string GetString(const std::string &Key) {
-            std::string R = instance()->config().getString(Key);
-            return Poco::Path::expand(R);
-        }
     }
 }
 

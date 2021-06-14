@@ -8,91 +8,96 @@
 
 #include "Poco/JSON/Parser.h"
 
-void RESTAPI_callbackHandler::handleRequest(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    if (!ContinueProcessing(Request, Response))
-        return;
+namespace uCentral {
+    void RESTAPI_callbackHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
+                                                Poco::Net::HTTPServerResponse &Response) {
+        if (!ContinueProcessing(Request, Response))
+            return;
 
-    if (!IsAuthorized(Request, Response))
-        return;
+        if (!IsAuthorized(Request, Response))
+            return;
 
-    ParseParameters(Request);
-    if(Request.getMethod()==Poco::Net::HTTPRequest::HTTP_GET)
-        DoGet(Request, Response);
-    else if (Request.getMethod()==Poco::Net::HTTPRequest::HTTP_POST)
-        DoPost(Request, Response);
-    else if (Request.getMethod()==Poco::Net::HTTPRequest::HTTP_PUT)
-        DoPut(Request, Response);
-    else if (Request.getMethod()==Poco::Net::HTTPRequest::HTTP_DELETE)
-        DoDelete(Request, Response);
-    else
-        BadRequest(Response);
-}
-
-void RESTAPI_callbackHandler::DoPost(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    try {
-        Poco::JSON::Parser parser;
-        Poco::JSON::Object::Ptr Obj = parser.parse(Request.stream()).extract<Poco::JSON::Object::Ptr>();
-
-        uCentral::Objects::Callback C;
-
-        if(C.from_json(Obj)) {
-            C.UUID = uCentral::instance()->CreateUUID();
-
-        }
-    } catch (const Poco::Exception &E) {
-        Logger_.log(E);
+        ParseParameters(Request);
+        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
+            DoGet(Request, Response);
+        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST)
+            DoPost(Request, Response);
+        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_PUT)
+            DoPut(Request, Response);
+        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE)
+            DoDelete(Request, Response);
+        else
+            BadRequest(Request, Response);
     }
-    BadRequest(Response);
-}
 
-void RESTAPI_callbackHandler::DoPut(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    try {
+    void
+    RESTAPI_callbackHandler::DoPost(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+        try {
+            Poco::JSON::Parser parser;
+            Poco::JSON::Object::Ptr Obj = parser.parse(Request.stream()).extract<Poco::JSON::Object::Ptr>();
 
-    } catch (const Poco::Exception &E) {
-        Logger_.log(E);
-    }
-    BadRequest(Response);
-}
-
-void RESTAPI_callbackHandler::DoGet(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    try {
-        auto UUID = GetBinding("uuid","");
-
-        if(!UUID.empty()) {
             uCentral::Objects::Callback C;
-            if(uCentral::Storage::GetCallback(UUID,C))
-            {
-                Poco::JSON::Object  Object;
 
-                C.to_json(Object);
-                ReturnObject(Object,Response);
-            } else {
-                NotFound(Response);
+            if (C.from_json(Obj)) {
+                C.UUID = Daemon()->CreateUUID();
 
             }
-            return;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
         }
-    } catch (const Poco::Exception &E) {
-        Logger_.log(E);
+        BadRequest(Request, Response);
     }
-    BadRequest(Response);
-}
 
-void RESTAPI_callbackHandler::DoDelete(Poco::Net::HTTPServerRequest& Request, Poco::Net::HTTPServerResponse& Response) {
-    try {
-        auto UUID = GetBinding("uuid","");
+    void
+    RESTAPI_callbackHandler::DoPut(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+        try {
 
-        if(!UUID.empty()) {
-            if(uCentral::Storage::DeleteCallback(UUID))
-            {
-                OK(Response);
-            } else {
-                NotFound(Response);
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        BadRequest(Request, Response);
+    }
+
+    void
+    RESTAPI_callbackHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+        try {
+            auto UUID = GetBinding("uuid", "");
+
+            if (!UUID.empty()) {
+                uCentral::Objects::Callback C;
+                if (uCentral::Storage()->GetCallback(UUID, C)) {
+                    Poco::JSON::Object Object;
+
+                    C.to_json(Object);
+                    ReturnObject(Request, Object, Response);
+                } else {
+                    NotFound(Request, Response);
+
+                }
+                return;
             }
-            return;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
         }
-    } catch (const Poco::Exception &E) {
-        Logger_.log(E);
+        BadRequest(Request, Response);
     }
-    BadRequest(Response);
+
+    void
+    RESTAPI_callbackHandler::DoDelete(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+        try {
+            auto UUID = GetBinding("uuid", "");
+
+            if (!UUID.empty()) {
+                if (uCentral::Storage()->DeleteCallback(UUID)) {
+                    OK(Request, Response);
+                } else {
+                    NotFound(Request, Response);
+                }
+                return;
+            }
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        BadRequest(Request, Response);
+    }
 }

@@ -11,11 +11,7 @@
 #include "AuthService.h"
 #include "RESTAPI_objects.h"
 
-namespace uCentral::NotificationMgr {
-
-    int Start();
-    void Stop();
-    void Update();
+namespace uCentral {
 
     struct NotifyEndPoint {
         uCentral::Objects::Callback     Caller;
@@ -23,33 +19,18 @@ namespace uCentral::NotificationMgr {
         uint64_t                        LastVersion;
     };
 
-    class Service : public SubSystemServer, Poco::Runnable {
+    class NotificationMgr : public SubSystemServer, Poco::Runnable {
     public:
 
-        Service() noexcept;
+        NotificationMgr() noexcept;
 
-        friend int Start();
-        friend void Stop();
-        friend void Update();
-
-        static Service *instance() {
+        static NotificationMgr *instance() {
             if (instance_ == nullptr) {
-                instance_ = new Service;
+                instance_ = new NotificationMgr;
             }
             return instance_;
         }
         void run() override;
-
-    private:
-        static Service                          *instance_;
-        Poco::Thread                            Worker_;
-        std::atomic_bool                        Running_ = false;
-        std::atomic_bool                        Updated_ = false;
-        std::map<std::string,NotifyEndPoint>    EndPoints_;
-
-        std::string                             CurrentManifest_;
-        uint64_t                                ManifestVersion_=0;
-
         int Start() override;
         void Stop() override;
         void Update();
@@ -57,8 +38,19 @@ namespace uCentral::NotificationMgr {
         void NotifyCallers();
         void SetVersion(const std::string &Manifest);
         bool SendManifest(const uCentral::Objects::Callback &Host);
+
+    private:
+        static NotificationMgr                 *instance_;
+        Poco::Thread                            Worker_;
+        std::atomic_bool                        Running_ = false;
+        std::atomic_bool                        Updated_ = false;
+        std::map<std::string,NotifyEndPoint>    EndPoints_;
+
+        std::string                             CurrentManifest_;
+        uint64_t                                ManifestVersion_=0;
     };
 
+    inline NotificationMgr * NotificationMgr() { return NotificationMgr::instance(); };
 }   // namespace
 
 

@@ -9,26 +9,14 @@
 #include "ManifestCreator.h"
 #include "Utils.h"
 
-namespace uCentral::ManifestCreator {
-    Service *Service::instance_ = nullptr;
+namespace uCentral {
+    class ManifestCreator *ManifestCreator::instance_ = nullptr;
 
-    int Start() {
-        return Service::instance()->Start();
-    }
-
-    void Stop() {
-        Service::instance()->Stop();
-    }
-
-    bool Update() {
-        return Service::instance()->Update();
-    }
-
-    Service::Service() noexcept:
+    ManifestCreator::ManifestCreator() noexcept:
             SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {
     }
 
-    void Service::run() {
+    void ManifestCreator::run() {
         Running_ = true;
 
         uCentral::S3BucketReader BR;
@@ -46,7 +34,7 @@ namespace uCentral::ManifestCreator {
         }
     }
 
-    bool Service::ComputeManifest(uCentral::BucketContent &BucketContent) {
+    bool ManifestCreator::ComputeManifest(uCentral::BucketContent &BucketContent) {
 
         for(auto &[Name,Entry]:BucketContent) {
             try {
@@ -78,19 +66,19 @@ namespace uCentral::ManifestCreator {
         return true;
     }
 
-    int Service::Start() {
+    int ManifestCreator::Start() {
         BucketReader_.Initialize();
         Worker_.start(*this);
         return 0;
     }
 
-    void Service::Stop() {
+    void ManifestCreator::Stop() {
         Running_ = false;
         Worker_.wakeUp();
         Worker_.join();
     }
 
-    bool Service::Update() {
+    bool ManifestCreator::Update() {
         Worker_.wakeUp();
         return true;
     }
