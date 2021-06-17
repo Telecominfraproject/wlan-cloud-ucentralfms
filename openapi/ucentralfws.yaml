@@ -324,6 +324,11 @@ components:
         PortalLogin:
           type: boolean
 
+    #########################################################################################
+    ##
+    ## These are endpoints that all services in the uCentral stack must provide
+    ##
+    #########################################################################################
     AnyPayload:
       type: object
       properties:
@@ -375,6 +380,11 @@ components:
       oneOf:
         - $ref: '#/components/schemas/StringList'
         - $ref: '#/components/schemas/TagValuePairList'
+    #########################################################################################
+    ##
+    ## End of uCentral system wide values
+    ##
+    #########################################################################################
 
 paths:
   /oauth2:
@@ -999,6 +1009,12 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+  #########################################################################################
+  ##
+  ## These are endpoints that all services in the uCentral stack must provide
+  ##
+  #########################################################################################
+
   /system:
     post:
       tags:
@@ -1023,4 +1039,51 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+  /callbackChannel:
+    post:
+      tags:
+        - Callback
+      summary: Generic callback hook
+      operationId: postCallback
+      parameters:
+        - in: query
+          name: subscribe
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: uri
+          schema:
+            type: string
+            format: uri
+        - in: query
+          name: key
+          schema:
+            type: string
+        - in: query
+          name: topics
+          schema:
+            type: string
+        - in: query
+          name: id
+          schema:
+            type: string
+        - in: query
+          name: topic
+          schema:
+            type: string
+      requestBody:
+        description: A generic JSONDocument, may be empty too {}
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnyPayload'
 
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'

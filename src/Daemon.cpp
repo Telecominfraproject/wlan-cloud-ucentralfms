@@ -21,6 +21,7 @@
 #include "Poco/Util/HelpFormatter.h"
 #include "Poco/Environment.h"
 #include "Poco/Path.h"
+#include "Poco/File.h"
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/Socket.h"
 
@@ -89,24 +90,26 @@ namespace uCentral {
         loadConfiguration(ConfigFile.toString());
 
         if(LogDir_.empty()) {
-            std::string OriginalLogFileValue = config().getString(LogFilePathKey);
-            std::string RealLogFileValue = Poco::Path::expand(OriginalLogFileValue);
-            config().setString(LogFilePathKey, RealLogFileValue);
+            std::string OriginalLogFileValue = ConfigPath(LogFilePathKey);
+            config().setString(LogFilePathKey, OriginalLogFileValue);
         } else {
             config().setString(LogFilePathKey, LogDir_);
         }
-
-        Poco::Path	DataDir(config().getString("system.directory.data"));
-        try {
-            DataDir.makeDirectory();
-            DataDir_ = DataDir.toString();
-        } catch(...) {
+        Poco::File	DataDir(ConfigPath("ucentral.system.data"));
+        DataDir_ = DataDir.path();
+        if(!DataDir.exists()) {
+            try {
+                DataDir.createDirectory();
+            } catch (const Poco::Exception &E) {
+                logger().log(E);
+            }
         }
-        std::string KeyFile = Poco::Path::expand(config().getString("ucentral.service.key"));
+        std::string KeyFile = ConfigPath("ucentral.service.key");
         AppKey_ = Poco::SharedPtr<Poco::Crypto::RSAKey>(new Poco::Crypto::RSAKey("", KeyFile, ""));
-        ID_ = config().getInt64("ucentral.system.id",1);
+        ID_ = ConfigGetInt("ucentral.system.id",1);
         if(!DebugMode_)
-            DebugMode_ = config().getBool("ucentral.system.debug",false);
+            DebugMode_ = ConfigGetBool("ucentral.system.debug",false);
+
         logger().information("Starting...");
 
         InitializeSubSystemServers();
@@ -282,11 +285,19 @@ namespace uCentral {
     }
 
     std::string Daemon::ConfigGetString(const std::string &Key,const std::string & Default) {
+        return config().getString(Key, Default);
+    }
+
+    std::string Daemon::ConfigGetString(const std::string &Key) {
+        return config().getString(Key);
+    }
+
+    std::string Daemon::ConfigPath(const std::string &Key,const std::string & Default) {
         std::string R = config().getString(Key, Default);
         return Poco::Path::expand(R);
     }
 
-    std::string Daemon::ConfigGetString(const std::string &Key) {
+    std::string Daemon::ConfigPath(const std::string &Key) {
         std::string R = config().getString(Key);
         return Poco::Path::expand(R);
     }
