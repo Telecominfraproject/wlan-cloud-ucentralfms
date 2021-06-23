@@ -72,6 +72,7 @@ namespace uCentral {
         APIKeyEntry GetFirst() { return APIKeys_.begin()->second; }
         std::string GenerateToken(const std::string & Identity, ACCESS_TYPE Type, int NumberOfDays);
         bool ValidateToken(const std::string & Token, std::string & SessionToken, struct uCentral::Objects::WebToken & UserInfo);
+        [[nodiscard]] std::string ComputePasswordHash(const std::string &UserName, const std::string &Password);
 
     private:
 		static AuthService *instance_;

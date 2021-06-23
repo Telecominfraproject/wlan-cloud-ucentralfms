@@ -56,6 +56,7 @@ add_executable( ucentralfws
                 src/RESTAPI_newFirmwareAvailable.cpp src/RESTAPI_newFirmwareAvailable.h
                 src/ManifestCreator.cpp src/ManifestCreator.h
                 src/KafkaManager.cpp src/KafkaManager.h
+                src/MicroService.h src/MicroService.cpp
                 src/RESTAPI_system_command.cpp src/RESTAPI_system_command.h
         )
 
