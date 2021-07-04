@@ -23,9 +23,9 @@ namespace uCentral {
 	  public:
 
 		struct KMessage {
-			std::string Topic,
-				Key,
-				PayLoad;
+					std::string Topic,
+								Key,
+								PayLoad;
 		};
 
 		void initialize(Poco::Util::Application & self) override;
@@ -35,30 +35,32 @@ namespace uCentral {
 			return instance_;
 		}
 
-		static void Producer(KafkaManager *);
-		static void Consumer(KafkaManager *);
+		void ProducerThr();
+		void ConsumerThr();
 
 		int Start() override;
 		void Stop() override;
 
-		void PostMessage(std::string topic, std::string key, std::string payload);
+		void PostMessage(std::string topic, std::string key, std::string payload, bool WrapMessage = true);
 		[[nodiscard]] std::string WrapSystemId(const std::string & PayLoad);
-		[[nodiscard]] bool Enabled() { return Running_ && KafkaEnabled_; }
+		[[nodiscard]] bool Enabled() { return KafkaEnabled_; }
 		int RegisterTopicWatcher(const std::string &Topic, Types::TopicNotifyFunction & F);
 		void UnregisterTopicWatcher(const std::string &Topic, int FunctionId);
+		void WakeUp();
 
 	  private:
-		static KafkaManager *instance_;
-		SubMutex 				ProducerMutex_;
-		SubMutex 				ConsumerMutex_;
-		bool 					KafkaEnabled_ = false;
-		std::atomic_bool 		Running_ = false;
-		std::queue<KMessage>	Queue_;
-		std::string 			SystemInfoWrapper_;
+		static KafkaManager 			*instance_;
+		SubMutex 						ProducerMutex_;
+		SubMutex 						ConsumerMutex_;
+		bool 							KafkaEnabled_ = false;
+		std::atomic_bool 				ProducerRunning_ = false;
+		std::atomic_bool 				ConsumerRunning_ = false;
+		std::queue<KMessage>			Queue_;
+		std::string 					SystemInfoWrapper_;
 		std::unique_ptr<std::thread>	ConsumerThr_;
 		std::unique_ptr<std::thread>	ProducerThr_;
-		int                       FunctionId_=1;
-		Types::NotifyTable        Notifiers_;
+		int                       		FunctionId_=1;
+		Types::NotifyTable        		Notifiers_;
 		std::unique_ptr<cppkafka::Configuration>    Config_;
 
 		KafkaManager() noexcept;

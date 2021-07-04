@@ -22,9 +22,7 @@ namespace uCentral {
     void
     RESTAPI_callbackChannel::DoPost(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
         try {
-            uCentral::APIKeyEntry Entry;
-
-            if (!AuthService()->IsValidAPIKey(Request, Entry)) {
+            if (!ValidateAPIKey(Request, Response)) {
                 UnAuthorized(Request, Response);
                 return;
             }
@@ -50,15 +48,15 @@ namespace uCentral {
                 C.Token = Key;
                 C.URI = URI;
                 C.Created = time(nullptr);
-                C.Creator = Entry.Owner;
+                C.Creator = UserInfo_.userinfo.name;
                 C.Topics = Topics;
 
                 if (uCentral::Storage()->AddOrUpdateCallback(C)) {
-                    Logger_.information(Poco::format("CALLBACK(%s): Just subscribed.", Entry.Owner));
+                    Logger_.information(Poco::format("CALLBACK(%s): Just subscribed.", UserInfo_.userinfo.name));
                     OK(Request, Response);
                     return;
                 } else {
-                    Logger_.error(Poco::format("CALLBACK(%s): Could not register.", Entry.Owner));
+                    Logger_.error(Poco::format("CALLBACK(%s): Could not register.", UserInfo_.userinfo.name));
                     BadRequest(Request, Response);
                     return;
                 }
@@ -73,7 +71,7 @@ namespace uCentral {
                     OK(Request, Response);
                     return;
                 }
-                Logger_.error(Poco::format("CALLBACK(%s): Cannot remove subscription.", Entry.Owner));
+                Logger_.error(Poco::format("CALLBACK(%s): Cannot remove subscription.", UserInfo_.userinfo.name));
                 NotFound(Request, Response);
                 return;
             } else {

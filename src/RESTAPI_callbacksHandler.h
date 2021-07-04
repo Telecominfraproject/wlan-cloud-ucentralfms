@@ -15,9 +15,8 @@ namespace uCentral {
                                  std::vector<std::string>
                                          {Poco::Net::HTTPRequest::HTTP_GET,
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
-
+        static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/callbacks"};}
         void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
-
         void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
     };
 }

@@ -12,14 +12,7 @@ namespace uCentral {
         if (!ContinueProcessing(Request, Response))
             return;
 
-        uCentral::APIKeyEntry AuthEntry;
-
-        if (!AuthService()->IsValidAPIKey(Request, AuthEntry)) {
-            UnAuthorized(Request, Response);
-            return;
-        }
-
-        if (AuthEntry.Access != uCentral::ALL && AuthEntry.Access != uCentral::NEWFIRMWARENOTIFIER) {
+        if (!ValidateAPIKey(Request, Response)) {
             UnAuthorized(Request, Response);
             return;
         }

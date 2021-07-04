@@ -18,6 +18,7 @@
 #include "Daemon.h"
 #include "StorageService.h"
 #include "RESTAPI_server.h"
+#include "RESTAPI_InternalServer.h"
 #include "NotificationMgr.h"
 #include "ManifestCreator.h"
 #include "ALBHealthCheckServer.h"
@@ -32,13 +33,12 @@ namespace uCentral {
                                    vDAEMON_ROOT_ENV_VAR,
                                    vDAEMON_CONFIG_ENV_VAR,
                                    vDAEMON_APP_NAME,
+                                   vDAEMON_BUS_TIMER,
                                    Types::SubSystemVec{Storage(),
-                                                       AuthService(),
                                                        RESTAPI_server(),
+                                                       RESTAPI_InternalServer(),
                                                        NotificationMgr(),
-                                                       ManifestCreator(),
-                                                       KafkaManager(),
-                                                       ALBHealthCheckServer()
+                                                       ManifestCreator()
                                    });
         }
         return instance_;

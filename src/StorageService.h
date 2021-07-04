@@ -15,7 +15,6 @@
 
 #include "RESTAPI_objects.h"
 #include "SubSystemServer.h"
-#include "AuthService.h"
 
 namespace uCentral {
 

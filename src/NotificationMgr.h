@@ -8,7 +8,6 @@
 #include <queue>
 
 #include "SubSystemServer.h"
-#include "AuthService.h"
 #include "RESTAPI_objects.h"
 
 namespace uCentral {
