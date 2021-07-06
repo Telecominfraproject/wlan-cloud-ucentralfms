@@ -60,6 +60,7 @@ add_executable( ucentralfms
                 src/RESTAPI_system_command.cpp src/RESTAPI_system_command.h
                 src/OpenAPIRequest.h src/OpenAPIRequest.cpp
                 src/RESTAPI_InternalServer.cpp src/RESTAPI_InternalServer.h
+                src/RESTAPI_utils.cpp src/RESTAPI_utils.h
         )
 
 target_link_libraries(ucentralfms PUBLIC
