@@ -49,12 +49,13 @@ FROM alpine
 
 RUN mkdir /ucentral
 RUN mkdir /ucentralfms-data
-RUN apk add --update --no-cache librdkafka
+RUN apk add --update --no-cache librdkafka curl-dev 
 
 COPY --from=builder /ucentralfms/cmake-build/ucentralfms /ucentral/ucentralfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
 COPY --from=builder /poco/cmake-build/lib/* /lib/
-COPY --from=builder /aws-sdk-cpp/cmake-build/lib/* /lib/
+COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-core/libaws-cpp-sdk-core.so /lib/
+COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-s3/libaws-cpp-sdk-s3.so /lib/
 
 EXPOSE 16004
 EXPOSE 17004
