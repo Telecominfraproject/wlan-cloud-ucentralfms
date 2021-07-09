@@ -30,25 +30,43 @@ components:
 
   responses:
     NotFound:
-      description: The specified resource was not found
+      description: The specified resource was not found.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericErrorResponse'
+            properties:
+              ErrorCode:
+                type: integer
+              ErrorDetails:
+                type: string
+              ErrorDescription:
+                type: string
 
     Unauthorized:
-      description: Unauthorized
+      description: The requested does not have sufficient rights to perform the operation.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericErrorResponse'
+            properties:
+              ErrorCode:
+                type: integer
+              ErrorDetails:
+                type: string
+              ErrorDescription:
+                type: string
 
     Success:
-      description: Success
+      description: The requested operation was performed.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/GenericGoodAnswer'
+            properties:
+              Operation:
+                type: string
+              Details:
+                type: string
+              Code:
+                type: integer
 
   schemas:
     FirmwareDetails:
@@ -261,69 +279,6 @@ components:
         Code:
           type: integer
 
-    WebTokenRequest:
-      description: User Id and password.
-      type: object
-      required:
-        - userId
-        - password
-      properties:
-        userId:
-          type: string
-          default: support@example.com
-        password:
-          type: string
-          default: support
-        refreshToken:
-          type: string
-      example:
-        userId: support@example.com
-        password: support
-
-    WebTokenResult:
-      description: Login and Refresh Tokens to be used in subsequent API calls.
-      type: object
-      properties:
-        access_token:
-          type: string
-        refresh_token:
-          type: string
-        token_type:
-          type: string
-        expires_in:
-          type: integer
-          format: int32
-        idle_timeout:
-          type: integer
-          format: int32
-        username:
-          type: string
-        created:
-          type: string
-          format: 'date-time'
-        aclTemplate:
-          $ref: '#/components/schemas/WebTokenAclTemplate'
-
-    WebTokenAclTemplate:
-      type: object
-      properties:
-        aclTemplate:
-          $ref: '#/components/schemas/AclTemplate'
-
-    AclTemplate:
-      type: object
-      properties:
-        Read:
-          type: boolean
-        ReadWrite:
-          type: boolean
-        ReadWriteCreate:
-          type: boolean
-        Delete:
-          type: boolean
-        PortalLogin:
-          type: boolean
-
     #########################################################################################
     ##
     ## These are endpoints that all services in the uCentral stack must provide
@@ -387,56 +342,6 @@ components:
     #########################################################################################
 
 paths:
-  /oauth2:
-    post:
-      tags:
-        - Authentication
-      summary: Get access token - to be used as Bearer token header for all other API requests.
-      operationId: getAccessToken
-      requestBody:
-        description: User id and password
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebTokenRequest'
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/WebTokenResult'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
-  /oauth2/{token}:
-    delete:
-      tags:
-        - Authentication
-      summary: Revoke a token.
-      operationId: removeAccessToken
-      parameters:
-        - in: path
-          name: token
-          schema:
-            type:
-              string
-          required: true
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GenericGoodAnswer'
-        403:
-          $ref: '#/components/responses/Unauthorized'
-        404:
-          $ref: '#/components/responses/NotFound'
-
   /firmwares:
     get:
       tags:
