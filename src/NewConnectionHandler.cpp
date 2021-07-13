@@ -33,6 +33,8 @@ namespace uCentral {
                 }
                 auto SerialNumber = S.first;
 
+                std::cout << "Connection data:" << S.second << std::endl;
+
                 Poco::JSON::Parser  Parser;
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
