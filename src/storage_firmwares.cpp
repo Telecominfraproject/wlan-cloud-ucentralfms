@@ -255,7 +255,7 @@ namespace uCentral {
             Select.execute();
 
             for(const auto &R:Records) {
-                LatestFirmwareCache()->AddToCache(R.get<0>(), R.get<1>(), R.get<2>());
+                LatestFirmwareCache()->AddToCache(R.get<1>(), R.get<0>(), R.get<2>());
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);

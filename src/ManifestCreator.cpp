@@ -34,7 +34,7 @@ namespace uCentral {
             std::cout << "Bucket read: " << BucketList.size() << std::endl;
             ComputeManifest(BucketList);
             AddManifestToDB(BucketList);
-            LatestFirmwareCache()->DumpCache();
+            // LatestFirmwareCache()->DumpCache();
             // Print(BucketList);
         }
     }
