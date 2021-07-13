@@ -5,114 +5,91 @@
 #include "StorageService.h"
 #include "RESTAPI_handler.h"
 
+#include "RESTAPI_FMSObjects.h"
+#include "RESTAPI_utils.h"
+
 namespace uCentral {
 
-    /*
-        std::string UUID;
-        std::string Description;
-        std::string FirmwareFileName;
-        std::string FirmwareVersion;
-        std::string FirmwareHash;
-        std::string FirmwareLatestDoc;
-        std::string Owner;
-        std::string Location;
-        std::string Compatible;
-        std::string Uploader;
-        std::string Digest;
-        std::string S3URI;
-        uint64_t    DownloadCount;
-        uint64_t    Size;
-        uint64_t    Uploaded;
-        uint64_t    FirmwareDate;
-        uint64_t    Latest;
- */
-
-    typedef Poco::Tuple<
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            uint64_t,
-            uint64_t,
-            uint64_t,
-            uint64_t,
-            uint64_t
-            >   FirmwareRecordTuple;
-    typedef std::vector<FirmwareRecordTuple>  FirmwareRecordList;
-
-    uint64_t Storage::FirmwareVersion() {
-        return FirmwareVersion_;
+    bool Convert(const FirmwaresRecord &T, FMSObjects::Firmware & F) {
+        F.id = T.get<0>();
+        F.deviceType = T.get<1>();
+        F.description = T.get<2>();
+        F.revision = T.get<3>();
+        F.uri = T.get<4>();
+        F.image = T.get<5>();
+        F.imageDate = T.get<6>();
+        F.size = T.get<7>();
+        F.downloadCount = T.get<8>();
+        F.firmwareHash = T.get<9>();
+        F.owner = T.get<10>();
+        F.location = T.get<11>();
+        F.uploader = T.get<12>();
+        F.digest = T.get<13>();
+        F.latest = T.get<14>();
+        F.notes = RESTAPI_utils::to_object_array<SecurityObjects::NoteInfo>(T.get<15>());
+        F.created = T.get<16>();
+        return true;
     }
 
-    bool Storage::AddFirmware(uCentral::Objects::Firmware & F) {
+    bool Convert(const FMSObjects::Firmware & F, FirmwaresRecord & T) {
+        T.set<0>(F.id);
+        T.set<1>(F.deviceType);
+        T.set<2>(F.description);
+        T.set<3>(F.revision);
+        T.set<4>(F.uri);
+        T.set<5>(F.image);
+        T.set<6>(F.imageDate);
+        T.set<7>(F.size);
+        T.set<8>(F.downloadCount);
+        T.set<9>(F.firmwareHash);
+        T.set<10>(F.owner);
+        T.set<11>(F.location);
+        T.set<12>(F.uploader);
+        T.set<13>(F.digest);
+        T.set<14>(F.latest);
+        T.set<15>(RESTAPI_utils::to_string(F.notes));
+        T.set<16>(F.created);
+        return true;
+    }
+
+    bool Storage::AddFirmware(FMSObjects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Insert(Sess);
 
-/*
-                    "UUID VARCHAR(64) PRIMARY KEY, "
-                    "Description VARCHAR(128), "
-                    "Owner VARCHAR(128), "
-                    "Location TEXT, ",
-                    "Compatible VARCHAR(128), "
-                    "Uploader VARCHAR(128), "
-                    "Digest TEXT, "
-                    "FirmwareFileName TEXT, "
-                    "FirmwareVersion VARCHAR(128), "
-                    "FirmwareHash VARCHAR(32), "
-                    "FirmwareLatestDoc TEXT, "
-                    "S3URI TEXT "
-                    "FirmwareDate BIGINT, "
-                    "Uploaded BIGINT, "
-                    "DownloadCount BIGINT, "
-                    "Size BIGINT,
-                    "Latest BIGINT"
- */
-
             // find the older software and change to latest = 0
-            if(F.Latest)
+            if(F.latest)
             {
                 Poco::Data::Statement   Update(Sess);
-                std::string st{"UPDATE Firmwares SET Latest=0 WHERE Compatible=? AND Latest=1"};
+                std::string st{"UPDATE " + DBNAME_FIRMWARES + " SET latest=0 WHERE deviceType=? AND Latest=1"};
                 Update <<   ConvertParams(st),
-                            Poco::Data::Keywords::use(F.Compatible);
+                            Poco::Data::Keywords::use(F.deviceType);
                 Update.execute();
             }
 
-            std::string st{"INSERT INTO Firmwares ("
-                               "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
-                               "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                               "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
+            auto Notes = RESTAPI_utils::to_string(F.notes);
+            std::string st{"INSERT INTO " + DBNAME_FIRMWARES + " (" +
+                               DBFIELDS_FIRMWARES_SELECT +
                             ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"};
-
             Insert      <<  ConvertParams(st),
-                            Poco::Data::Keywords::use(F.UUID),
-                            Poco::Data::Keywords::use(F.Description),
-                            Poco::Data::Keywords::use(F.Owner),
-                            Poco::Data::Keywords::use(F.Location),
-                            Poco::Data::Keywords::use(F.Compatible),
-                            Poco::Data::Keywords::use(F.Uploader),
-                            Poco::Data::Keywords::use(F.Digest),
-                            Poco::Data::Keywords::use(F.FirmwareFileName),
-                            Poco::Data::Keywords::use(F.FirmwareVersion),
-                            Poco::Data::Keywords::use(F.FirmwareHash),
-                            Poco::Data::Keywords::use(F.FirmwareLatestDoc),
-                            Poco::Data::Keywords::use(F.S3URI),
-                            Poco::Data::Keywords::use(F.FirmwareDate),
-                            Poco::Data::Keywords::use(F.Uploaded),
-                            Poco::Data::Keywords::use(F.DownloadCount),
-                            Poco::Data::Keywords::use(F.Size),
-                            Poco::Data::Keywords::use(F.Latest);
+                            Poco::Data::Keywords::use(F.id),
+                            Poco::Data::Keywords::use(F.deviceType),
+                            Poco::Data::Keywords::use(F.description),
+                            Poco::Data::Keywords::use(F.revision),
+                            Poco::Data::Keywords::use(F.uri),
+                            Poco::Data::Keywords::use(F.image),
+                            Poco::Data::Keywords::use(F.imageDate),
+                            Poco::Data::Keywords::use(F.size),
+                            Poco::Data::Keywords::use(F.downloadCount),
+                            Poco::Data::Keywords::use(F.firmwareHash),
+                            Poco::Data::Keywords::use(F.owner),
+                            Poco::Data::Keywords::use(F.location),
+                            Poco::Data::Keywords::use(F.uploader),
+                            Poco::Data::Keywords::use(F.digest),
+                            Poco::Data::Keywords::use(F.latest),
+                            Poco::Data::Keywords::use(Notes),
+                            Poco::Data::Keywords::use(F.created);
             Insert.execute();
-            FirmwareVersion_++;
             return true;
 
         } catch (const Poco::Exception &E) {
@@ -121,36 +98,35 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
+    bool Storage::UpdateFirmware(std::string & ID, FMSObjects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Update(Sess);
 
-            std::string st{"UPDATE Firmwares "
-                           " Description, Owner, Location, Compatible, Uploader, Digest, "
-                           " FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           " S3URI, FirmwareDate, Uploaded, DownloadCount, Size"
-                           " WHERE UUID=?"};
+            std::string st{"UPDATE " + DBNAME_FIRMWARES + " set " + DBFIELDS_DEVICETYPES_UPDATE +
+                           " WHERE id=?"};
+            auto Notes = RESTAPI_utils::to_string(F.notes);
 
-            Update      <<  ConvertParams(st),
-                    Poco::Data::Keywords::use(F.Description),
-                    Poco::Data::Keywords::use(F.Owner),
-                    Poco::Data::Keywords::use(F.Location),
-                    Poco::Data::Keywords::use(F.Compatible),
-                    Poco::Data::Keywords::use(F.Uploader),
-                    Poco::Data::Keywords::use(F.Digest),
-                    Poco::Data::Keywords::use(F.FirmwareFileName),
-                    Poco::Data::Keywords::use(F.FirmwareVersion),
-                    Poco::Data::Keywords::use(F.FirmwareHash),
-                    Poco::Data::Keywords::use(F.FirmwareLatestDoc),
-                    Poco::Data::Keywords::use(F.S3URI),
-                    Poco::Data::Keywords::use(F.FirmwareDate),
-                    Poco::Data::Keywords::use(F.Uploaded),
-                    Poco::Data::Keywords::use(F.DownloadCount),
-                    Poco::Data::Keywords::use(F.Size),
-                    Poco::Data::Keywords::use(F.UUID);
+            Update  <<  ConvertParams(st),
+                    Poco::Data::Keywords::use(F.id),
+                    Poco::Data::Keywords::use(F.deviceType),
+                    Poco::Data::Keywords::use(F.description),
+                    Poco::Data::Keywords::use(F.revision),
+                    Poco::Data::Keywords::use(F.uri),
+                    Poco::Data::Keywords::use(F.image),
+                    Poco::Data::Keywords::use(F.imageDate),
+                    Poco::Data::Keywords::use(F.size),
+                    Poco::Data::Keywords::use(F.downloadCount),
+                    Poco::Data::Keywords::use(F.firmwareHash),
+                    Poco::Data::Keywords::use(F.owner),
+                    Poco::Data::Keywords::use(F.location),
+                    Poco::Data::Keywords::use(F.uploader),
+                    Poco::Data::Keywords::use(F.digest),
+                    Poco::Data::Keywords::use(F.latest),
+                    Poco::Data::Keywords::use(Notes),
+                    Poco::Data::Keywords::use(F.created);
+                    Poco::Data::Keywords::use(ID);
             Update.execute();
-            FirmwareVersion_++;
             return true;
 
         } catch (const Poco::Exception &E) {
@@ -159,17 +135,15 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::DeleteFirmware(std::string & UUID) {
+    bool Storage::DeleteFirmware(std::string & ID) {
         try {
-
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Delete(Sess);
 
-            std::string st{"DELETE FROM Firmwares WHERE UUID=?"};
+            std::string st{"DELETE FROM " + DBNAME_FIRMWARES + " WHERE id=?"};
             Delete <<   ConvertParams(st),
-                        Poco::Data::Keywords::use(UUID);
+                        Poco::Data::Keywords::use(ID);
             Delete.execute();
-            FirmwareVersion_++;
             return true;
 
         } catch (const Poco::Exception &E) {
@@ -178,39 +152,25 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::GetFirmware(std::string & UUID, uCentral::Objects::Firmware & F) {
+    bool Storage::GetFirmware(std::string & ID, FMSObjects::Firmware & F) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT "
-                           "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
-                           "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
-                           " FROM Firmwares WHERE UUID=?"};
+            std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
+                           " FROM " + DBNAME_FIRMWARES + " WHERE id=?"};
 
+            FirmwaresRecordList Records;
             Select      <<  ConvertParams(st),
-                        Poco::Data::Keywords::into(F.UUID),
-                        Poco::Data::Keywords::into(F.Description),
-                        Poco::Data::Keywords::into(F.Owner),
-                        Poco::Data::Keywords::into(F.Location),
-                        Poco::Data::Keywords::into(F.Compatible),
-                        Poco::Data::Keywords::into(F.Uploader),
-                        Poco::Data::Keywords::into(F.Digest),
-                        Poco::Data::Keywords::into(F.FirmwareFileName),
-                        Poco::Data::Keywords::into(F.FirmwareVersion),
-                        Poco::Data::Keywords::into(F.FirmwareHash),
-                        Poco::Data::Keywords::into(F.FirmwareLatestDoc),
-                        Poco::Data::Keywords::into(F.S3URI),
-                        Poco::Data::Keywords::into(F.FirmwareDate),
-                        Poco::Data::Keywords::into(F.Uploaded),
-                        Poco::Data::Keywords::into(F.DownloadCount),
-                        Poco::Data::Keywords::into(F.Size),
-                        Poco::Data::Keywords::into(F.Latest),
-                        Poco::Data::Keywords::use(UUID);
+                        Poco::Data::Keywords::into(Records),
+                        Poco::Data::Keywords::use(ID);
             Select.execute();
 
-            return !F.UUID.empty();
+            if(Records.empty())
+                return false;
+
+            Convert(Records[0],F);
+            return true;
 
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
@@ -218,118 +178,31 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares) {
+    bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, FMSObjects::FirmwareVec & Firmwares) {
         try {
-            FirmwareRecordList      Records;
+            FirmwaresRecordList      Records;
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT "
-                           "UUID, Description, Owner, Location, Compatible, Uploader, Digest, "
-                           "FirmwareFileName, FirmwareVersion, FirmwareHash, FirmwareLatestDoc, "
-                           "S3URI, FirmwareDate, Uploaded, DownloadCount, Size, Latest "
-                           " FROM Firmwares"};
+            std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
+                           " FROM " + DBNAME_FIRMWARES };
 
             Select << ConvertParams(st),
                         Poco::Data::Keywords::into(Records),
                         Poco::Data::Keywords::range(From, From + HowMany);
             Select.execute();
 
-            for(auto const &i:Records) {
-                uCentral::Objects::Firmware F{
-                    .UUID = i.get<0>(),
-                    .Description= i.get<1>(),
-                    .Owner= i.get<2>(),
-                    .Location= i.get<3>(),
-                    .Compatible= i.get<4>(),
-                    .Uploader= i.get<5>(),
-                    .Digest= i.get<6>(),
-                    .FirmwareFileName= i.get<7>(),
-                    .FirmwareVersion= i.get<8>(),
-                    .FirmwareHash= i.get<9>(),
-                    .FirmwareLatestDoc= i.get<10>(),
-                    .S3URI= i.get<11>(),
-                    .FirmwareDate= i.get<12>(),
-                    .Uploaded= i.get<13>(),
-                    .DownloadCount= i.get<14>(),
-                    .Size= i.get<15>(),
-                    .Latest = (bool) (i.get<16>()!=0)
-                };
+            for(const auto &R:Records) {
+                FMSObjects::Firmware   F;
+                Convert(R,F);
                 Firmwares.push_back(F);
             }
-
             return true;
-
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
         return false;
     }
-
-
-/*
-    "Compatible VARCHAR(128), "
-    "Uploader VARCHAR(128), "
-    "FirmwareVersion VARCHAR(128), "
-    "S3URI TEXT )",
-    "Uploaded BIGINT, "
-    "Size BIGINT, "
-    "FirmwareDate BIGINT, "
- */
-
-    typedef Poco::Tuple<
-            std::string,
-            std::string,
-            std::string,
-            std::string,
-            uint64_t,
-            uint64_t,
-            uint64_t,
-            uint64_t
-    >   FirmwareManifestTuple;
-    typedef std::vector<FirmwareManifestTuple>  FirmwareManifestList;
-
-
-    bool Storage::BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version) {
-        try {
-            SubMutexGuard           Guard(Mutex_);
-            FirmwareManifestList    Records;
-            Poco::Data::Session     Sess = Pool_->get();
-            Poco::Data::Statement   Select(Sess);
-
-            std::string st{"SELECT Compatible,Uploader,FirmwareVersion,S3URI,Uploaded,Size,FirmwareDate,Latest FROM Firmwares"};
-
-            Select <<   ConvertParams(st),
-                        Poco::Data::Keywords::into(Records);
-            Select.execute();
-
-            Poco::JSON::Array   Elements;
-            for(const auto &i:Records) {
-                Poco::JSON::Object  Obj;
-
-                Obj.set("compatible", i.get<0>());
-                Obj.set("uploader",i.get<1>());
-                Obj.set("version",i.get<2>());
-                Obj.set("uri",i.get<3>());
-                Obj.set("uploaded",i.get<4>());
-                Obj.set("size",i.get<5>());
-                Obj.set("date", i.get<6>());
-                Obj.set("latest", (bool) (i.get<7>() != 0));
-
-                Elements.add(Obj);
-            }
-
-            Manifest.set("firmwares",Elements);
-            Version = FirmwareVersion_;
-
-            return true;
-
-        } catch (const Poco::Exception &E) {
-            Logger_.log(E);
-        }
-        return false;
-    }
-
 
 }
 

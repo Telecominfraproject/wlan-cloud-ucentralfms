@@ -12,41 +12,48 @@
 #include "Poco/Data/Session.h"
 #include "Poco/Data/SessionPool.h"
 #include "Poco/Data/SQLite/Connector.h"
+#include "Poco/JSON/Object.h"
 
-#include "RESTAPI_objects.h"
+#include "RESTAPI_FMSObjects.h"
 #include "SubSystemServer.h"
+
+#include "storage_firmwares.h"
+#include "storage_history.h"
+#include "storage_deviceTypes.h"
+
+#ifndef SMALL_BUILD
+#include "Poco/Data/PostgreSQL/Connector.h"
+#include "Poco/Data/MySQL/Connector.h"
+#include "Poco/Data/ODBC/Connector.h"
+#endif
 
 namespace uCentral {
 
     class Storage : public SubSystemServer {
-
     public:
+
+        enum StorageType {
+            sqlite,
+            pgsql,
+            mysql,
+            odbc
+        };
+
         Storage() noexcept;
 
         int Create_Tables();
         int Create_Firmwares();
-        int Create_Callbacks();
+        int Create_History();
+        int Create_DeviceTypes();
         int Create_LatestFirmwareList();
 
-        bool AddCallback(uCentral::Objects::Callback & C);
-        bool AddOrUpdateCallback(uCentral::Objects::Callback & C);
-        bool UpdateCallback(std::string & UUID, uCentral::Objects::Callback & C);
-        bool DeleteCallback(std::string & UUID);
-        bool GetCallback(std::string & UUID, uCentral::Objects::Callback & C);
-        bool GetCallbacks(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Callback> & Callbacks);
-
-        bool AddFirmware(uCentral::Objects::Firmware & F);
-        bool UpdateFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
+        bool AddFirmware(FMSObjects::Firmware & F);
+        bool UpdateFirmware(std::string & UUID, FMSObjects::Firmware & C);
         bool DeleteFirmware(std::string & UUID);
-        bool GetFirmware(std::string & UUID, uCentral::Objects::Firmware & C);
-        bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::Firmware> & Firmwares);
+        bool GetFirmware(std::string & UUID, FMSObjects::Firmware & C);
+        bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::Firmware> & Firmwares);
         bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
         uint64_t FirmwareVersion();
-
-        bool AddLatestFirmware(std::string & Compatible, std::string &UUID);
-        bool GetLatestFirmware(std::string & Compatible, uCentral::Objects::LatestFirmware &L);
-        bool DeleteLatestFirmware(std::string & Compatible);
-        bool GetLatestFirmwareList(uint64_t From, uint64_t HowMany, std::vector<uCentral::Objects::LatestFirmware> & LatestFirmwareList);
 
         int 	Start() override;
         void 	Stop() override;
@@ -60,11 +67,23 @@ namespace uCentral {
             return instance_;
         }
 
+#ifndef SMALL_BUILD
+        int 	Setup_MySQL();
+        int 	Setup_PostgreSQL();
+        int 	Setup_ODBC();
+#endif
+
 	  private:
-		static Storage      							*instance_;
-		std::unique_ptr<Poco::Data::SessionPool>        Pool_= nullptr;
-		std::unique_ptr<Poco::Data::SQLite::Connector>  SQLiteConn_= nullptr;
-		std::atomic_int64_t                             FirmwareVersion_ = 1 ;
+		static Storage      							    *instance_;
+		std::unique_ptr<Poco::Data::SessionPool>            Pool_= nullptr;
+        StorageType 										dbType_ = sqlite;
+        std::unique_ptr<Poco::Data::SQLite::Connector>  	SQLiteConn_= nullptr;
+#ifndef SMALL_BUILD
+        std::unique_ptr<Poco::Data::PostgreSQL::Connector>  PostgresConn_= nullptr;
+        std::unique_ptr<Poco::Data::MySQL::Connector>       MySQLConn_= nullptr;
+        std::unique_ptr<Poco::Data::ODBC::Connector>        ODBCConn_= nullptr;
+#endif
+
    };
 
     inline Storage * Storage() { return Storage::instance(); };

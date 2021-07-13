@@ -8,13 +8,8 @@
 #include "Utils.h"
 #include "RESTAPI_handler.h"
 
-#include "RESTAPI_callbackHandler.h"
-#include "RESTAPI_callbacksHandler.h"
 #include "RESTAPI_firmwareHandler.h"
 #include "RESTAPI_firmwaresHandler.h"
-#include "RESTAPI_latestFirmwareListHandler.h"
-#include "RESTAPI_callbackChannel.h"
-#include "RESTAPI_newFirmwareAvailable.h"
 #include "RESTAPI_system_command.h"
 
 namespace uCentral {
@@ -67,11 +62,6 @@ namespace uCentral {
         return RESTAPI_Router<
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
-                RESTAPI_callbacksHandler,
-                RESTAPI_callbackHandler,
-                RESTAPI_latestFirmwareListHandler,
-                RESTAPI_callbackChannel,
-                RESTAPI_newFirmwareAvailable,
                 RESTAPI_system_command
                 >(Path,Bindings,Logger_);
     }

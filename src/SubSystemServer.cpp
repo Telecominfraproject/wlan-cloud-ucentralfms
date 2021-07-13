@@ -114,7 +114,7 @@ Poco::Net::SecureServerSocket PropertiesFileServerEntry::CreateSecureSocket(Poco
 	P.dhUse2048Bits = true;
 	P.caLocation = cas_;
 
-	auto Context = new Poco::Net::Context(Poco::Net::Context::TLS_SERVER_USE, P);
+	auto Context = Poco::AutoPtr<Poco::Net::Context>(new Poco::Net::Context(Poco::Net::Context::TLS_SERVER_USE, P));
 
 	if(!key_file_password_.empty()) {
 		auto PassphraseHandler = Poco::SharedPtr<MyPrivateKeyPassphraseHandler>( new MyPrivateKeyPassphraseHandler(KeyFilePassword(),L));

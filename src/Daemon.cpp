@@ -19,7 +19,6 @@
 #include "StorageService.h"
 #include "RESTAPI_server.h"
 #include "RESTAPI_InternalServer.h"
-#include "NotificationMgr.h"
 #include "ManifestCreator.h"
 #include "ALBHealthCheckServer.h"
 #include "KafkaManager.h"
@@ -37,7 +36,6 @@ namespace uCentral {
                                    Types::SubSystemVec{Storage(),
                                                        RESTAPI_server(),
                                                        RESTAPI_InternalServer(),
-                                                       NotificationMgr(),
                                                        ManifestCreator()
                                    });
         }

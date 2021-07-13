@@ -9,6 +9,9 @@
 #include <fstream>
 #include "StorageService.h"
 #include "Poco/Util/Application.h"
+
+#include "Daemon.h"
+
 #include "Utils.h"
 
 namespace uCentral {
@@ -43,12 +46,25 @@ namespace uCentral {
 	}
 
     int Storage::Start() {
-		SubMutexGuard		Guard(Mutex_);
-		Logger_.setLevel(Poco::Message::PRIO_NOTICE);
+        SubMutexGuard		Guard(Mutex_);
+
+        Logger_.setLevel(Poco::Message::PRIO_NOTICE);
         Logger_.notice("Starting.");
-        Setup_SQLite();
-		Create_Tables();
-		return 0;
+        std::string DBType = Daemon()->ConfigGetString("storage.type");
+
+        if (DBType == "sqlite") {
+            Setup_SQLite();
+        } else if (DBType == "postgresql") {
+            Setup_PostgreSQL();
+        } else if (DBType == "mysql") {
+            Setup_MySQL();
+        } else if (DBType == "odbc") {
+            Setup_ODBC();
+        }
+
+        Create_Tables();
+
+        return 0;
     }
 
     void Storage::Stop() {

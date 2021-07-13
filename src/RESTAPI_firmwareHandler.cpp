@@ -42,8 +42,8 @@ namespace uCentral {
             auto UUID = GetBinding("uuid", "");
 
             if (!UUID.empty()) {
-                uCentral::Objects::Firmware F;
-                if (uCentral::Storage()->GetFirmware(UUID, F)) {
+                FMSObjects::Firmware F;
+                if (Storage()->GetFirmware(UUID, F)) {
                     Poco::JSON::Object Object;
                     F.to_json(Object);
                     ReturnObject(Request, Object, Response);
@@ -64,7 +64,7 @@ namespace uCentral {
             auto UUID = GetBinding("uuid", "");
 
             if (!UUID.empty()) {
-                if (uCentral::Storage()->DeleteFirmware(UUID)) {
+                if (Storage()->DeleteFirmware(UUID)) {
                     OK(Request, Response);
                 } else {
                     NotFound(Request, Response);

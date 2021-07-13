@@ -27,7 +27,7 @@ namespace uCentral {
             auto Offset = GetParameter("offset", 0);
             auto Limit = GetParameter("limit", 100);
 
-            std::vector<uCentral::Objects::Firmware> List;
+            std::vector<FMSObjects::Firmware> List;
             if (uCentral::Storage()->GetFirmwares(Offset, Limit, List)) {
 
                 Poco::JSON::Array ObjectArray;
