@@ -34,6 +34,7 @@ ucentral.system.uri.private = https://localhost:17004
 ucentral.system.uri.public = https://ucentral.dpaas.arilia.com:16004
 # ucentral.system.uri.public = https://local.dpaas.arilia.com:16004
 ucentral.system.commandchannel = /tmp/app.ucentralfms
+ucentral.system.uri.ui = ucentral-ui.arilia.com
 
 #
 # Firmware Microservice Specific Section
