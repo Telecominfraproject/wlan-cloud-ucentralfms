@@ -167,11 +167,15 @@ components:
         serialNumber:
           type: string
         revisionId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         upgraded:
           type: integer
           format: int64
+        fromRelease:
+          type: string
+        toRelease:
+          type: string
         commandUUID:
           type: string
           format: uuid

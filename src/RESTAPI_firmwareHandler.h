@@ -18,7 +18,7 @@ namespace uCentral {
                                           Poco::Net::HTTPRequest::HTTP_PUT,
                                           Poco::Net::HTTPRequest::HTTP_DELETE,
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
-        static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/firmware/{uuid}"};}
+        static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/firmware/{id}"};}
         void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
         void DoPost(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
         void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);

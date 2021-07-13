@@ -22,6 +22,8 @@
 #include "ManifestCreator.h"
 #include "ALBHealthCheckServer.h"
 #include "KafkaManager.h"
+#include "NewConnectionHandler.h"
+#include "LatestFirmwareCache.h"
 
 namespace uCentral {
     class Daemon *Daemon::instance_ = nullptr;
@@ -34,6 +36,8 @@ namespace uCentral {
                                    vDAEMON_APP_NAME,
                                    vDAEMON_BUS_TIMER,
                                    Types::SubSystemVec{Storage(),
+                                                       LatestFirmwareCache(),
+                                                       NewConnectionHandler(),
                                                        RESTAPI_server(),
                                                        RESTAPI_InternalServer(),
                                                        ManifestCreator()

@@ -10,7 +10,8 @@
 namespace uCentral {
     static const std::string DBNAME_FIRMWARES{"firmwares"};
     static const std::string DBFIELDS_FIRMWARES_CREATION {
-            "Id             varchar(36) UNIQUE PRIMARY KEY, "
+            "Id              varchar(36) UNIQUE PRIMARY KEY, "
+            "release            varchar, "
             "deviceType         varchar, "
             "description        varchar, "
             "revision           varchar, "
@@ -31,6 +32,7 @@ namespace uCentral {
 
     static const std::string DBFIELDS_FIRMWARES_SELECT{
             " Id, "
+            "release, "
             "deviceType, "
             "description, "
             "revision, "
@@ -51,6 +53,7 @@ namespace uCentral {
 
     static const std::string DBFIELDS_FIRMWARES_UPDATE {
             " Id=?, "
+            "release=?, "
             "deviceType=?, "
             "description=?, "
             "revision=?, "
@@ -70,6 +73,7 @@ namespace uCentral {
     };
 
     typedef Poco::Tuple<
+            std::string,
             std::string,
             std::string,
             std::string,

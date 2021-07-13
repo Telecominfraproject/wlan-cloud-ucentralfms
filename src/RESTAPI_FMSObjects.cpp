@@ -12,6 +12,7 @@ namespace uCentral::FMSObjects {
 
     void Firmware::to_json(Poco::JSON::Object &Obj) const {
         field_to_json(Obj, "id", id);
+        field_to_json(Obj, "release", release);
         field_to_json(Obj, "deviceType", deviceType);
         field_to_json(Obj, "description", description);
         field_to_json(Obj, "revision", revision);
@@ -33,6 +34,7 @@ namespace uCentral::FMSObjects {
     bool Firmware::from_json(const Poco::JSON::Object::Ptr &Obj) {
         try {
             field_from_json(Obj, "id", id);
+            field_from_json(Obj, "release", release);
             field_from_json(Obj, "deviceType", deviceType);
             field_from_json(Obj, "description", description);
             field_from_json(Obj, "revision", revision);
@@ -121,16 +123,22 @@ namespace uCentral::FMSObjects {
     void RevisionHistoryEntry::to_json(Poco::JSON::Object &Obj) const {
         field_to_json(Obj, "id", id);
         field_to_json(Obj, "serialNumber", serialNumber);
-        field_to_json(Obj, "upgraded", upgraded);
+        field_to_json(Obj, "fromRelease", fromRelease);
+        field_to_json(Obj, "toRelease", toRelease);
         field_to_json(Obj, "commandUUID", commandUUID);
+        field_to_json(Obj, "revisionId", revisionId);
+        field_to_json(Obj, "upgraded", upgraded);
     }
 
     bool RevisionHistoryEntry::from_json(const Poco::JSON::Object::Ptr &Obj) {
         try {
             field_from_json(Obj, "id", id);
             field_from_json(Obj, "serialNumber", serialNumber);
-            field_from_json(Obj, "upgraded", upgraded);
+            field_from_json(Obj, "fromRelease", fromRelease);
+            field_from_json(Obj, "toRelease", toRelease);
             field_from_json(Obj, "commandUUID", commandUUID);
+            field_from_json(Obj, "revisionId", revisionId);
+            field_from_json(Obj, "upgraded", upgraded);
             return true;
         } catch(...) {
 

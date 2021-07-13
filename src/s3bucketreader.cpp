@@ -10,6 +10,7 @@
 
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
+#include "Poco/File.h"
 
 #include "Utils.h"
 
@@ -56,12 +57,11 @@ namespace uCentral {
     }
 
     bool S3BucketReader::ReadBucket() {
-
         static const std::string JSON(".json");
         static const std::string UPGRADE("-upgrade.bin");
 
         std::string     URIBase = "https://";
-                        URIBase += Daemon()->ConfigGetString("s3.bucket.uri/");
+        URIBase += Daemon()->ConfigGetString("s3.bucket.uri");
 
         BucketContent_.clear();
 
@@ -72,13 +72,15 @@ namespace uCentral {
         auto Outcome = S3Client.ListObjects(Request);
 
         if(Outcome.IsSuccess()) {
+            std::cout << "Success..." << std::endl;
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
             for (const auto &Object : objects) {
-                std::string FileName{Object.GetKey()};
-                if (FileName.size() > JSON.size() && FileName.substr(FileName.size() - JSON.size()) == JSON) {
-                    std::string Release = FileName.substr(0, FileName.size() - JSON.size());
+                Poco::Path  FileName(Object.GetKey().c_str());
+                std::cout << "Object: " << Object.GetKey() << std::endl;
+                if (FileName.getExtension() == "json") {
+                    std::string Release = FileName.getBaseName();
                     std::string Content;
-                    if (GetObjectContent(S3Client, FileName, Content)) {
+                    if (GetObjectContent(S3Client, FileName.getFileName(), Content)) {
                         Poco::JSON::Parser P;
                         auto ParsedContent = P.parse(Content).extract<Poco::JSON::Object::Ptr>();
                         if (ParsedContent->has("image") &&
@@ -102,7 +104,7 @@ namespace uCentral {
                             }
                         }
                     }
-                } else if (FileName.size() > UPGRADE.size() && FileName.substr(FileName.size() - UPGRADE.size()) == UPGRADE) {
+                } else if (FileName.getExtension() > "bin") {
                     std::string Release = FileName.substr(0, FileName.size() - UPGRADE.size());
                     auto It = BucketContent_.find(Release);
                     if(It != BucketContent_.end()) {
@@ -117,8 +119,12 @@ namespace uCentral {
                                                             .S3Size = (uint64_t ) Object.GetSize(),
                                                             .URI = URIBase + FileName });
                     }
+                } else {
+
                 }
             }
+        } else {
+            std::cout << "No success in connecting..." << Outcome.GetError() << std::endl;
         }
         return true;
     }

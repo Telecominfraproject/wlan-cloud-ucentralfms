@@ -64,7 +64,6 @@ add_executable( ucentralfms
                 src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h
                 src/RESTAPI_GWobjects.cpp src/RESTAPI_GWobjects.h
                 src/ALBHealthCheckServer.h
-                src/s3bucketreader.cpp src/s3bucketreader.h
                 src/ManifestCreator.cpp src/ManifestCreator.h
                 src/KafkaManager.cpp src/KafkaManager.h
                 src/MicroService.h src/MicroService.cpp
@@ -76,7 +75,7 @@ add_executable( ucentralfms
                 src/RESTAPI_utils.cpp src/RESTAPI_utils.h
                 src/RESTAPI_FMSObjects.cpp src/RESTAPI_FMSObjects.h
                 src/storage_firmwares.h src/storage_history.cpp
-                src/storage_history.h src/storage_deviceTypes.cpp src/storage_deviceTypes.h)
+                src/storage_history.h src/storage_deviceTypes.cpp src/storage_deviceTypes.h src/RESTAPI_historyHandler.cpp src/RESTAPI_historyHandler.h src/NewConnectionHandler.cpp src/NewConnectionHandler.h src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h)
 
 target_link_libraries(ucentralfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

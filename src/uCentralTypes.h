@@ -13,9 +13,12 @@
 #include <functional>
 #include <list>
 #include <utility>
+#include <queue>
 
 namespace uCentral::Types {
-	typedef std::vector<std::pair<std::string,std::string>>	StringPairVec;
+    typedef std::pair<std::string,std::string>              StringPair;
+	typedef std::vector<StringPair>	                        StringPairVec;
+    typedef std::queue<StringPair>	                        StringPairQueue;
 	typedef std::vector<std::string>						StringVec;
 	typedef std::vector<SubSystemServer*>					SubSystemVec;
 	typedef std::map<std::string,std::set<std::string>>		StringMapStringSet;

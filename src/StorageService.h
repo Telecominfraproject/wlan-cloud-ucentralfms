@@ -53,7 +53,13 @@ namespace uCentral {
         bool GetFirmware(std::string & UUID, FMSObjects::Firmware & C);
         bool GetFirmwares(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::Firmware> & Firmwares);
         bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
+        bool GetFirmwareByName(std::string & Release, std::string &DeviceType,FMSObjects::Firmware & C );
         uint64_t FirmwareVersion();
+
+        bool GetHistory(std::string &SerialNumber,uint64_t From, uint64_t HowMany,FMSObjects::RevisionHistoryEntryVec &History);
+        bool AddHistory(FMSObjects::RevisionHistoryEntry &History);
+
+        void PopulateLatestFirmwareCache();
 
         int 	Start() override;
         void 	Stop() override;
