@@ -55,12 +55,14 @@ namespace uCentral {
                     Entry.Compatible = ParsedContent->get("compatible").toString();
                     Entry.Revision = ParsedContent->get("revision").toString();
                     Entry.Image = ParsedContent->get("image").toString();
-                    if(Entry.Image!=Name) {
+                    auto FullNme = Name + "-upgrade.bin";
+                    if(FullNme!=Entry.Image) {
                         Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
+                        std::cout << "Error: Name=" << Name << " Image:" << Entry.Image << std::endl;
+                        Entry.Valid = false;
                         continue;
                     }
                     Entry.Valid = true;
-
                 } else {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
                 }
@@ -76,7 +78,7 @@ namespace uCentral {
         for(auto &[Release,BucketEntry]:BucketContent) {
             FMSObjects::Firmware    F;
             auto R = Release;
-            if(!Storage()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
+            if(BucketEntry.Valid && !Storage()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
                 F.id = Daemon()->CreateUUID();
                 F.release = Release;
                 F.size = BucketEntry.S3Size;
@@ -202,7 +204,7 @@ namespace uCentral {
                     }
                 } else if (FileName.getExtension() == "bin") {
                     const auto & ReleaseName = FileName.getFileName();
-                    std::string Release = ReleaseName.substr(0, ReleaseName.size() - UPGRADE.size());
+                    std::string Release = FileName.getBaseName();
                     auto It = Bucket.find(ReleaseName);
                     if(It != Bucket.end()) {
                         It->second.S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);

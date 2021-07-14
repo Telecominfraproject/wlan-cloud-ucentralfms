@@ -15,11 +15,12 @@
 
 namespace uCentral {
 
-    struct FirmwareCacheEntry {
+    struct LatestFirmwareCacheEntry {
         std::string     Id;
         uint64_t        TimeStamp=0;
+        std::string     Revision;
     };
-    typedef std::map<std::string, FirmwareCacheEntry> FirmwareCache;
+    typedef std::map<std::string, LatestFirmwareCacheEntry> FirmwareCache;
 
     class LatestFirmwareCache : public SubSystemServer {
     public:
@@ -32,13 +33,16 @@ namespace uCentral {
 
         int Start() override;
         void Stop() override;
-        void AddToCache(const std::string & DeviceType, const std::string &Id, uint64_t TimeStamp);
-        std::string FindLatestFirmware(std::string &DeviceType);
+        void AddToCache(const std::string & DeviceType, const std::string & Revision, const std::string &Id, uint64_t TimeStamp);
+        void AddRevision(const std::string &Revision);
+        bool FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry );
         void DumpCache();
+        inline Types::StringSet GetRevisions() { SubMutexGuard G(Mutex_); return RevisionSet_; };
 
     private:
         static LatestFirmwareCache 	*instance_;
         FirmwareCache               FirmwareCache_;
+        Types::StringSet            RevisionSet_;
         explicit LatestFirmwareCache() noexcept:
                 SubSystemServer("FirmwareCache", "FIRMWARE-CACHE", "FirmwareCache")
         {

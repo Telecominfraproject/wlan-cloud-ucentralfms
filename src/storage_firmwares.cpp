@@ -71,7 +71,7 @@ namespace uCentral {
                 Update.execute();
             }
 
-            LatestFirmwareCache()->AddToCache(F.deviceType,F.id,F.imageDate);
+            LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate);
 
             auto Notes = RESTAPI_utils::to_string(F.notes);
             std::string st{"INSERT INTO " + DBNAME_FIRMWARES + " (" +
@@ -250,20 +250,21 @@ namespace uCentral {
             typedef Poco::Tuple<
                 std::string,
                 std::string,
-                uint64_t> FCE;
+                uint64_t,
+                std::string> FCE;
             typedef std::vector<FCE>    FCEList;
 
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT Id, DeviceType, ImageDate FROM " + DBNAME_FIRMWARES};
+            std::string st{"SELECT Id, DeviceType, ImageDate, Revision FROM " + DBNAME_FIRMWARES};
             FCEList Records;
             Select << ConvertParams(st),
                     Poco::Data::Keywords::into(Records);
             Select.execute();
 
             for(const auto &R:Records) {
-                LatestFirmwareCache()->AddToCache(R.get<1>(), R.get<0>(), R.get<2>());
+                LatestFirmwareCache()->AddToCache(R.get<1>(), R.get<3>(), R.get<0>(), R.get<2>());
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);

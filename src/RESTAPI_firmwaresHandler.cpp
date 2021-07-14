@@ -29,20 +29,34 @@ namespace uCentral {
             InitQueryBlock();
             auto DeviceType = GetParameter("deviceType","");
             auto IdOnly = (GetParameter("idOnly","false")=="true");
+            auto RevisionSet = (GetParameter("revisionSet","false")=="true");
+
+            if(RevisionSet) {
+                auto Revisions = LatestFirmwareCache()->GetRevisions();
+                Poco::JSON::Array ObjectArray;
+                for (const auto &i:Revisions) {
+                    ObjectArray.add(i);
+                }
+                Poco::JSON::Object RetObj;
+                RetObj.set("revisions", ObjectArray);
+                ReturnObject(Request, RetObj, Response);
+                return;
+            }
 
             // special cases: if latestOnly and deviceType
             if(HasParameter("latestOnly") && HasParameter("deviceType")) {
                 bool LatestOnly = (GetParameter("latestOnly","false") == "true");
 
                 if(LatestOnly) {
-                    auto FirmwareId = LatestFirmwareCache()->FindLatestFirmware(DeviceType);
-                    if(FirmwareId.empty()) {
+
+                    LatestFirmwareCacheEntry    Entry;
+                    if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {
                         NotFound(Request, Response);
                         return;
                     }
 
                     FMSObjects::Firmware    F;
-                    if(Storage()->GetFirmware(FirmwareId,F)) {
+                    if(Storage()->GetFirmware(Entry.Id,F)) {
                         Poco::JSON::Object  Answer;
                         F.to_json(Answer);
                         ReturnObject(Request, Answer, Response);

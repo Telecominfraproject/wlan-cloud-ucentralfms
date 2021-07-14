@@ -16,23 +16,34 @@ namespace uCentral {
     void LatestFirmwareCache::Stop() {
     }
 
-    void LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Id, uint64_t TimeStamp) {
+    void LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Revision, const std::string &Id, uint64_t TimeStamp) {
         SubMutexGuard G(Mutex_);
 
+        RevisionSet_.insert(Revision);
         auto E = FirmwareCache_.find(DeviceType);
-        if((E==FirmwareCache_.end()) || (TimeStamp < E->second.TimeStamp)) {
-            FirmwareCache_[DeviceType] = FirmwareCacheEntry{.Id=Id, .TimeStamp=TimeStamp};
+        if((E==FirmwareCache_.end()) || (TimeStamp > E->second.TimeStamp)) {
+            FirmwareCache_[DeviceType] = LatestFirmwareCacheEntry{.Id=Id,
+                                                            .TimeStamp=TimeStamp,
+                                                            .Revision=Revision};
         }
     }
 
-    std::string LatestFirmwareCache::FindLatestFirmware(std::string &DeviceType)  {
+    void LatestFirmwareCache::AddRevision(const std::string &Revision) {
+        SubMutexGuard G(Mutex_);
+        RevisionSet_.insert(Revision);
+    }
+
+    bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
         SubMutexGuard G(Mutex_);
 
         std::string Result;
         auto E=FirmwareCache_.find(DeviceType);
-        if(E!=FirmwareCache_.end())
-            Result = E->second.Id;
-        return Result;
+        if(E!=FirmwareCache_.end()) {
+            Entry = E->second;
+            return true;
+        }
+
+        return false;
     }
 
     void LatestFirmwareCache::DumpCache() {

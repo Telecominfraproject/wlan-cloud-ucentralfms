@@ -20,6 +20,7 @@ namespace uCentral::Types {
 	typedef std::vector<StringPair>	                        StringPairVec;
     typedef std::queue<StringPair>	                        StringPairQueue;
 	typedef std::vector<std::string>						StringVec;
+	typedef std::set<std::string>                           StringSet;
 	typedef std::vector<SubSystemServer*>					SubSystemVec;
 	typedef std::map<std::string,std::set<std::string>>		StringMapStringSet;
 	typedef std::function<void(std::string, std::string)>   TopicNotifyFunction;
