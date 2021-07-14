@@ -38,6 +38,7 @@ RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
 
 ADD CMakeLists.txt /ucentralfms/
+ADD cmake /ucentralfms/cmake
 ADD src /ucentralfms/src
 
 WORKDIR /ucentralfms
