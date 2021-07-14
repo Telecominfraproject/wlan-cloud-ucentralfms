@@ -33,7 +33,15 @@ namespace uCentral {
             bool DeviceSet = GetBoolParameter("deviceSet",false);
 
             if(DeviceSet) {
-
+                auto Revisions = LatestFirmwareCache()->GetDevices();
+                Poco::JSON::Array ObjectArray;
+                for (const auto &i:Revisions) {
+                    ObjectArray.add(i);
+                }
+                Poco::JSON::Object RetObj;
+                RetObj.set("deviceTypes", ObjectArray);
+                ReturnObject(Request, RetObj, Response);
+                return;
             }
 
             if(RevisionSet) {
