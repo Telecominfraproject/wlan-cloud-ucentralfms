@@ -54,10 +54,12 @@ namespace uCentral {
                             compatible = CapObj->get("compatible").toString();
                             serialNumber = PayloadObj->get("serial").toString();
                             firmware = PayloadObj->get("firmware").toString();
-                            std::cout << "Compatible: " << CapObj->get("compatible").toString() << std::endl;
+                            std::cout << "Compatible: " << CapObj->get("compatible").toString() << " Revision:" << firmware << std::endl;
+
                             FMSObjects::Firmware    CurrentFirmware;
                             FMSObjects::Firmware    LatestFirmware;
                             if(Storage()->GetFirmwareByRevision(firmware,compatible,CurrentFirmware)) {
+                                std::cout << "Found your revision..." << std::endl;
                                 LatestFirmwareCacheEntry    LE;
                                 if(LatestFirmwareCache()->FindLatestFirmware(compatible,LE)) {
                                     Storage()->GetFirmware(LE.Id,LatestFirmware);
