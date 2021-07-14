@@ -48,11 +48,17 @@ namespace uCentral {
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
                 if(Object->isObject("payload")) {
+                    std::cout << __LINE__ << std::endl;
                     auto PayloadObj = Object->getObject("payload");
+                    std::cout << __LINE__ << std::endl;
                     if(PayloadObj->isObject("capabilities")) {
+                        std::cout << __LINE__ << std::endl;
                         auto CapObj = PayloadObj->getObject("capabilities");
-                        if(CapObj->has("compatible"))
+                        std::cout << __LINE__ << std::endl;
+                        if(CapObj->has("compatible")) {
+                            std::cout << __LINE__ << std::endl;
                             std::cout << "Compatible: " << CapObj->get("compatible").toString() << std::endl;
+                        }
                     }
                 }
             }
