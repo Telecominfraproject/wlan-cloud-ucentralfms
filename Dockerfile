@@ -47,6 +47,8 @@ RUN cmake --build . --config Release -j8
 
 FROM alpine
 
+RUN addgroup -S ucentralfms && adduser -S -G ucentralfms ucentralfms
+
 RUN mkdir /ucentral
 RUN mkdir /ucentralfms-data
 RUN apk add --update --no-cache librdkafka curl-dev 
@@ -61,4 +63,5 @@ EXPOSE 16004
 EXPOSE 17004
 EXPOSE 16104
 
+USER ucentralfms
 ENTRYPOINT /ucentral/ucentralfms
