@@ -4,8 +4,9 @@ RUN apk update && \
     apk add --no-cache openssl openssh && \
     apk add --no-cache ncurses-libs && \
     apk add --no-cache bash util-linux coreutils curl && \
-    apk add --no-cache make cmake gcc g++ libstdc++ libgcc git && \
-    apk add --no-cache openssl-dev boost-dev curl-dev util-linux-dev zlib-dev  && \
+    apk add --no-cache make cmake gcc g++ libstdc++ libgcc git zlib-dev && \
+    apk add --no-cache openssl-dev boost-dev curl-dev util-linux-dev && \
+    apk add --no-cache unixodbc-dev postgresql-dev mariadb-dev && \
     apk add --no-cache librdkafka-dev
 
 RUN git clone https://github.com/stephb9959/poco /poco
@@ -51,7 +52,7 @@ RUN addgroup -S ucentralfms && adduser -S -G ucentralfms ucentralfms
 
 RUN mkdir /ucentral
 RUN mkdir /ucentralfms-data
-RUN apk add --update --no-cache librdkafka curl-dev 
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc 
 
 COPY --from=builder /ucentralfms/cmake-build/ucentralfms /ucentral/ucentralfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
