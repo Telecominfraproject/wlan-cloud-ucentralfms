@@ -4,6 +4,7 @@
 
 #include "RESTAPI_firmwaresHandler.h"
 #include "StorageService.h"
+#include "LatestFirmwareCache.h"
 
 namespace uCentral {
     void RESTAPI_firmwaresHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -24,11 +25,54 @@ namespace uCentral {
     void
     RESTAPI_firmwaresHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
         try {
-            auto Offset = GetParameter("offset", 0);
-            auto Limit = GetParameter("limit", 100);
+
+            InitQueryBlock();
+
+            // special cases: if latestOnly and deviceType
+            if(HasParameter("latestOnly") && HasParameter("deviceType")) {
+                auto DeviceType = GetParameter("deviceType","");
+                bool LatestOnly = GetParameter("LatestOnly",false);
+
+                //  Let's find the ID of the latest
+                if(LatestOnly) {
+                    auto FirmwareId = LatestFirmwareCache()->FindLatestFirmware(DeviceType);
+                    if(FirmwareId.empty()) {
+                        NotFound(Request, Response);
+                        return;
+                    }
+
+                    FMSObjects::Firmware    F;
+                    if(Storage()->GetFirmware(FirmwareId,F)) {
+                        Poco::JSON::Object  Answer;
+                        F.to_json(Answer);
+                        ReturnObject(Request, Answer, Response);
+                        return;
+                    }
+                    NotFound(Request, Response);
+                    return;
+                } else {
+                    std::vector<FMSObjects::Firmware> List;
+                    if (uCentral::Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
+                        Poco::JSON::Array ObjectArray;
+                        for (const auto &i:List) {
+                            Poco::JSON::Object Obj;
+                            i.to_json(Obj);
+                            ObjectArray.add(Obj);
+                        }
+                        Poco::JSON::Object RetObj;
+                        RetObj.set("firmwares", ObjectArray);
+                        ReturnObject(Request, RetObj, Response);
+                        return;
+                    } else {
+                        NotFound(Request, Response);
+                        return;
+                    }
+                }
+            }
 
             std::vector<FMSObjects::Firmware> List;
-            if (uCentral::Storage()->GetFirmwares(Offset, Limit, List)) {
+            std::string DeviceType;
+            if (Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
 
                 Poco::JSON::Array ObjectArray;
 

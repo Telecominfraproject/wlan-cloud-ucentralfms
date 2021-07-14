@@ -211,18 +211,26 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, FMSObjects::FirmwareVec & Firmwares) {
+    bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, std::string & Compatible, FMSObjects::FirmwareVec & Firmwares) {
         try {
             FirmwaresRecordList      Records;
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
-                           " FROM " + DBNAME_FIRMWARES };
+            std::string st;
 
-            Select << ConvertParams(st),
+            if(Compatible.empty()) {
+                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES;
+                Select << ConvertParams(st),
                         Poco::Data::Keywords::into(Records),
                         Poco::Data::Keywords::range(From, From + HowMany);
+            } else {
+                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES + " where DeviceType=?";
+                Select << ConvertParams(st),
+                        Poco::Data::Keywords::into(Records),
+                        Poco::Data::Keywords::use(Compatible),
+                        Poco::Data::Keywords::range(From, From + HowMany);
+            }
             Select.execute();
 
             for(const auto &R:Records) {

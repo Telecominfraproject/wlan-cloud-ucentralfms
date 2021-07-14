@@ -118,7 +118,16 @@ namespace uCentral {
 		return E->second;
 	}
 
-	static std::string MakeList(const std::vector<std::string> &L) {
+    bool RESTAPIHandler::HasParameter(const std::string &Name) {
+        for (const auto &i : Parameters_) {
+            if (i.first == Name)
+                return true;
+        }
+        return false;
+	}
+
+
+    static std::string MakeList(const std::vector<std::string> &L) {
 		std::string Return;
 		for (const auto &i : L)
 			if (Return.empty())

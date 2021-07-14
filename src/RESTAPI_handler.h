@@ -118,6 +118,7 @@ namespace uCentral {
 		uint64_t GetParameter(const std::string &Name, uint64_t Default);
 		std::string GetParameter(const std::string &Name, const std::string &Default);
 		bool GetBoolParameter(const std::string &Name, bool Default);
+		bool HasParameter(const std::string &name);
 
 		void BadRequest(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response, const std::string &Reason = "");
 		void UnAuthorized(Poco::Net::HTTPServerRequest &Request,
