@@ -137,6 +137,13 @@ revisions() {
     jq < ${result_file}
 }
 
+devices() {
+    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        "https://${UCENTRALFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
+    jq < ${result_file}
+}
+
 help() {
   echo
   echo
@@ -148,6 +155,7 @@ case "$1" in
     "getfirmwares") login; getfirmwares $2; logout ;;
     "latestfirmware") login; latestfirmware $2; logout ;;
     "revisions") login; revisions; logout ;;
+    "devices") login; devices; logout ;;
     *) help ;;
 esac
 

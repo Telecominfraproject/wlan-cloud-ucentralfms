@@ -267,6 +267,16 @@ paths:
           schema:
             type: string
           required: false
+        - in: query
+          name: revisionSet
+          schema:
+            type: boolean
+          required: false
+        - in: query
+          name: deviceSet
+          schema:
+            type: boolean
+          required: false
       responses:
         200:
           description: List firmwares

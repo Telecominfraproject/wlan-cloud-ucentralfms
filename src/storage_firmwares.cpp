@@ -211,6 +211,31 @@ namespace uCentral {
         return false;
     }
 
+    bool Storage::GetFirmwareByRevision(std::string & Revision, std::string &DeviceType,FMSObjects::Firmware & Firmware ) {
+        try {
+            FirmwaresRecordList     Records;
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Select(Sess);
+
+            std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
+                           " FROM " + DBNAME_FIRMWARES + " where Revision=? and DeviceType=?"};
+
+            Select << ConvertParams(st),
+                    Poco::Data::Keywords::into(Records),
+                    Poco::Data::Keywords::use(Revision),
+                    Poco::Data::Keywords::use(DeviceType);
+            Select.execute();
+
+            if(Records.empty())
+                return false;
+            Convert(Records[0],Firmware);
+            return true;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
     bool Storage::GetFirmwares(uint64_t From, uint64_t HowMany, std::string & Compatible, FMSObjects::FirmwareVec & Firmwares) {
         try {
             FirmwaresRecordList      Records;

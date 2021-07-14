@@ -8,6 +8,8 @@
 #include "uCentralTypes.h"
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
+#include "StorageService.h"
+#include "LatestFirmwareCache.h"
 
 /*
 
@@ -53,6 +55,15 @@ namespace uCentral {
                             serialNumber = PayloadObj->get("serial").toString();
                             firmware = PayloadObj->get("firmware").toString();
                             std::cout << "Compatible: " << CapObj->get("compatible").toString() << std::endl;
+                            FMSObjects::Firmware    CurrentFirmware;
+                            FMSObjects::Firmware    LatestFirmware;
+                            if(Storage()->GetFirmwareByRevision(firmware,compatible,CurrentFirmware)) {
+                                LatestFirmwareCacheEntry    LE;
+                                if(LatestFirmwareCache()->FindLatestFirmware(compatible,LE)) {
+                                    Storage()->GetFirmware(LE.Id,LatestFirmware);
+                                    std::cout << "Firmware is " << LatestFirmware.imageDate - CurrentFirmware.imageDate << " seconds out of date" << std::endl;
+                                }
+                            }
                         }
                     }
                 }
