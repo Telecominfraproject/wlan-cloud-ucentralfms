@@ -20,6 +20,7 @@ namespace uCentral {
         SubMutexGuard G(Mutex_);
 
         RevisionSet_.insert(Revision);
+        RevisionSet_.insert(DeviceType);
         auto E = FirmwareCache_.find(DeviceType);
         if((E==FirmwareCache_.end()) || (TimeStamp > E->second.TimeStamp)) {
             FirmwareCache_[DeviceType] = LatestFirmwareCacheEntry{.Id=Id,
@@ -28,11 +29,12 @@ namespace uCentral {
         }
     }
 
+/*
     void LatestFirmwareCache::AddRevision(const std::string &Revision) {
         SubMutexGuard G(Mutex_);
         RevisionSet_.insert(Revision);
     }
-
+*/
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
         SubMutexGuard G(Mutex_);
 

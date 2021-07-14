@@ -30,8 +30,11 @@ namespace uCentral {
             bool IdOnly = GetBoolParameter("idOnly",false);
             bool RevisionSet = GetBoolParameter("revisionSet",false);
             bool LatestOnly = GetBoolParameter("latestOnly",false);
+            bool DeviceSet = GetBoolParameter("deviceSet",false);
 
-            std::cout << "I:" << IdOnly << " R:" << RevisionSet << " L:" << LatestOnly << std::endl;
+            if(DeviceSet) {
+
+            }
 
             if(RevisionSet) {
                 auto Revisions = LatestFirmwareCache()->GetRevisions();

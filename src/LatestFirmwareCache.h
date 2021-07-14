@@ -34,15 +34,17 @@ namespace uCentral {
         int Start() override;
         void Stop() override;
         void AddToCache(const std::string & DeviceType, const std::string & Revision, const std::string &Id, uint64_t TimeStamp);
-        void AddRevision(const std::string &Revision);
+        // void AddRevision(const std::string &Revision);
         bool FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry );
         void DumpCache();
         inline Types::StringSet GetRevisions() { SubMutexGuard G(Mutex_); return RevisionSet_; };
+        inline Types::StringSet GetDevices() { SubMutexGuard G(Mutex_); return DeviceSet_; };
 
     private:
         static LatestFirmwareCache 	*instance_;
         FirmwareCache               FirmwareCache_;
         Types::StringSet            RevisionSet_;
+        Types::StringSet            DeviceSet_;
         explicit LatestFirmwareCache() noexcept:
                 SubSystemServer("FirmwareCache", "FIRMWARE-CACHE", "FirmwareCache")
         {
