@@ -23,19 +23,17 @@ namespace uCentral {
         Running_ = true;
 
         while(Running_) {
-            Poco::Thread::trySleep(10000);
+            Poco::Thread::trySleep(DBRefresh_*1000);
             if(!Running_)
                 break;
-            std::cout << "About to read bucket..." << std::endl;
+            Logger_.information("Performing DB refresh");
             S3BucketContent BucketList;
             ReadBucket(BucketList);
             if(!Running_)
                 break;
-            std::cout << "Bucket read: " << BucketList.size() << std::endl;
+            Logger_.information(Poco::format("Found %Lu entries in S# repository for firmware.",(uint64_t)BucketList.size()));
             ComputeManifest(BucketList);
             AddManifestToDB(BucketList);
-            // LatestFirmwareCache()->DumpCache();
-            // Print(BucketList);
         }
     }
 
@@ -87,9 +85,8 @@ namespace uCentral {
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
                 if(Storage()->AddFirmware(F)) {
-                    std::cout << "Adding " << Release << std::endl;
+                    Logger_.information(Poco::format("Adding firmware '%'",Release));
                 } else {
-                    std::cout << "Could not add firmware..." << Release << std::endl;
                 }
             }
         }
@@ -102,6 +99,8 @@ namespace uCentral {
         S3Secret_ = Daemon()->ConfigGetString("s3.secret");
         S3Key_ = Daemon()->ConfigGetString("s3.key");
         S3Retry_ = Daemon()->ConfigGetInt("s3.retry",60);
+
+        DBRefresh_ = Daemon()->ConfigGetInt("firmwaredb.refresh",30*60);
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;
@@ -167,13 +166,9 @@ namespace uCentral {
         auto Outcome = S3Client.ListObjects(Request);
 
         if(Outcome.IsSuccess()) {
-//            std::cout << "Success..." << std::endl;
-//            std::cout << "Objects: ." ;
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
             for (const auto &Object : objects) {
                 Poco::Path  FileName(Object.GetKey().c_str());
-                // std::cout << "Object: " << Object.GetKey() << std::endl;
-//                std::cout << "." << std::flush;
                 if(!Running_)
                     return false;
                 if (FileName.getExtension() == "json") {

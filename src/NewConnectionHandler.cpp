@@ -33,7 +33,6 @@ namespace uCentral {
                 if(!Running_)
                     break;
 
-                std::cout << "New connection..." << std::endl;
                 Types::StringPair  S;
                 {
                     SubMutexGuard G(Mutex_);
@@ -41,22 +40,18 @@ namespace uCentral {
                     NewConnections_.pop();
                 }
                 auto SerialNumber = S.first;
-
-                std::cout << "Connection data:" << S.second << std::endl;
-
                 Poco::JSON::Parser  Parser;
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
+                std::string compatible, serialNumber, firmware;
                 if(Object->has("payload")) {
-                    std::cout << __LINE__ << std::endl;
                     auto PayloadObj = Object->getObject("payload");
-                    std::cout << __LINE__ << std::endl;
                     if(PayloadObj->has("capabilities")) {
-                        std::cout << __LINE__ << std::endl;
                         auto CapObj = PayloadObj->getObject("capabilities");
-                        std::cout << __LINE__ << std::endl;
                         if(CapObj->has("compatible")) {
-                            std::cout << __LINE__ << std::endl;
+                            compatible = CapObj->get("compatible").toString();
+                            serialNumber = PayloadObj->get("serial").toString();
+                            firmware = PayloadObj->get("firmware").toString();
                             std::cout << "Compatible: " << CapObj->get("compatible").toString() << std::endl;
                         }
                     }
@@ -87,6 +82,5 @@ namespace uCentral {
     void NewConnectionHandler::ConnectionReceived( const std::string & Key, const std::string & Message) {
         SubMutexGuard G(Mutex_);
         NewConnections_.push(std::make_pair(Key,Message));
-        std::cout << "New connection..." << std::endl;
     }
 }

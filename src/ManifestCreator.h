@@ -64,6 +64,7 @@ namespace uCentral {
         uint64_t                    S3Retry_;
         Aws::Client::ClientConfiguration    AwsConfig_{"ARILIA"};
         Aws::Auth::AWSCredentials           AwsCreds_;
+        uint64_t                     DBRefresh_ = 30 * 60;
 
         ManifestCreator() noexcept:
                 SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {

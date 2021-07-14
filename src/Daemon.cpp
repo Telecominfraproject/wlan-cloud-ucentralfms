@@ -24,6 +24,7 @@
 #include "KafkaManager.h"
 #include "NewConnectionHandler.h"
 #include "LatestFirmwareCache.h"
+#include "DeviceCache.h"
 
 namespace uCentral {
     class Daemon *Daemon::instance_ = nullptr;
@@ -37,6 +38,7 @@ namespace uCentral {
                                    vDAEMON_BUS_TIMER,
                                    Types::SubSystemVec{Storage(),
                                                        LatestFirmwareCache(),
+                                                       DeviceCache(),
                                                        NewConnectionHandler(),
                                                        RESTAPI_server(),
                                                        RESTAPI_InternalServer(),
