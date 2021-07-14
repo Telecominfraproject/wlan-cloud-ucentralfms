@@ -28,6 +28,7 @@ ucentral.internal.restapi.host.0.key.password = mypassword
 # Generic section that all microservices must have
 #
 ucentral.service.key = $UCENTRALFMS_ROOT/certs/restapi-key.pem
+ucentral.service.key.password = mypassword
 ucentral.system.data = $UCENTRALFMS_ROOT/data
 ucentral.system.debug = false
 ucentral.system.uri.private = https://localhost:17004

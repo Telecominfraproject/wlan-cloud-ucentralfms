@@ -28,6 +28,7 @@ ucentral.internal.restapi.host.0.key.password = mypassword
 # Generic section that all microservices must have
 #
 ucentral.service.key = $UCENTRALFMS_ROOT/certs/restapi-key.pem
+ucentral.service.key.password = mypassword
 ucentral.system.data = $UCENTRALFMS_ROOT/data
 ucentral.system.debug = false
 ucentral.system.uri.private = https://localhost:17004
@@ -45,7 +46,6 @@ s3.secret = ******************************************
 s3.key = ***************************
 s3.retry = 60
 s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
-manifestnotification.key = 61a50cb02a1fa4af5e89e8d556629e91bc2274b7e8bb8eaf4339e8c18d5931d4
 
 #############################
 # Generic information for all micro services
