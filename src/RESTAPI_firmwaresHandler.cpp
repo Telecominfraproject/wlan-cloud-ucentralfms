@@ -32,7 +32,7 @@ namespace uCentral {
             // special cases: if latestOnly and deviceType
             if(HasParameter("latestOnly") && HasParameter("deviceType")) {
                 std::cout << __LINE__ << std::endl;
-                bool LatestOnly = GetParameter("latestOnly",false);
+                bool LatestOnly = (GetParameter("latestOnly","false") == "true");
                 std::cout << __LINE__ << std::endl;
 
                 //  Let's find the ID of the latest
