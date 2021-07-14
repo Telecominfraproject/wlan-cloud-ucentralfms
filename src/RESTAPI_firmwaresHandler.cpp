@@ -11,7 +11,6 @@ namespace uCentral {
                                                  Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))
             return;
-
         if (!IsAuthorized(Request, Response))
             return;
 
@@ -27,9 +26,12 @@ namespace uCentral {
         try {
 
             InitQueryBlock();
-            auto DeviceType = GetParameter("deviceType","");
-            auto IdOnly = (GetParameter("idOnly","false")=="true");
-            auto RevisionSet = (GetParameter("revisionSet","false")=="true");
+            std::string DeviceType = GetParameter("deviceType","");
+            bool IdOnly = GetBoolParameter("idOnly",false);
+            bool RevisionSet = GetBoolParameter("revisionSet",false);
+            bool LatestOnly = GetBoolParameter("latestOnly",false);
+
+            std::cout << "I:" << IdOnly << " R:" << RevisionSet << " L:" << LatestOnly << std::endl;
 
             if(RevisionSet) {
                 auto Revisions = LatestFirmwareCache()->GetRevisions();
@@ -44,11 +46,8 @@ namespace uCentral {
             }
 
             // special cases: if latestOnly and deviceType
-            if(HasParameter("latestOnly") && HasParameter("deviceType")) {
-                bool LatestOnly = (GetParameter("latestOnly","false") == "true");
-
+            if(HasParameter("deviceType")) {
                 if(LatestOnly) {
-
                     LatestFirmwareCacheEntry    Entry;
                     if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {
                         NotFound(Request, Response);
