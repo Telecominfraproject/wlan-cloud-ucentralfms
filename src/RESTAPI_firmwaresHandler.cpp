@@ -27,10 +27,10 @@ namespace uCentral {
         try {
 
             InitQueryBlock();
+            auto DeviceType = GetParameter("deviceType","");
 
             // special cases: if latestOnly and deviceType
             if(HasParameter("latestOnly") && HasParameter("deviceType")) {
-                auto DeviceType = GetParameter("deviceType","");
                 bool LatestOnly = GetParameter("LatestOnly",false);
 
                 //  Let's find the ID of the latest
@@ -71,7 +71,6 @@ namespace uCentral {
             }
 
             std::vector<FMSObjects::Firmware> List;
-            std::string DeviceType;
             if (Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
 
                 Poco::JSON::Array ObjectArray;
