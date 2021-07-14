@@ -206,13 +206,13 @@ namespace uCentral {
                         It->second.S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
                         It->second.S3Size = Object.GetSize();
                         It->second.S3Name = ReleaseName;
-                        It->second.URI = URIBase + ReleaseName;
+                        It->second.URI = URIBase + "/" + ReleaseName;
                     } else {
                         Bucket.emplace(Release, S3BucketEntry{
                                 .S3Name = ReleaseName,
                                 .S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000),
                                 .S3Size = (uint64_t ) Object.GetSize(),
-                                .URI = URIBase + ReleaseName });
+                                .URI = URIBase + "/" + ReleaseName });
                     }
                 } else {
                     // std::cout << "Ignoring " << FileName.getFileName() << std::endl;
