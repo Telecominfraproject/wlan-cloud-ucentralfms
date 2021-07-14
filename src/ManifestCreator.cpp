@@ -21,11 +21,13 @@ namespace uCentral {
 
     void ManifestCreator::run() {
         Running_ = true;
+        bool FirstRun = true;
 
         while(Running_) {
-            Poco::Thread::trySleep(DBRefresh_*1000);
+            Poco::Thread::trySleep(FirstRun ? 10000 : DBRefresh_*1000);
             if(!Running_)
                 break;
+            FirstRun = false;
             Logger_.information("Performing DB refresh");
             S3BucketContent BucketList;
             ReadBucket(BucketList);
