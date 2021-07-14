@@ -127,7 +127,7 @@ latestfirmware() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
-    jq < ${result_file}
+    jq < ${result_file}cd ../
 }
 
 help() {
