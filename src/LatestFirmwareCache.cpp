@@ -20,7 +20,7 @@ namespace uCentral {
         SubMutexGuard G(Mutex_);
 
         RevisionSet_.insert(Revision);
-        RevisionSet_.insert(DeviceType);
+        DeviceSet_.insert(DeviceType);
         auto E = FirmwareCache_.find(DeviceType);
         if((E==FirmwareCache_.end()) || (TimeStamp > E->second.TimeStamp)) {
             FirmwareCache_[DeviceType] = LatestFirmwareCacheEntry{.Id=Id,
