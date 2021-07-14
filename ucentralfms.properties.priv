@@ -40,8 +40,8 @@ ucentral.system.commandchannel = /tmp/app.ucentralfms
 #
 s3.bucketname = ucentral-ap-firmware
 s3.region = us-east-1
-s3.secret = Sm/k+Z2GcnSPoWCZFdriVI2/n/oTD9BHjmqsf5qC
-s3.key = AKIATXEXGKF33GKONVVX
+s3.secret = ****************************
+s3.key = **************************
 s3.retry = 60
 s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
 
