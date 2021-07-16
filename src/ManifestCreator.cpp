@@ -43,6 +43,7 @@ namespace uCentral {
 
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
+
             try {
                 Poco::JSON::Parser  P;
                 auto ParsedContent = P.parse(Entry.S3ContentManifest).extract<Poco::JSON::Object::Ptr>();
@@ -59,7 +60,6 @@ namespace uCentral {
                     auto FullNme = Name + "-upgrade.bin";
                     if(FullNme!=Entry.Image) {
                         Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
-                        std::cout << "Error: Name=" << Name << " Image:" << Entry.Image << std::endl;
                         Entry.Valid = false;
                         continue;
                     }
@@ -180,7 +180,10 @@ namespace uCentral {
                 if (FileName.getExtension() == "json") {
                     std::string Release = FileName.getBaseName();
                     std::string Content;
+
                     if (GetBucketObjectContent(S3Client, FileName.getFileName(), Content)) {
+                        // std::cout << "Object: " << FileName.getFileName() << std::endl;
+                        // std::cout << "Content: " << Content << std::endl;
                         Poco::JSON::Parser P;
                         auto ParsedContent = P.parse(Content).extract<Poco::JSON::Object::Ptr>();
                         if (ParsedContent->has("image") &&
@@ -188,37 +191,44 @@ namespace uCentral {
                             ParsedContent->has("revision") &&
                             ParsedContent->has("timestamp")) {
                             auto It = Bucket.find(Release);
+                            uint64_t TimeStamp = ParsedContent->get("timestamp");
+                            auto Compatible = ParsedContent->get("compatible").toString();
+                            auto Revision = ParsedContent->get("revision").toString();
+                            auto Image = ParsedContent->get("image").toString();
                             if (It != Bucket.end()) {
-                                It->second.Timestamp = ParsedContent->get("timestamp");
-                                It->second.Compatible = ParsedContent->get("compatible").toString();
-                                It->second.Revision = ParsedContent->get("revision").toString();
-                                It->second.Image = ParsedContent->get("image").toString();
+                                It->second.Timestamp = TimeStamp;
+                                It->second.Compatible = Compatible;
+                                It->second.Revision = Revision;
+                                It->second.Image = Image;
                                 It->second.S3ContentManifest = Content;
                             } else {
                                 Bucket.emplace(Release, S3BucketEntry{
                                         .S3ContentManifest = Content,
-                                        .Revision = ParsedContent->get("revision").toString(),
-                                        .Image = ParsedContent->get("image").toString(),
-                                        .Compatible = ParsedContent->get("compatible").toString(),
-                                        .Timestamp = ParsedContent->get("timestamp")});
+                                        .Revision = Revision,
+                                        .Image = Image,
+                                        .Compatible = Compatible,
+                                        .Timestamp = TimeStamp});
                             }
                         }
                     }
                 } else if (FileName.getExtension() == "bin") {
-                    const auto & ReleaseName = FileName.getFileName();
-                    std::string Release = FileName.getBaseName();
+                    //  we must remove -upgrade, so
+                    const auto & ReleaseName = FileName.getBaseName().substr(0,FileName.getBaseName().size()-8);
                     auto It = Bucket.find(ReleaseName);
+                    auto S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
+                    uint64_t S3Size = Object.GetSize();
+                    std::string URI = URIBase + "/" + ReleaseName;
                     if(It != Bucket.end()) {
-                        It->second.S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
-                        It->second.S3Size = Object.GetSize();
+                        It->second.S3TimeStamp = S3TimeStamp;
+                        It->second.S3Size = S3Size;
                         It->second.S3Name = ReleaseName;
-                        It->second.URI = URIBase + "/" + ReleaseName;
+                        It->second.URI = URI;
                     } else {
-                        Bucket.emplace(Release, S3BucketEntry{
+                        Bucket.emplace(ReleaseName, S3BucketEntry{
                                 .S3Name = ReleaseName,
-                                .S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000),
-                                .S3Size = (uint64_t ) Object.GetSize(),
-                                .URI = URIBase + "/" + ReleaseName });
+                                .S3TimeStamp = S3TimeStamp,
+                                .S3Size = S3Size,
+                                .URI = URI });
                     }
                 } else {
                     // std::cout << "Ignoring " << FileName.getFileName() << std::endl;

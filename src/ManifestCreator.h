@@ -54,9 +54,6 @@ namespace uCentral {
         static ManifestCreator      *instance_;
         Poco::Thread                Worker_;
         std::atomic_bool            Running_ = false;
-        std::atomic_bool            Updated_ = false;
-        std::string                 CurrentManifest_;
-        uint64_t                    ManifestVersion_=0;
         Aws::String                 S3BucketName_;
         Aws::String                 S3Region_;
         Aws::String                 S3Key_;
