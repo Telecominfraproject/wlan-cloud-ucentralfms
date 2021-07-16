@@ -37,25 +37,20 @@ namespace uCentral {
                 return;
             }
 
-            DBGLINE
             FMSObjects::FirmwareAgeDetails  FA;
             if(Storage()->ComputeFirmwareAge(DeviceType, Revision,FA)) {
                 Poco::JSON::Object  Answer;
-                DBGLINE
 
                 FA.to_json(Answer);
                 ReturnObject(Request, Answer, Response);
                 return;
             } else {
-                DBGLINE
                 NotFound(Request, Response);
             }
             return;
         } catch (const Poco::Exception &E) {
-            DBGLINE
             Logger_.log(E);
         }
-        DBGLINE
         BadRequest(Request, Response);
     }
 }

@@ -91,7 +91,7 @@ namespace uCentral {
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
                 if(Storage()->AddFirmware(F)) {
-                    Logger_.information(Poco::format("Adding firmware '%'",Release));
+                    Logger_.information(Poco::format("Adding firmware '%s'",Release));
                 } else {
                 }
             }
@@ -217,7 +217,7 @@ namespace uCentral {
                     auto It = Bucket.find(ReleaseName);
                     auto S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
                     uint64_t S3Size = Object.GetSize();
-                    std::string URI = URIBase + "/" + ReleaseName;
+                    std::string URI = URIBase + "/" + FileName.getFileName();
                     if(It != Bucket.end()) {
                         It->second.S3TimeStamp = S3TimeStamp;
                         It->second.S3Size = S3Size;
