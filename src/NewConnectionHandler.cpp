@@ -45,26 +45,19 @@ namespace uCentral {
                 Poco::JSON::Parser  Parser;
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
-                std::string compatible, serialNumber, firmware;
+                std::string DeviceType, Serial, Revision;
                 if(Object->has("payload")) {
                     auto PayloadObj = Object->getObject("payload");
                     if(PayloadObj->has("capabilities")) {
                         auto CapObj = PayloadObj->getObject("capabilities");
                         if(CapObj->has("compatible")) {
-                            compatible = CapObj->get("compatible").toString();
-                            serialNumber = PayloadObj->get("serial").toString();
-                            firmware = PayloadObj->get("firmware").toString();
-                            std::cout << "Compatible: " << CapObj->get("compatible").toString() << " Revision:" << firmware << std::endl;
-
-                            FMSObjects::Firmware    CurrentFirmware;
-                            FMSObjects::Firmware    LatestFirmware;
-                            if(Storage()->GetFirmwareByRevision(firmware,compatible,CurrentFirmware)) {
-                                std::cout << "Found your revision..." << std::endl;
-                                LatestFirmwareCacheEntry    LE;
-                                if(LatestFirmwareCache()->FindLatestFirmware(compatible,LE)) {
-                                    Storage()->GetFirmware(LE.Id,LatestFirmware);
-                                    std::cout << "Firmware is " << LatestFirmware.imageDate - CurrentFirmware.imageDate << " seconds out of date" << std::endl;
-                                }
+                            DeviceType = CapObj->get("compatible").toString();
+                            Serial = PayloadObj->get("serial").toString();
+                            Revision = PayloadObj->get("firmware").toString();
+                            std::cout << "Compatible: " << DeviceType << " Revision:" << Revision << std::endl;
+                            FMSObjects::FirmwareAgeDetails  FA;
+                            if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
+                                Logger_.information(Poco::format("Device %s connection. Firmware is %Lu seconds old (0=unknown)",SerialNumber, FA.age));
                             }
                         }
                     }

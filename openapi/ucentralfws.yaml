@@ -155,6 +155,27 @@ components:
           items:
             $ref: '#/components/schemas/RevisionHistoryEntry'
 
+
+    FirmwareAgeDetails:
+      type: object
+      properties:
+        latestId:
+          type: string
+        image:
+          type: string
+        imageDate:
+          type: integer
+          format: uint64
+        revision:
+          type: string
+        uri:
+          type: string
+          format: uri
+        age:
+          type: integer
+          format: int64
+          example: this is in seconds. a 0 means we cannot determine the age. something like 'unknown' should be shown to the user.
+
     #########################################################################################
     ##
     ## These are endpoints that all services in the uCentral stack must provide
@@ -437,6 +458,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RevisionHistoryEntryList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /firmwareAge:
+    get:
+      tags:
+        - Firmware
+      summary: Calculate how old a version of firmware is.
+      operationId: getFirmwareAge
+      parameters:
+        - in: query
+          description: The exact current verion of the firmware on that device.
+          name: revision
+          schema:
+            type: string
+          required: true
+        - in: query
+          description: The exact current verion of the firmware on that device.
+          name: deviceType
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: The recommended latest version to update to.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirmwareAgeDetails'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:

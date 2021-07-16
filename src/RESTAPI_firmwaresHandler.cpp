@@ -57,7 +57,7 @@ namespace uCentral {
             }
 
             // special cases: if latestOnly and deviceType
-            if(HasParameter("deviceType")) {
+            if(!DeviceType.empty()) {
                 if(LatestOnly) {
                     LatestFirmwareCacheEntry    Entry;
                     if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {

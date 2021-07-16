@@ -8,6 +8,7 @@
 #include "RESTAPI_utils.h"
 #include "LatestFirmwareCache.h"
 #include "Daemon.h"
+#include <limits>
 
 namespace uCentral {
 
@@ -295,6 +296,35 @@ namespace uCentral {
             Logger_.log(E);
         }
     }
+
+    bool Storage::ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails) {
+        try {
+            FMSObjects::Firmware    CurrentFirmware;
+            FMSObjects::Firmware    LatestFirmware;
+            bool CurrentFirmwareExists = false;
+            if(GetFirmwareByRevision(Revision,DeviceType,CurrentFirmware)) {
+                CurrentFirmwareExists = true;
+            }
+
+            LatestFirmwareCacheEntry    LE;
+            if(LatestFirmwareCache()->FindLatestFirmware(DeviceType,LE)) {
+                GetFirmware(LE.Id,LatestFirmware);
+            }
+
+            AgeDetails.imageDate = LatestFirmware.imageDate;
+            AgeDetails.uri = LatestFirmware.uri;
+            AgeDetails.image = LatestFirmware.image;
+            AgeDetails.revision = LatestFirmware.revision;
+            AgeDetails.latestId = LatestFirmware.id;
+            AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
+            return true;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+
+        return false;
+    }
+
 
 }
 

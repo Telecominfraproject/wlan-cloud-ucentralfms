@@ -19,6 +19,7 @@
 
 #include "Poco/Logger.h"
 #include "Poco/File.h"
+#include "Poco/TemporaryFile.h"
 #include "Poco/JSON/Object.h"
 #include "Poco/CountingStream.h"
 #include "Poco/NullStream.h"
@@ -118,7 +119,6 @@ namespace uCentral {
 		uint64_t GetParameter(const std::string &Name, uint64_t Default);
 		std::string GetParameter(const std::string &Name, const std::string &Default);
 		bool GetBoolParameter(const std::string &Name, bool Default);
-		bool HasParameter(const std::string &name);
 
 		void BadRequest(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response, const std::string &Reason = "");
 		void UnAuthorized(Poco::Net::HTTPServerRequest &Request,
@@ -137,6 +137,7 @@ namespace uCentral {
                               Poco::Net::HTTPServerRequest &Request,
                               Poco::Net::HTTPServerResponse &Response ,
                               const Types::StringPairVec & FormVars);
+        void SendFile(Poco::TemporaryFile &TempAvatar, const std::string &Type, const std::string & Name, Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response);
 
         void SendFile(Poco::File & File, Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response);
 

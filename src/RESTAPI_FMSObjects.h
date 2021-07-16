@@ -87,6 +87,18 @@ namespace uCentral::FMSObjects {
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };
 
+    struct FirmwareAgeDetails {
+        std::string latestId;
+        std::string image;
+        uint64_t imageDate;
+        std::string revision;
+        std::string uri;
+        uint64_t age=0;
+
+        void to_json(Poco::JSON::Object &Obj) const;
+        bool from_json(const Poco::JSON::Object::Ptr &Obj);
+    };
+
 }
 
 

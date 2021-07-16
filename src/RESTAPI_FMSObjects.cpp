@@ -159,4 +159,30 @@ namespace uCentral::FMSObjects {
         }
         return false;
     }
+
+    void FirmwareAgeDetails::to_json(Poco::JSON::Object &Obj) const {
+        field_to_json(Obj,"latestId", latestId);
+        field_to_json(Obj,"image", image);
+        field_to_json(Obj,"imageDate", imageDate);
+        field_to_json(Obj,"revision", revision);
+        field_to_json(Obj,"uri", uri);
+        field_to_json(Obj,"age", age);
+    }
+
+    bool FirmwareAgeDetails::from_json(const Poco::JSON::Object::Ptr &Obj) {
+        try {
+            field_from_json(Obj,"latestId", latestId);
+            field_from_json(Obj,"image", image);
+            field_from_json(Obj,"imageDate", imageDate);
+            field_from_json(Obj,"revision", revision);
+            field_from_json(Obj,"uri", uri);
+            field_from_json(Obj,"age", age);
+            return true;
+        } catch(...) {
+
+        }
+        return false;
+    }
+
+
 }

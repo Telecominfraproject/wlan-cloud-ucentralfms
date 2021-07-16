@@ -57,6 +57,8 @@ namespace uCentral {
         bool GetFirmwareByRevision(std::string & Revision, std::string &DeviceType,FMSObjects::Firmware & C );
         uint64_t FirmwareVersion();
 
+        bool ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails);
+
         bool GetHistory(std::string &SerialNumber,uint64_t From, uint64_t HowMany,FMSObjects::RevisionHistoryEntryVec &History);
         bool AddHistory(FMSObjects::RevisionHistoryEntry &History);
 
