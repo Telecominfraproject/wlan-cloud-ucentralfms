@@ -145,9 +145,9 @@ devicetypes() {
 }
 
 firmwareage() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -G -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwareAge?deviceType=$1&revision=${2}" > ${result_file}
+        "https://${UCENTRALFMS}/api/v1/firmwareAge" --data-urlencode "deviceType=$1" --data-urlencode "revision=$2" > ${result_file}
     jq < ${result_file}
 }
 

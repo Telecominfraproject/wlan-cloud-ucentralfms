@@ -31,9 +31,6 @@ namespace uCentral {
             auto DeviceType = GetParameter("deviceType","");
             auto Revision = GetParameter("revision","");
 
-            std::cout << "DeviceType: " << DeviceType << std::endl;
-            std::cout << "Revision: " << Revision << std::endl;
-
             if (DeviceType.empty() || Revision.empty()) {
                 BadRequest(Request, Response, "Both deviceType and revision must be set.");
                 return;
