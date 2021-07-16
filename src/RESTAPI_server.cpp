@@ -60,6 +60,8 @@ namespace uCentral {
         auto *Path = uri.getPath().c_str();
         RESTAPIHandler::BindingMap Bindings;
 
+        std::cout << "Path: " << Path << std::endl;
+
         return RESTAPI_Router<
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
