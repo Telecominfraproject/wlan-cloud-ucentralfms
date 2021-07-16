@@ -24,7 +24,6 @@
 #ifndef SMALL_BUILD
 #include "Poco/Data/PostgreSQL/Connector.h"
 #include "Poco/Data/MySQL/Connector.h"
-#include "Poco/Data/ODBC/Connector.h"
 #endif
 
 namespace uCentral {
@@ -35,8 +34,7 @@ namespace uCentral {
         enum StorageType {
             sqlite,
             pgsql,
-            mysql,
-            odbc
+            mysql
         };
 
         Storage() noexcept;
@@ -79,7 +77,6 @@ namespace uCentral {
 #ifndef SMALL_BUILD
         int 	Setup_MySQL();
         int 	Setup_PostgreSQL();
-        int 	Setup_ODBC();
 #endif
 
 	  private:
@@ -90,7 +87,6 @@ namespace uCentral {
 #ifndef SMALL_BUILD
         std::unique_ptr<Poco::Data::PostgreSQL::Connector>  PostgresConn_= nullptr;
         std::unique_ptr<Poco::Data::MySQL::Connector>       MySQLConn_= nullptr;
-        std::unique_ptr<Poco::Data::ODBC::Connector>        ODBCConn_= nullptr;
 #endif
 
    };

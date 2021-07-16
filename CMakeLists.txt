@@ -43,8 +43,7 @@ else()
     find_package(CppKafka REQUIRED)
     find_package(PostgreSQL REQUIRED)
     find_package(MySQL REQUIRED)
-    find_package(ODBC REQUIRED)
-    find_package(Poco REQUIRED COMPONENTS JSON Crypto JWT Net Util NetSSL Data DataSQLite DataPostgreSQL DataMySQL DataODBC)
+    find_package(Poco REQUIRED COMPONENTS JSON Crypto JWT Net Util NetSSL Data DataSQLite DataPostgreSQL DataMySQL)
 endif()
 
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka /usr/local/opt/mysql-client/include)
@@ -57,7 +56,7 @@ add_executable( ucentralfms
                 src/SubSystemServer.cpp src/SubSystemServer.h
                 src/RESTAPI_handler.cpp src/RESTAPI_handler.h
                 src/storage_firmwares.cpp
-                src/storage_mysql.cpp src/storage_pgql.cpp src/storage_odbc.cpp
+                src/storage_mysql.cpp src/storage_pgql.cpp
                 src/Utils.cpp src/Utils.h
                 src/RESTAPI_server.cpp src/RESTAPI_server.h
                 src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h
@@ -79,7 +78,7 @@ add_executable( ucentralfms
 
 target_link_libraries(ucentralfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
-        ${ODBC_LIBRARIES} ${Boost_LIBRARIES}
+        ${Boost_LIBRARIES}
         ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES}
         CppKafka::cppkafka )
 
