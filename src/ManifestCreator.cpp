@@ -42,6 +42,7 @@ namespace uCentral {
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
         for(auto &[Name,Entry]:BucketContent) {
+            std::string C = Entry.S3ContentManifest;
             try {
                 Poco::JSON::Parser  P;
                 auto ParsedContent = P.parse(Entry.S3ContentManifest).extract<Poco::JSON::Object::Ptr>();
@@ -67,6 +68,7 @@ namespace uCentral {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
                 }
             } catch (const Poco::Exception  &E ) {
+                std::cout << "Exception parsing: " << C << std::endl;
                 Logger_.log(E);
             }
         }
