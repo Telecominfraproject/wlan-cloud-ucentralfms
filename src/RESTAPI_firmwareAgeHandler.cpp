@@ -7,6 +7,7 @@
 #include "StorageService.h"
 #include "Poco/JSON/Parser.h"
 #include "Daemon.h"
+#include "Utils.h"
 
 namespace uCentral {
     void RESTAPI_firmwareAgeHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -30,25 +31,31 @@ namespace uCentral {
             auto DeviceType = GetParameter("deviceType","");
             auto Revision = GetParameter("revision","");
 
+            std::cout << "Revision: " << Revision << std::endl;
             if (DeviceType.empty() || Revision.empty()) {
                 BadRequest(Request, Response, "Both deviceType and revision must be set.");
                 return;
             }
 
+            DBGLINE
             FMSObjects::FirmwareAgeDetails  FA;
             if(Storage()->ComputeFirmwareAge(DeviceType, Revision,FA)) {
                 Poco::JSON::Object  Answer;
+                DBGLINE
 
                 FA.to_json(Answer);
                 ReturnObject(Request, Answer, Response);
                 return;
             } else {
+                DBGLINE
                 NotFound(Request, Response);
             }
             return;
         } catch (const Poco::Exception &E) {
+            DBGLINE
             Logger_.log(E);
         }
+        DBGLINE
         BadRequest(Request, Response);
     }
 }
