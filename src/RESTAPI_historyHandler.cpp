@@ -18,6 +18,7 @@ namespace uCentral {
             return;
         if (!IsAuthorized(Request, Response))
             return;
+        std::cout << __LINE__ << std::endl;
         ParseParameters(Request);
         if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
             DoGet(Request, Response);
@@ -30,12 +31,16 @@ namespace uCentral {
     void
     RESTAPI_historyHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
         try {
+            std::cout << __LINE__ << std::endl;
             auto SerialNumber = GetBinding("serialNumber", "");
+            std::cout << __LINE__ << std::endl;
 
             if (!SerialNumber.empty()) {
+                std::cout << __LINE__ << std::endl;
                 FMSObjects::RevisionHistoryEntryVec H;
                 InitQueryBlock();
                 if (Storage()->GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
+                    std::cout << __LINE__ << std::endl;
                     Poco::JSON::Array A;
                     for (auto const &i:H) {
                         Poco::JSON::Object O;
@@ -50,7 +55,9 @@ namespace uCentral {
                 }
                 return;
             }
+            std::cout << __LINE__ << std::endl;
         } catch (const Poco::Exception &E) {
+            std::cout << __LINE__ << std::endl;
             Logger_.log(E);
         }
         BadRequest(Request, Response);
