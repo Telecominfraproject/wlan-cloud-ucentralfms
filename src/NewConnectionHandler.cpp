@@ -57,7 +57,10 @@ namespace uCentral {
                             std::cout << "Compatible: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
-                                Logger_.information(Poco::format("Device %s connection. Firmware is %Lu seconds old (0=unknown)",SerialNumber, FA.age));
+                                if(FA.age)
+                                    Logger_.information(Poco::format("Device %s connection. Firmware is %Lu seconds older than latest",SerialNumber, FA.age));
+                                else
+                                    Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
                             }
                         }
                     }

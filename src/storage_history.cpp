@@ -5,6 +5,7 @@
 #include "StorageService.h"
 #include "storage_history.h"
 #include "RESTAPI_FMSObjects.h"
+#include "Daemon.h"
 
 namespace uCentral {
 /*
@@ -87,6 +88,14 @@ namespace uCentral {
         return false;
     }
 
-
+    bool Storage::AddHistory( std::string & SerialNumber, std::string & PreviousRevision, std::string & NewVersion) {
+            FMSObjects::RevisionHistoryEntry    History{
+                .id = Daemon()->CreateUUID(),
+                .serialNumber = SerialNumber,
+                .fromRelease = PreviousRevision,
+                .toRelease = NewVersion,
+                .upgraded = (uint64_t)std::time(nullptr)};
+            return AddHistory(History);
+    }
 
 }

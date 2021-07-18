@@ -99,6 +99,16 @@ namespace uCentral::FMSObjects {
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };
 
+    struct DeviceInformation {
+        std::string serialNumber;
+        std::string revision;
+        std::string deviceType;
+        std::string endPoint;
+        uint64_t    lastUpdate;
+        void to_json(Poco::JSON::Object &Obj) const;
+        bool from_json(const Poco::JSON::Object::Ptr &Obj);
+    };
+
 }
 
 

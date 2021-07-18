@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(ucentralfms VERSION 0.0.1)
+project(ucentralfms VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -74,7 +74,7 @@ add_executable( ucentralfms
                 src/RESTAPI_utils.cpp src/RESTAPI_utils.h
                 src/RESTAPI_FMSObjects.cpp src/RESTAPI_FMSObjects.h
                 src/storage_firmwares.h src/storage_history.cpp
-                src/storage_history.h src/storage_deviceTypes.cpp src/storage_deviceTypes.h src/RESTAPI_historyHandler.cpp src/RESTAPI_historyHandler.h src/NewConnectionHandler.cpp src/NewConnectionHandler.h src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h src/DeviceCache.cpp src/DeviceCache.h src/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI_firmwareAgeHandler.h)
+                src/storage_history.h src/storage_deviceTypes.cpp src/storage_deviceTypes.h src/RESTAPI_historyHandler.cpp src/RESTAPI_historyHandler.h src/NewConnectionHandler.cpp src/NewConnectionHandler.h src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h src/DeviceCache.cpp src/DeviceCache.h src/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI_firmwareAgeHandler.h src/storage_deviceInfo.cpp src/storage_deviceInfo.h)
 
 target_link_libraries(ucentralfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

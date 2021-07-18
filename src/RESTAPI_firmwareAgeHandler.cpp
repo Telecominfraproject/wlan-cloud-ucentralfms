@@ -14,10 +14,8 @@ namespace uCentral {
                                                 Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))
             return;
-
         if (!IsAuthorized(Request, Response))
             return;
-
         ParseParameters(Request);
         if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
             DoGet(Request, Response);

@@ -33,7 +33,7 @@ namespace uCentral {
             ReadBucket(BucketList);
             if(!Running_)
                 break;
-            Logger_.information(Poco::format("Found %Lu entries in S# repository for firmware.",(uint64_t)BucketList.size()));
+            Logger_.information(Poco::format("Found %Lu firmware entries in S3 repository.",(uint64_t)BucketList.size()));
             ComputeManifest(BucketList);
             AddManifestToDB(BucketList);
         }
