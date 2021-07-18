@@ -130,7 +130,7 @@ namespace uCentral {
             Poco::Data::Statement   Select(Sess);
 
             DevicesRecordList   Records;
-            std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + "where serialNumber=?"};
+            std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " where serialNumber=?"};
             Select <<   ConvertParams(St) ,
                     Poco::Data::Keywords::into(Records),
                     Poco::Data::Keywords::use(SerialNumber);
