@@ -10,6 +10,7 @@
 #include "Poco/JSON/Parser.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
+#include "Utils.h"
 
 /*
 
@@ -68,7 +69,7 @@ namespace uCentral {
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                 Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                 if(FA.age)
-                                    Logger_.information(Poco::format("Device %s connection. Firmware is %Lu seconds older than latest",SerialNumber, FA.age));
+                                    Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                 else
                                     Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
                             }

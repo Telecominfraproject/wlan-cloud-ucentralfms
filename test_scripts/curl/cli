@@ -152,21 +152,21 @@ firmwareage() {
 }
 
 gethistory() {
-    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/revisionHistory/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevice() {
-    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/connectedDevice/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevices() {
-    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/connectedDevices" > ${result_file}
     jq < ${result_file}
