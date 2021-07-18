@@ -42,7 +42,7 @@ namespace uCentral {
             try {
                 Poco::Data::Statement   Select(Sess);
 
-                std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + "where serialNumber=?"};
+                std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " where serialNumber=?"};
                 Select <<   ConvertParams(St) ,
                             Poco::Data::Keywords::into(Records),
                             Poco::Data::Keywords::use(SerialNumber);
@@ -79,7 +79,7 @@ namespace uCentral {
                 uint64_t Now = (uint64_t)std::time(nullptr);
 
                 std::cout << "Updating device: " << SerialNumber << std::endl;
-                std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=? " + "where serialNumber=?"};
+                std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=? " + " where serialNumber=?"};
                 Update <<   ConvertParams(st) ,
                             Poco::Data::Keywords::use(Revision),
                             Poco::Data::Keywords::use(Now),
@@ -136,16 +136,11 @@ namespace uCentral {
                     Poco::Data::Keywords::use(SerialNumber);
             Select.execute();
 
-            std::cout << "GetDevice: " << SerialNumber << std::endl;
             if(!Records.empty()) {
-                std::cout << "GetDevice found: " << SerialNumber << std::endl;
                 Convert(Records[0],Device);
                 return true;
             }
-            std::cout << "GetDevice not found: " << SerialNumber << std::endl;
-
         } catch (const Poco::Exception &E) {
-            std::cout << "GetDevice: " << SerialNumber << "W:" << E.what() << std::endl;
             Logger_.log(E);
         }
         return false;
