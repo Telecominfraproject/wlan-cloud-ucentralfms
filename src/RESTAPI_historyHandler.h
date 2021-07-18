@@ -17,7 +17,7 @@ namespace uCentral {
                                          {Poco::Net::HTTPRequest::HTTP_GET,
                                           Poco::Net::HTTPRequest::HTTP_DELETE,
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
-        static const std::list<const char *> PathName() { return std::list<const char *>{"/revisionHistory/{serialNumber}"};}
+        static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/revisionHistory/{serialNumber}"};}
         void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
         void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
         void DoDelete(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
