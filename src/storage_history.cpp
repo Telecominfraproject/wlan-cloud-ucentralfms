@@ -75,6 +75,7 @@ namespace uCentral {
             std::string st{"INSERT INTO " + DBNAME_HISTORY + " (" + DBFIELDS_HISTORY_SELECT +
                     " ) values(?,?,?,?,?,?,?)" };
 
+            std::cout << "Adding history for " << History.serialNumber << std::endl;
             HistoryRecordList   RL;
             HistoryRecord       R;
             Convert(History, R);
