@@ -70,7 +70,7 @@ namespace uCentral {
                 RESTAPI_system_command,
                 RESTAPI_firmwareAgeHandler,
                 RESTAPI_connectedDevicesHandler,
-                RESTAPI_connectedDevicesHandler
+                RESTAPI_connectedDeviceHandler
                 >(Path,Bindings,Logger_);
     }
 
