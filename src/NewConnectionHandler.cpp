@@ -63,7 +63,7 @@ namespace uCentral {
                             DeviceType = CapObj->get("compatible").toString();
                             Serial = PayloadObj->get("serial").toString();
                             Revision = PayloadObj->get("firmware").toString();
-                            std::cout << "Compatible: " << DeviceType << " Revision:" << Revision << std::endl;
+                            std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                 Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
