@@ -46,6 +46,15 @@ namespace uCentral {
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
                 std::string DeviceType, Serial, Revision;
+
+                std::string EndPoint;
+
+                if(Object->has("system")) {
+                    auto SystemObj = Object->getObject("system");
+                    if(SystemObj->has("host"))
+                        EndPoint = SystemObj->get("host").toString();
+                }
+
                 if(Object->has("payload")) {
                     auto PayloadObj = Object->getObject("payload");
                     if(PayloadObj->has("capabilities")) {
@@ -57,6 +66,7 @@ namespace uCentral {
                             std::cout << "Compatible: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
+                                Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                 if(FA.age)
                                     Logger_.information(Poco::format("Device %s connection. Firmware is %Lu seconds older than latest",SerialNumber, FA.age));
                                 else

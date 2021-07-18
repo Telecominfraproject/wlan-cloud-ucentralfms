@@ -59,6 +59,7 @@ namespace uCentral {
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
                                ") VALUES(?,?,?,?,?)"};
+                std::cout << "Adding device: " << SerialNumber << std::endl;
                 FMSObjects::DeviceConnectionInformation   DI{
                         .serialNumber = SerialNumber,
                         .revision = Revision,
@@ -77,6 +78,7 @@ namespace uCentral {
                 Poco::Data::Statement   Update(Sess);
                 uint64_t Now = (uint64_t)std::time(nullptr);
 
+                std::cout << "Updating device: " << SerialNumber << std::endl;
                 std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=? " + "where serialNumber=?"};
                 Update <<   ConvertParams(st) ,
                             Poco::Data::Keywords::use(Revision),

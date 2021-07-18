@@ -158,14 +158,14 @@ gethistory() {
     jq < ${result_file}
 }
 
-connectedDevice() {
+connecteddevice() {
     curl  ${FLAGS} -G -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/connectedDevice/$1" > ${result_file}
     jq < ${result_file}
 }
 
-connectedDevices() {
+connecteddevices() {
     curl  ${FLAGS} -G -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
         "https://${UCENTRALFMS}/api/v1/connectedDevices" > ${result_file}
@@ -186,6 +186,8 @@ case "$1" in
     "devicetypes") login; devicetypes; logout ;;
     "firmwareage") login; firmwareage "$2" "$3"; logout ;;
     "gethistory") login; gethistory "$2"; logout ;;
+    "connecteddevices") login; connecteddevices ; logout ;;
+    "connecteddevice") login; connecteddevice "$2" ; logout ;;
 
     *) help ;;
 esac
