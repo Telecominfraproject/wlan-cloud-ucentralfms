@@ -88,7 +88,7 @@ namespace uCentral {
                 Update.execute();
 
                 if(PreviousVersion!=Revision)
-                    AddHistory(SerialNumber, PreviousVersion, Revision);
+                    AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
             }
             return true;
         } catch (const Poco::Exception &E) {

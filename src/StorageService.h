@@ -69,7 +69,7 @@ namespace uCentral {
 
         bool    SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
 
-        bool AddHistory( std::string & SerialNumber, std::string & PreviousRevision, std::string & NewVersion);
+        bool AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion);
         bool DeleteHistory( std::string & SerialNumber, std::string &Id);
 
         bool GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices);

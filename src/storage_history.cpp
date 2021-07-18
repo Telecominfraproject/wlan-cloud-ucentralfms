@@ -91,13 +91,21 @@ namespace uCentral {
         return false;
     }
 
-    bool Storage::AddHistory( std::string & SerialNumber, std::string & PreviousRevision, std::string & NewVersion) {
+    bool Storage::AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion) {
             FMSObjects::RevisionHistoryEntry    History{
                 .id = Daemon()->CreateUUID(),
                 .serialNumber = SerialNumber,
                 .fromRelease = PreviousRevision,
                 .toRelease = NewVersion,
                 .upgraded = (uint64_t)std::time(nullptr)};
+
+            FMSObjects::Firmware    F;
+            if(GetFirmwareByRevision(NewVersion,DeviceType,F)) {
+                History.revisionId = F.id;
+            } else {
+                History.revisionId = "unknown";
+            }
+
             return AddHistory(History);
     }
 
