@@ -9,6 +9,8 @@
 #include "RESTAPI_firmwareHandler.h"
 #include "RESTAPI_firmwaresHandler.h"
 #include "RESTAPI_system_command.h"
+#include "RESTAPI_connectedDevicesHandler.h"
+#include "RESTAPI_connectedDeviceHandler.h"
 
 #include "Utils.h"
 
@@ -64,7 +66,9 @@ namespace uCentral {
         return RESTAPI_Router<
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
-                RESTAPI_system_command
+                RESTAPI_system_command,
+                RESTAPI_connectedDevicesHandler,
+                RESTAPI_connectedDeviceHandler
         >(Path, Bindings, Logger_);
     }
 

@@ -12,6 +12,8 @@
 #include "RESTAPI_firmwaresHandler.h"
 #include "RESTAPI_system_command.h"
 #include "RESTAPI_firmwareAgeHandler.h"
+#include "RESTAPI_connectedDeviceHandler.h"
+#include "RESTAPI_connectedDevicesHandler.h"
 
 namespace uCentral {
 
@@ -66,7 +68,9 @@ namespace uCentral {
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
                 RESTAPI_system_command,
-                RESTAPI_firmwareAgeHandler
+                RESTAPI_firmwareAgeHandler,
+                RESTAPI_connectedDevicesHandler,
+                RESTAPI_connectedDevicesHandler
                 >(Path,Bindings,Logger_);
     }
 
