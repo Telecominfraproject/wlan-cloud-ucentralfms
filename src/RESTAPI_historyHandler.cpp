@@ -21,6 +21,8 @@ namespace uCentral {
         ParseParameters(Request);
         if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
             DoGet(Request, Response);
+        else if(Request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE)
+            DoDelete(Request, Response);
         else
             BadRequest(Request, Response);
     }
@@ -48,6 +50,27 @@ namespace uCentral {
                 }
                 return;
             }
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        BadRequest(Request, Response);
+    }
+
+    void RESTAPI_historyHandler::DoDelete(Poco::Net::HTTPServerRequest &Request,
+                                          Poco::Net::HTTPServerResponse &Response) {
+        try {
+            auto SerialNumber = GetBinding("serialNumber", "");
+            auto Id = GetParameter("id", "");
+            if (SerialNumber.empty() || Id.empty()) {
+                BadRequest(Request, Response, "SerialNumber and Id must not be empty.");
+                return;
+            }
+
+            if (!Storage()->DeleteHistory(SerialNumber, Id)) {
+                OK(Request, Response);
+                return;
+            }
+            NotFound(Request, Response);
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }

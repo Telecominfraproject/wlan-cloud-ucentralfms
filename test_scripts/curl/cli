@@ -151,6 +151,27 @@ firmwareage() {
     jq < ${result_file}
 }
 
+gethistory() {
+    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        "https://${UCENTRALFMS}/api/v1/revisionHistory/$1" > ${result_file}
+    jq < ${result_file}
+}
+
+connectedDevice() {
+    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        "https://${UCENTRALFMS}/api/v1/connectedDevice/$1" > ${result_file}
+    jq < ${result_file}
+}
+
+connectedDevices() {
+    curl  ${FLAGS} -G -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        "https://${UCENTRALFMS}/api/v1/connectedDevices" > ${result_file}
+    jq < ${result_file}
+}
+
 help() {
   echo
   echo
@@ -164,6 +185,8 @@ case "$1" in
     "revisions") login; revisions; logout ;;
     "devicetypes") login; devicetypes; logout ;;
     "firmwareage") login; firmwareage "$2" "$3"; logout ;;
+    "gethistory") login; gethistory "$2"; logout ;;
+
     *) help ;;
 esac
 

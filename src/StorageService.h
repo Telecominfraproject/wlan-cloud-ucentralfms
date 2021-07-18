@@ -20,6 +20,7 @@
 #include "storage_firmwares.h"
 #include "storage_history.h"
 #include "storage_deviceTypes.h"
+#include "storage_deviceInfo.h"
 
 #ifndef SMALL_BUILD
 #include "Poco/Data/PostgreSQL/Connector.h"
@@ -43,7 +44,7 @@ namespace uCentral {
         int Create_Firmwares();
         int Create_History();
         int Create_DeviceTypes();
-        int Create_LatestFirmwareList();
+        int Create_DeviceInfo();
 
         bool AddFirmware(FMSObjects::Firmware & F);
         bool UpdateFirmware(std::string & UUID, FMSObjects::Firmware & C);
@@ -54,7 +55,6 @@ namespace uCentral {
         bool GetFirmwareByName(std::string & Release, std::string &DeviceType,FMSObjects::Firmware & C );
         bool GetFirmwareByRevision(std::string & Revision, std::string &DeviceType,FMSObjects::Firmware & C );
         uint64_t FirmwareVersion();
-
         bool ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails);
 
         bool GetHistory(std::string &SerialNumber,uint64_t From, uint64_t HowMany,FMSObjects::RevisionHistoryEntryVec &History);
@@ -66,6 +66,14 @@ namespace uCentral {
         void 	Stop() override;
         int 	Setup_SQLite();
         [[nodiscard]] std::string ConvertParams(const std::string &S) const;
+
+        bool    SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
+
+        bool AddHistory( std::string & SerialNumber, std::string & PreviousRevision, std::string & NewVersion);
+        bool DeleteHistory( std::string & SerialNumber, std::string &Id);
+
+        bool GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices);
+        bool GetDevice(std::string &SerialNumber, FMSObjects::DeviceConnectionInformation & Device);
 
         static Storage *instance() {
             if (instance_ == nullptr) {

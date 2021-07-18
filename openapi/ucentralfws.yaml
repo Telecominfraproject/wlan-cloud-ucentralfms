@@ -176,6 +176,30 @@ components:
           format: int64
           example: this is in seconds. a 0 means we cannot determine the age. something like 'unknown' should be shown to the user.
 
+    DeviceConnectionInformation:
+      type: object
+      properties:
+        serialNumber:
+          type: string
+        revision:
+          type: string
+        deviceType:
+          type: string
+        endPoint:
+          type: string
+          format: uri
+        lastUpdate:
+          type: integer
+          format: uint64
+
+    DeviceConnectionInformationList:
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceConnectionInformation'
+
     #########################################################################################
     ##
     ## These are endpoints that all services in the uCentral stack must provide
@@ -463,6 +487,36 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+    delete:
+      tags:
+        - RevisionHistory
+      summary: Delete specific hostory elements for a device
+      operationId: deleteRevisionHistory
+      parameters:
+        - in: path
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        200:
+          description: Success.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/responses/Success'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
   /firmwareAge:
     get:
       tags:
@@ -493,6 +547,69 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
+
+  /connectedDevices:
+    get:
+      tags:
+        - ConnectedDevices
+      summary: Get a list of connected devices and some values.
+      operationId: getConnectedDevices
+      parameters:
+        - in: query
+          description: Pagination start (starts at 1. If not specified, 1 is assumed)
+          name: offset
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Maximum number of entries to return (if absent, no limit is assumed)
+          name: limit
+          schema:
+            type: integer
+          required: false
+        - in: query
+          description: Filter the results
+          name: filter
+          schema:
+            type: string
+          required: false
+      responses:
+        200:
+          description: List firmwares
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceConnectionInformationList'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  /connectedDevice/{serialNumber}:
+    get:
+      tags:
+        - ConnectedDevices
+      summary: Get status of a connected device.
+      operationId: getConnectedDevice
+      parameters:
+        - in: path
+          description: SerialNumber of the device
+          name: serialNumber
+          schema:
+            type: string
+          required: true
+      responses:
+        200:
+          description: Get information about a connected device.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceConnectionInformation'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
 
   #########################################################################################
   ##

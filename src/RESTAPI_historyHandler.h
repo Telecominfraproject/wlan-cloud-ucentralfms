@@ -15,10 +15,12 @@ namespace uCentral {
                 : RESTAPIHandler(bindings, L,
                                  std::vector<std::string>
                                          {Poco::Net::HTTPRequest::HTTP_GET,
+                                          Poco::Net::HTTPRequest::HTTP_DELETE,
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
         static const std::list<const char *> PathName() { return std::list<const char *>{"/revisionHistory/{serialNumber}"};}
         void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
         void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
+        void DoDelete(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
     };
 }
 

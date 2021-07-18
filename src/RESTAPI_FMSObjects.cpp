@@ -184,7 +184,7 @@ namespace uCentral::FMSObjects {
         return false;
     }
 
-    void DeviceInformation::to_json(Poco::JSON::Object &Obj) const {
+    void DeviceConnectionInformation::to_json(Poco::JSON::Object &Obj) const {
         field_to_json(Obj, "serialNumber", serialNumber);
         field_to_json(Obj, "revision", revision);
         field_to_json(Obj, "deviceType", deviceType);
@@ -192,7 +192,7 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "lastUpdate", lastUpdate);
     }
 
-    bool DeviceInformation::from_json(const Poco::JSON::Object::Ptr &Obj) {
+    bool DeviceConnectionInformation::from_json(const Poco::JSON::Object::Ptr &Obj) {
         try {
             field_from_json(Obj, "serialNumber", serialNumber);
             field_from_json(Obj, "revision", revision);

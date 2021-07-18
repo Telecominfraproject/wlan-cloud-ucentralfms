@@ -62,7 +62,7 @@ namespace uCentral {
             }
             return true;
         } catch(const Poco::Exception &E) {
-
+            Logger_.log(E);
         }
         return false;
     }
@@ -75,15 +75,17 @@ namespace uCentral {
             std::string st{"INSERT INTO " + DBNAME_HISTORY + " (" + DBFIELDS_HISTORY_SELECT +
                     " ) values(?,?,?,?,?,?,?)" };
 
-            HistoryRecordList R{ HistoryRecord{}};
-            Convert(History, R[0]);
+            HistoryRecordList   RL;
+            HistoryRecord       R;
+            Convert(History, R);
+            RL.push_back(R);
 
-            Insert << ConvertParams(st),
-                    Poco::Data::Keywords::use(R);
+            Insert <<   ConvertParams(st),
+                        Poco::Data::Keywords::use(RL);
             Insert.execute();
             return true;
         } catch(const Poco::Exception &E) {
-
+            Logger_.log(E);
         }
         return false;
     }
@@ -97,5 +99,24 @@ namespace uCentral {
                 .upgraded = (uint64_t)std::time(nullptr)};
             return AddHistory(History);
     }
+
+    bool Storage::DeleteHistory( std::string & SerialNumber, std::string &Id) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Delete(Sess);
+
+            std::string st{"DELETE FROM " + DBNAME_HISTORY + " where id=? and serialnumber=?"};
+
+            Delete <<   ConvertParams(st),
+                        Poco::Data::Keywords::use(Id),
+                        Poco::Data::Keywords::use(SerialNumber);
+            Delete.execute();
+            return true;
+        } catch(const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
 
 }
