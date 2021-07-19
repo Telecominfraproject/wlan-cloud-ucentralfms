@@ -9,7 +9,8 @@
             "revision=?, "
             "deviceType=?, "
             "endPoint=?, "
-            "lastUpdate=? "
+            "lastUpdate=?, "
+            "status=?
  */
 namespace uCentral {
 
@@ -19,6 +20,7 @@ namespace uCentral {
         F.deviceType = T.get<2>();
         F.endPoint = T.get<3>();
         F.lastUpdate = T.get<4>();
+        F.status = T.get<5>();
         return true;
     }
 
@@ -28,6 +30,7 @@ namespace uCentral {
         T.set<2>(F.deviceType);
         T.set<3>(F.endPoint);
         T.set<4>(F.lastUpdate);
+        T.set<5>(F.status);
         return true;
     }
 
@@ -58,14 +61,15 @@ namespace uCentral {
             if(!DeviceExists) {
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
-                               ") VALUES(?,?,?,?,?)"};
+                               ") VALUES(?,?,?,?,?,?)"};
                 Logger_.information(Poco::format("New device '%s' connected", SerialNumber));
                 FMSObjects::DeviceConnectionInformation   DI{
                         .serialNumber = SerialNumber,
                         .revision = Revision,
                         .deviceType = DeviceType,
                         .endPoint = EndPoint,
-                        .lastUpdate = (uint64_t)std::time(nullptr)};
+                        .lastUpdate = (uint64_t)std::time(nullptr),
+                        .status = "connected"};
 
                 DevicesRecordList   InsertRecords;
                 DevicesRecord       R;
@@ -79,11 +83,12 @@ namespace uCentral {
                 uint64_t Now = (uint64_t)std::time(nullptr);
 
                 // std::cout << "Updating device: " << SerialNumber << std::endl;
-                std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=? " + " where serialNumber=?"};
+                std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
                 Update <<   ConvertParams(st) ,
                             Poco::Data::Keywords::use(Revision),
                             Poco::Data::Keywords::use(Now),
                             Poco::Data::Keywords::use(EndPoint),
+                            "connected",
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
 
@@ -97,6 +102,27 @@ namespace uCentral {
         return false;
 
     }
+
+    bool Storage::SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Update(Sess);
+            uint64_t Now = (uint64_t)std::time(nullptr);
+
+            // std::cout << "Updating device: " << SerialNumber << std::endl;
+            std::string st{"UPDATE " + DBNAME_DEVICES + " set lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
+            Update <<   ConvertParams(st) ,
+                    Poco::Data::Keywords::use(Now),
+                    Poco::Data::Keywords::use(EndPoint),
+                    "disconnected",
+                    Poco::Data::Keywords::use(SerialNumber);
+            Update.execute();
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
 
     bool Storage::GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices) {
         try {

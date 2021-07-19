@@ -190,6 +190,7 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "deviceType", deviceType);
         field_to_json(Obj, "endPoint", endPoint);
         field_to_json(Obj, "lastUpdate", lastUpdate);
+        field_to_json(Obj, "status", status);
     }
 
     bool DeviceConnectionInformation::from_json(const Poco::JSON::Object::Ptr &Obj) {
@@ -199,6 +200,7 @@ namespace uCentral::FMSObjects {
             field_from_json(Obj, "deviceType", deviceType);
             field_from_json(Obj, "endPoint", endPoint);
             field_from_json(Obj, "lastUpdate", lastUpdate);
+            field_from_json(Obj, "status", status);
             return true;
         } catch(...) {
 

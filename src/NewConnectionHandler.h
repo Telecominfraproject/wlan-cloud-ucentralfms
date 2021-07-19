@@ -32,7 +32,8 @@ namespace uCentral {
         static NewConnectionHandler      *instance_;
         Poco::Thread                Worker_;
         std::atomic_bool            Running_ = false;
-        int                         WatcherId_=0;
+        int                         ConnectionWatcherId_=0;
+        int                         HealthcheckWatcherId_=0;
         Types::StringPairQueue      NewConnections_;
 
         NewConnectionHandler() noexcept:

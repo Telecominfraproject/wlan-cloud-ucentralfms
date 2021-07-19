@@ -191,6 +191,12 @@ components:
         lastUpdate:
           type: integer
           format: uint64
+        status:
+          type: string
+          enum:
+            - connected
+            - disconnected
+            - unknown
 
     DeviceConnectionInformationList:
       type: object

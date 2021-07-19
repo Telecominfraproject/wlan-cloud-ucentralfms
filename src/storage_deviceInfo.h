@@ -15,7 +15,8 @@ namespace uCentral {
             "revision           varchar, "
             "deviceType         varchar, "
             "endPoint           varchar, "
-            "lastUpdate         bigint "
+            "lastUpdate         bigint, "
+            "status             varchar "
     };
 
     static const std::string DBFIELDS_DEVICES_SELECT{
@@ -24,6 +25,7 @@ namespace uCentral {
             "deviceType, "
             "endPoint, "
             "lastUpdate "
+            "status "
     };
 
     static const std::string DBFIELDS_DEVICES_UPDATE {
@@ -31,7 +33,8 @@ namespace uCentral {
             "revision=?, "
             "deviceType=?, "
             "endPoint=?, "
-            "lastUpdate=? "
+            "lastUpdate=?, "
+            "status=? "
     };
 
     typedef Poco::Tuple<
@@ -39,7 +42,8 @@ namespace uCentral {
             std::string,
             std::string,
             std::string,
-            uint64_t> DevicesRecord;
+            uint64_t,
+            std::string> DevicesRecord;
     typedef std::vector<DevicesRecord> DevicesRecordList;
 
 }

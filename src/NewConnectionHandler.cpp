@@ -11,6 +11,7 @@
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
 #include "Utils.h"
+#include "uCentralProtocol.h"
 
 /*
 
@@ -50,20 +51,20 @@ namespace uCentral {
 
                 std::string EndPoint;
 
-                if(Object->has("system")) {
-                    auto SystemObj = Object->getObject("system");
-                    if(SystemObj->has("host"))
-                        EndPoint = SystemObj->get("host").toString();
+                if(Object->has(uCentralProtocol::SYSTEM)) {
+                    auto SystemObj = Object->getObject(uCentralProtocol::SYSTEM);
+                    if(SystemObj->has(uCentralProtocol::HOST))
+                        EndPoint = SystemObj->get(uCentralProtocol::HOST).toString();
                 }
 
-                if(Object->has("payload")) {
-                    auto PayloadObj = Object->getObject("payload");
-                    if(PayloadObj->has("capabilities")) {
-                        auto CapObj = PayloadObj->getObject("capabilities");
-                        if(CapObj->has("compatible")) {
-                            DeviceType = CapObj->get("compatible").toString();
-                            Serial = PayloadObj->get("serial").toString();
-                            Revision = PayloadObj->get("firmware").toString();
+                if(Object->has(uCentralProtocol::PAYLOAD)) {
+                    auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
+                    if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
+                        auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
+                        if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
+                            DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
+                            Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
+                            Revision = PayloadObj->get(uCentralProtocol::FIRMWARE).toString();
                             std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
@@ -74,6 +75,23 @@ namespace uCentral {
                                     Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
                             }
                         }
+                    } else if(PayloadObj->has(uCentralProtocol::DISCONNECTION)) {
+                        auto DisconnectMessage = PayloadObj->getObject(uCentralProtocol::DISCONNECTION);
+                        if(DisconnectMessage->has(uCentralProtocol::SERIAL) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
+                            auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
+                            auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
+                            Storage()->SetDeviceDisconnected(SNum,EndPoint);
+                        }
+                    } else if(PayloadObj->has(uCentralProtocol::PING)) {
+                        auto PingMessage = PayloadObj->getObject(uCentralProtocol::PING);
+                        if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
+                            PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
+                            PingMessage->has(uCentralProtocol::COMPATIBLE)) {
+                            auto Revision = PingMessage->get(uCentralProtocol::FIRMWARE).toString();
+                            auto SerialNUmber = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
+                            auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
+                            Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
+                        }
                     }
                 }
             }
@@ -82,13 +100,15 @@ namespace uCentral {
 
     int NewConnectionHandler::Start() {
         Types::TopicNotifyFunction F = [this](std::string s1,std::string s2) { this->ConnectionReceived(s1,s2); };
-        WatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::CONNECTION, F);
+        ConnectionWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::CONNECTION, F);
+        HealthcheckWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::HEALTHCHECK, F);
         Worker_.start(*this);
         return 0;
     };
 
     void NewConnectionHandler::Stop() {
-        KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, WatcherId_);
+        KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, ConnectionWatcherId_);
+        KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, HealthcheckWatcherId_);
         Running_ = false;
         Worker_.wakeUp();
         Worker_.join();

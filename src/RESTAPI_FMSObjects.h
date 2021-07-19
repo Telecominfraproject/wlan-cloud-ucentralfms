@@ -105,6 +105,7 @@ namespace uCentral::FMSObjects {
         std::string deviceType;
         std::string endPoint;
         uint64_t    lastUpdate;
+        std::string status;
         void to_json(Poco::JSON::Object &Obj) const;
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };

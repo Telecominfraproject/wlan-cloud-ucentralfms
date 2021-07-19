@@ -74,6 +74,7 @@ namespace uCentral {
 
         bool GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices);
         bool GetDevice(std::string &SerialNumber, FMSObjects::DeviceConnectionInformation & Device);
+        bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
 
         static Storage *instance() {
             if (instance_ == nullptr) {
