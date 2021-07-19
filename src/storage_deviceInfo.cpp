@@ -58,6 +58,8 @@ namespace uCentral {
 
             }
 
+            std::string Status{"connected"};
+
             if(!DeviceExists) {
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
@@ -69,7 +71,7 @@ namespace uCentral {
                         .deviceType = DeviceType,
                         .endPoint = EndPoint,
                         .lastUpdate = (uint64_t)std::time(nullptr),
-                        .status = "connected"};
+                        .status = Status};
 
                 DevicesRecordList   InsertRecords;
                 DevicesRecord       R;
@@ -88,7 +90,7 @@ namespace uCentral {
                             Poco::Data::Keywords::use(Revision),
                             Poco::Data::Keywords::use(Now),
                             Poco::Data::Keywords::use(EndPoint),
-                            "connected",
+                            Status,
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
 
@@ -97,6 +99,7 @@ namespace uCentral {
             }
             return true;
         } catch (const Poco::Exception &E) {
+
             Logger_.log(E);
         }
         return false;
@@ -109,12 +112,14 @@ namespace uCentral {
             Poco::Data::Statement   Update(Sess);
             uint64_t Now = (uint64_t)std::time(nullptr);
 
+            std::string Status{"disconnected"};
+
             // std::cout << "Updating device: " << SerialNumber << std::endl;
             std::string st{"UPDATE " + DBNAME_DEVICES + " set lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
             Update <<   ConvertParams(st) ,
                     Poco::Data::Keywords::use(Now),
                     Poco::Data::Keywords::use(EndPoint),
-                    "disconnected",
+                    Status,
                     Poco::Data::Keywords::use(SerialNumber);
             Update.execute();
         } catch (const Poco::Exception &E) {
@@ -129,13 +134,16 @@ namespace uCentral {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
+            std::cout << "Devices..." << std::endl;
             DevicesRecordList   Records;
 
             std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES};
+            std::cout << "Devices..." << std::endl;
             Select <<   ConvertParams(St) ,
                     Poco::Data::Keywords::into(Records),
                     Poco::Data::Keywords::range(From, From + HowMany);
             Select.execute();
+            std::cout << "Devices..." << std::endl;
 
             for(const auto &i:Records) {
                 FMSObjects::DeviceConnectionInformation DI;
@@ -145,6 +153,7 @@ namespace uCentral {
 
             return true;
         } catch (const Poco::Exception &E) {
+            std::cout << "Devices..." << E.what() << " " << E.name() << std::endl;
             Logger_.log(E);
         }
         return false;
