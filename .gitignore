@@ -17,5 +17,6 @@ _deps
 *.p7b
 *.zip
 result.json
+pidfile
 
 
