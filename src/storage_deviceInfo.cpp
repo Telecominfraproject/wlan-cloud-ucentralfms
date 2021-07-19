@@ -132,6 +132,7 @@ namespace uCentral {
             uint64_t Now = (uint64_t)std::time(nullptr);
 
             std::string Status{"disconnected"};
+            DBGLINE
 
             // std::cout << "Updating device: " << SerialNumber << std::endl;
             std::string st{"UPDATE " + DBNAME_DEVICES + " set lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
@@ -153,20 +154,21 @@ namespace uCentral {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::cout << "Devices..." << std::endl;
+            DBGLINE
             DevicesRecordList   Records;
 
             std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES};
-            std::cout << "Devices..." << std::endl;
+            DBGLINE
             Select <<   ConvertParams(St) ,
                     Poco::Data::Keywords::into(Records),
                     Poco::Data::Keywords::range(From, From + HowMany);
             Select.execute();
-            std::cout << "Devices..." << std::endl;
+            DBGLINE
 
             for(const auto &i:Records) {
                 FMSObjects::DeviceConnectionInformation DI;
                 Convert(i,DI);
+                DBGLINE
                 Devices.push_back(DI);
             }
 
