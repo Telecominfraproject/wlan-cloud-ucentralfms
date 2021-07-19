@@ -39,43 +39,33 @@ namespace uCentral {
     bool Storage::SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint) {
         try {
             Poco::Data::Session     Sess = Pool_->get();
-            Poco::Data::Statement   Insert(Sess);
 
             DevicesRecordList   Records;
             std::string         PreviousVersion;
             bool                DeviceExists=false;
-            DBGLINE
             try {
                 Poco::Data::Statement   Select(Sess);
-                DBGLINE
 
                 std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " where serialNumber=?"};
                 Select <<   ConvertParams(St) ,
                             Poco::Data::Keywords::into(Records),
                             Poco::Data::Keywords::use(SerialNumber);
                 Select.execute();
-                DBGLINE
                 if(!Records.empty()) {
-                    DBGLINE
                     PreviousVersion = Records[0].get<1>();
                     DeviceExists = true;
-                    DBGLINE
                 }
             } catch (const Poco::Exception &E) {
-                DBGLINE
 
             }
 
             std::string Status{"connected"};
-            DBGLINE
 
             if(!DeviceExists) {
-                DBGLINE
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
                                ") VALUES(?,?,?,?,?,?)"};
                 Logger_.information(Poco::format("New device '%s' connected", SerialNumber));
-                DBGLINE
                 FMSObjects::DeviceConnectionInformation   DI{
                         .serialNumber = SerialNumber,
                         .revision = Revision,
@@ -83,7 +73,7 @@ namespace uCentral {
                         .endPoint = EndPoint,
                         .lastUpdate = (uint64_t)std::time(nullptr),
                         .status = Status};
-                DBGLINE
+                Poco::Data::Statement   Insert(Sess);
 
                 DevicesRecordList   InsertRecords;
                 DevicesRecord       R;
@@ -92,13 +82,10 @@ namespace uCentral {
                 Insert  <<  ConvertParams(st),
                         Poco::Data::Keywords::use(InsertRecords);
                 Insert.execute();
-                DBGLINE
             } else {
-                DBGLINE
                 Poco::Data::Statement   Update(Sess);
                 uint64_t Now = (uint64_t)std::time(nullptr);
 
-                DBGLINE
                 // std::cout << "Updating device: " << SerialNumber << std::endl;
                 std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
                 Update <<   ConvertParams(st) ,
@@ -108,17 +95,13 @@ namespace uCentral {
                             Status,
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
-                DBGLINE
 
                 if(PreviousVersion!=Revision) {
                     AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
-                    DBGLINE
                 }
             }
-            DBGLINE
             return true;
         } catch (const Poco::Exception &E) {
-            DBGLINE
             Logger_.log(E);
         }
         return false;
@@ -132,7 +115,6 @@ namespace uCentral {
             uint64_t Now = (uint64_t)std::time(nullptr);
 
             std::string Status{"disconnected"};
-            DBGLINE
 
             // std::cout << "Updating device: " << SerialNumber << std::endl;
             std::string st{"UPDATE " + DBNAME_DEVICES + " set lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
@@ -154,21 +136,17 @@ namespace uCentral {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            DBGLINE
             DevicesRecordList   Records;
 
             std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES};
-            DBGLINE
             Select <<   ConvertParams(St) ,
                     Poco::Data::Keywords::into(Records),
                     Poco::Data::Keywords::range(From, From + HowMany);
             Select.execute();
-            DBGLINE
 
             for(const auto &i:Records) {
                 FMSObjects::DeviceConnectionInformation DI;
                 Convert(i,DI);
-                DBGLINE
                 Devices.push_back(DI);
             }
 

@@ -24,7 +24,7 @@ namespace uCentral {
             "revision, "
             "deviceType, "
             "endPoint, "
-            "lastUpdate "
+            "lastUpdate, "
             "status "
     };
 
