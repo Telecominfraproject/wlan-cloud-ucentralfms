@@ -47,8 +47,6 @@ namespace uCentral {
                 Poco::JSON::Parser  Parser;
                 auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
-                std::string DeviceType, Serial, Revision;
-
                 std::string EndPoint;
 
                 if(Object->has(uCentralProtocol::SYSTEM)) {
@@ -58,8 +56,10 @@ namespace uCentral {
                 }
 
                 if(Object->has(uCentralProtocol::PAYLOAD)) {
+                    std::string DeviceType, Serial, Revision;
                     auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
                     if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
+                        std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
                         auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
                         if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
                             DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
@@ -81,8 +81,10 @@ namespace uCentral {
                             auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
                             auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
                             Storage()->SetDeviceDisconnected(SNum,EndPoint);
+                            std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
                         }
                     } else if(PayloadObj->has(uCentralProtocol::PING)) {
+                        std::cout << "PING:" << SerialNumber << std::endl;
                         auto PingMessage = PayloadObj->getObject(uCentralProtocol::PING);
                         if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
@@ -101,14 +103,14 @@ namespace uCentral {
     int NewConnectionHandler::Start() {
         Types::TopicNotifyFunction F = [this](std::string s1,std::string s2) { this->ConnectionReceived(s1,s2); };
         ConnectionWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::CONNECTION, F);
-        HealthcheckWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::HEALTHCHECK, F);
+//        HealthcheckWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::HEALTHCHECK, F);
         Worker_.start(*this);
         return 0;
     };
 
     void NewConnectionHandler::Stop() {
         KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, ConnectionWatcherId_);
-        KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, HealthcheckWatcherId_);
+//        KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, HealthcheckWatcherId_);
         Running_ = false;
         Worker_.wakeUp();
         Worker_.join();
