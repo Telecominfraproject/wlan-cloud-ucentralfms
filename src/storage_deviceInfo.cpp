@@ -4,6 +4,8 @@
 
 #include "storage_deviceInfo.h"
 #include "StorageService.h"
+#include "Utils.h"
+
 /*
             "serialNumber=?, "
             "revision=?, "
@@ -42,29 +44,38 @@ namespace uCentral {
             DevicesRecordList   Records;
             std::string         PreviousVersion;
             bool                DeviceExists=false;
+            DBGLINE
             try {
                 Poco::Data::Statement   Select(Sess);
+                DBGLINE
 
                 std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " where serialNumber=?"};
                 Select <<   ConvertParams(St) ,
                             Poco::Data::Keywords::into(Records),
                             Poco::Data::Keywords::use(SerialNumber);
                 Select.execute();
+                DBGLINE
                 if(!Records.empty()) {
+                    DBGLINE
                     PreviousVersion = Records[0].get<1>();
                     DeviceExists = true;
+                    DBGLINE
                 }
             } catch (const Poco::Exception &E) {
+                DBGLINE
 
             }
 
             std::string Status{"connected"};
+            DBGLINE
 
             if(!DeviceExists) {
+                DBGLINE
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
                                ") VALUES(?,?,?,?,?,?)"};
                 Logger_.information(Poco::format("New device '%s' connected", SerialNumber));
+                DBGLINE
                 FMSObjects::DeviceConnectionInformation   DI{
                         .serialNumber = SerialNumber,
                         .revision = Revision,
@@ -72,6 +83,7 @@ namespace uCentral {
                         .endPoint = EndPoint,
                         .lastUpdate = (uint64_t)std::time(nullptr),
                         .status = Status};
+                DBGLINE
 
                 DevicesRecordList   InsertRecords;
                 DevicesRecord       R;
@@ -80,10 +92,13 @@ namespace uCentral {
                 Insert  <<  ConvertParams(st),
                         Poco::Data::Keywords::use(InsertRecords);
                 Insert.execute();
+                DBGLINE
             } else {
+                DBGLINE
                 Poco::Data::Statement   Update(Sess);
                 uint64_t Now = (uint64_t)std::time(nullptr);
 
+                DBGLINE
                 // std::cout << "Updating device: " << SerialNumber << std::endl;
                 std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
                 Update <<   ConvertParams(st) ,
@@ -93,13 +108,17 @@ namespace uCentral {
                             Status,
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
+                DBGLINE
 
-                if(PreviousVersion!=Revision)
+                if(PreviousVersion!=Revision) {
                     AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
+                    DBGLINE
+                }
             }
+            DBGLINE
             return true;
         } catch (const Poco::Exception &E) {
-
+            DBGLINE
             Logger_.log(E);
         }
         return false;
