@@ -63,7 +63,7 @@ namespace uCentral {
         const auto &Path = uri.getPath();
         RESTAPIHandler::BindingMap Bindings;
 
-        return RESTAPI_Router<
+        return RESTAPI_Router_I<
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
                 RESTAPI_system_command,

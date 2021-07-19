@@ -10,14 +10,15 @@
 namespace uCentral {
     class RESTAPI_firmwareHandler : public RESTAPIHandler {
     public:
-        RESTAPI_firmwareHandler(const RESTAPIHandler::BindingMap &bindings, Poco::Logger &L)
+        RESTAPI_firmwareHandler(const RESTAPIHandler::BindingMap &bindings, Poco::Logger &L, bool Internal)
                 : RESTAPIHandler(bindings, L,
                                  std::vector<std::string>
                                          {Poco::Net::HTTPRequest::HTTP_GET,
                                           Poco::Net::HTTPRequest::HTTP_POST,
                                           Poco::Net::HTTPRequest::HTTP_PUT,
                                           Poco::Net::HTTPRequest::HTTP_DELETE,
-                                          Poco::Net::HTTPRequest::HTTP_OPTIONS}) {}
+                                          Poco::Net::HTTPRequest::HTTP_OPTIONS},
+                                          Internal) {}
         static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/firmware/{id}"};}
         void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
         void DoPost(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);

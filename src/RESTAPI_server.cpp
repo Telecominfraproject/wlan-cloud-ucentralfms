@@ -65,7 +65,7 @@ namespace uCentral {
 
         // std::cout << "Path: " << Request.getURI() << std::endl;
 
-        return RESTAPI_Router<
+        return  RESTAPI_Router<
                 RESTAPI_firmwaresHandler,
                 RESTAPI_firmwareHandler,
                 RESTAPI_system_command,
