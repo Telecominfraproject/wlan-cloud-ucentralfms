@@ -77,14 +77,14 @@ namespace uCentral {
                         }
                     } else if(PayloadObj->has(uCentralProtocol::DISCONNECTION)) {
                         auto DisconnectMessage = PayloadObj->getObject(uCentralProtocol::DISCONNECTION);
-                        if(DisconnectMessage->has(uCentralProtocol::SERIAL) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
+                        if(DisconnectMessage->has(uCentralProtocol::SERIALNUMBER) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
                             auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
                             auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
                             Storage()->SetDeviceDisconnected(SNum,EndPoint);
                             std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
                         }
                     } else if(PayloadObj->has(uCentralProtocol::PING)) {
-                        std::cout << "PING:" << SerialNumber << std::endl;
+                        // std::cout << "PING:" << SerialNumber << std::endl;
                         auto PingMessage = PayloadObj->getObject(uCentralProtocol::PING);
                         if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
