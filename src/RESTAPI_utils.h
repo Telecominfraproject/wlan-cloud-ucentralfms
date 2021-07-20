@@ -8,6 +8,7 @@
 
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
+#include "Poco/Net/HTTPServerRequest.h"
 #include "uCentralTypes.h"
 #include "Utils.h"
 
@@ -203,6 +204,13 @@ namespace uCentral::RESTAPI_utils {
 
 		return Result;
 	}
+
+    template<class T> bool from_request(T & Obj, Poco::Net::HTTPServerRequest &Request) {
+        Poco::JSON::Parser IncomingParser;
+        auto RawObject = IncomingParser.parse(Request.stream()).extract<Poco::JSON::Object::Ptr>();
+        Obj.from_json(RawObject);
+        return true;
+    }
 }
 
 #endif // UCENTRALGW_RESTAPI_UTILS_H
