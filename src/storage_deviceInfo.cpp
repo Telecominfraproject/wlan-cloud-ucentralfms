@@ -220,8 +220,10 @@ namespace uCentral {
                         Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
                     }
                 }
-                if(LatestFirmwareCache()->IsLatest(DeviceType, Revision))
-                    Types::UpdateCountedMap(Report.UsingLatest_,Revision);
+                if(LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
+                    std::cout << "Device using latest..." << std::endl;
+                    Types::UpdateCountedMap(Report.UsingLatest_, Revision);
+                }
                 More = RSet.moveNext();
             }
             return true;
