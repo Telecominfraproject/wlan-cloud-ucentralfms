@@ -27,7 +27,6 @@ namespace uCentral {
 
             if(Storage()->GenerateDeviceReport(R)) {
                 Poco::JSON::Object  O;
-
                 R.to_json(O);
                 ReturnObject(Request, O, Response);
                 return;

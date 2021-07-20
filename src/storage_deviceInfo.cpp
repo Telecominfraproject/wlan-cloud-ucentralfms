@@ -196,6 +196,8 @@ namespace uCentral {
             Poco::Data::Statement   Select(Sess);
 
             Select << "SELECT " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES;
+            Select.execute();
+
             Poco::Data::RecordSet   RSet(Select);
 
             bool More = RSet.moveFirst();
