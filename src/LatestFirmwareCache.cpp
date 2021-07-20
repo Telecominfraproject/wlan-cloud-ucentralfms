@@ -29,12 +29,6 @@ namespace uCentral {
         }
     }
 
-/*
-    void LatestFirmwareCache::AddRevision(const std::string &Revision) {
-        SubMutexGuard G(Mutex_);
-        RevisionSet_.insert(Revision);
-    }
-*/
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
         SubMutexGuard G(Mutex_);
 
