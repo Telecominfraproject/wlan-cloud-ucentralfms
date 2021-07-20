@@ -206,6 +206,20 @@ components:
           items:
             $ref: '#/components/schemas/DeviceConnectionInformation'
 
+    DeviceReport:
+      type: object
+      properties:
+        ouis:
+          $ref: '#/components/schemas/TagIntPairList'
+        revisions:
+          $ref: '#/components/schemas/TagIntPairList'
+        deviceTypes:
+          $ref: '#/components/schemas/TagIntPairList'
+        status:
+          $ref: '#/components/schemas/TagIntPairList'
+        endPoints:
+          $ref: '#/components/schemas/TagIntPairList'
+
     #########################################################################################
     ##
     ## These are endpoints that all services in the uCentral stack must provide
@@ -240,6 +254,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TagValuePair'
+
+    TagIntPair:
+      type: object
+      properties:
+        tag:
+          type: string
+        value:
+          type: integer
+          format: int64
+
+    TagIntPairList:
+      type: object
+      properties:
+        tagList:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagIntPair'
 
     SystemCommandDetails:
       type: object
@@ -616,6 +647,22 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+  /deviceReport:
+    get:
+      tags:
+        - DeviceInfo
+      summary: get an analysis of the existing devices we know about.
+      responses:
+        200:
+          description: A full analysis report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceReport'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
 
   #########################################################################################
   ##

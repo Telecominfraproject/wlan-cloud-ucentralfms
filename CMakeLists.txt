@@ -81,7 +81,7 @@ add_executable( ucentralfms
                 src/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI_firmwareAgeHandler.h
                 src/storage_deviceInfo.cpp src/storage_deviceInfo.h
                 src/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI_connectedDevicesHandler.h
-                src/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI_connectedDeviceHandler.h)
+                src/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI_connectedDeviceHandler.h src/RESTAPI_deviceReportHandler.cpp src/RESTAPI_deviceReportHandler.h)
 
 target_link_libraries(ucentralfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

@@ -5,6 +5,7 @@
 #include "storage_deviceInfo.h"
 #include "StorageService.h"
 #include "Utils.h"
+#include "Poco/Data/RecordSet.h"
 
 /*
             "serialNumber=?, "
@@ -179,4 +180,45 @@ namespace uCentral {
         }
         return false;
     }
+
+    /*
+            "serialNumber, "
+            "revision, "
+            "deviceType, "
+            "endPoint, "
+            "lastUpdate, "
+            "status "
+     */
+
+    bool Storage::GenerateDeviceReport(FMSObjects::DeviceReport &Report) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Select(Sess);
+
+            Select << "SELECT " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES;
+            Poco::Data::RecordSet   RSet(Select);
+
+            bool More = RSet.moveFirst();
+            while(More) {
+                auto SerialNumber = RSet[0].convert<std::string>();
+                auto Revision = RSet[1].convert<std::string>();
+                auto DeviceType = RSet[2].convert<std::string>();
+                auto EndPoint = RSet[3].convert<std::string>();
+                auto Status = RSet[5].convert<std::string>();
+
+                Types::UpdateCountedMap(Report.DeviceTypes_, DeviceType);
+                Types::UpdateCountedMap(Report.Revisions_, Revision);
+                Types::UpdateCountedMap(Report.Status_, Status);
+                Types::UpdateCountedMap(Report.EndPoints_, EndPoint);
+                Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0,6));
+                More = RSet.moveNext();
+            }
+            return true;
+        } catch( const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+
+        return false;
+    }
+
 }

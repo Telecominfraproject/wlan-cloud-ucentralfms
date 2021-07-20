@@ -5,7 +5,6 @@
 #ifndef UCENTRALFMS_RESTAPI_FIRMWAREAGEHANDLER_H
 #define UCENTRALFMS_RESTAPI_FIRMWAREAGEHANDLER_H
 
-
 #include "RESTAPI_handler.h"
 
 namespace uCentral {
@@ -22,6 +21,5 @@ namespace uCentral {
         void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
     };
 }
-
 
 #endif //UCENTRALFMS_RESTAPI_FIRMWAREAGEHANDLER_H

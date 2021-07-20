@@ -38,7 +38,19 @@ namespace uCentral::RESTAPI_utils {
 		Obj.set(Field,A);
 	}
 
-	template<typename T> void field_to_json(Poco::JSON::Object &Obj,
+    inline void field_to_json(Poco::JSON::Object &Obj, const char *Field, const Types::CountedMap &M) {
+        Poco::JSON::Array	A;
+        for(const auto &[Key,Value]:M) {
+            Poco::JSON::Object  O;
+            O.set("tag",Key);
+            O.set("value", Value);
+            A.add(O);
+        }
+        Obj.set(Field,A);
+    }
+
+
+    template<typename T> void field_to_json(Poco::JSON::Object &Obj,
 					   						const char *Field,
 					   						const T &V,
 											std::function<std::string(const T &)> F) {

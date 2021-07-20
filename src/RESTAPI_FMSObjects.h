@@ -9,6 +9,7 @@
 
 
 #include "RESTAPI_SecurityObjects.h"
+#include "uCentralTypes.h"
 
 namespace uCentral::FMSObjects {
 
@@ -110,6 +111,16 @@ namespace uCentral::FMSObjects {
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };
 
+    struct DeviceReport {
+        Types::CountedMap      OUI_;
+        Types::CountedMap      Revisions_;
+        Types::CountedMap      DeviceTypes_;
+        Types::CountedMap      Status_;
+        Types::CountedMap      EndPoints_;
+
+        void to_json(Poco::JSON::Object &Obj) const;
+        bool from_json(const Poco::JSON::Object::Ptr &Obj);
+    };
 }
 
 

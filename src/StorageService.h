@@ -38,8 +38,6 @@ namespace uCentral {
             mysql
         };
 
-        Storage() noexcept;
-
         int Create_Tables();
         int Create_Firmwares();
         int Create_History();
@@ -76,6 +74,8 @@ namespace uCentral {
         bool GetDevice(std::string &SerialNumber, FMSObjects::DeviceConnectionInformation & Device);
         bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
 
+        bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
+
         static Storage *instance() {
             if (instance_ == nullptr) {
                 instance_ = new Storage;
@@ -98,7 +98,11 @@ namespace uCentral {
         std::unique_ptr<Poco::Data::MySQL::Connector>       MySQLConn_= nullptr;
 #endif
 
-   };
+        Storage() noexcept:
+                SubSystemServer("Storage", "STORAGE-SVR", "storage")
+        {
+        }
+    };
 
     inline Storage * Storage() { return Storage::instance(); };
 

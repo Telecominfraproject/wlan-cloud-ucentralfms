@@ -207,4 +207,22 @@ namespace uCentral::FMSObjects {
         }
         return false;
     }
+
+    void DeviceReport::to_json(Poco::JSON::Object &Obj) const {
+        field_to_json(Obj,"ouis",OUI_);
+        field_to_json(Obj, "revisions", Revisions_);
+        field_to_json(Obj, "deviceTypes", DeviceTypes_);
+        field_to_json(Obj, "status", Status_);
+        field_to_json(Obj,"endPoints", EndPoints_);
+    }
+
+    bool DeviceReport::from_json(const Poco::JSON::Object::Ptr &Obj) {
+        try {
+
+            return true;
+        } catch (...) {
+
+        }
+        return false;
+    }
 }
