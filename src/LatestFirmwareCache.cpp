@@ -38,7 +38,6 @@ namespace uCentral {
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
         SubMutexGuard G(Mutex_);
 
-        std::string Result;
         auto E=FirmwareCache_.find(DeviceType);
         if(E!=FirmwareCache_.end()) {
             Entry = E->second;
@@ -51,7 +50,6 @@ namespace uCentral {
     bool LatestFirmwareCache::IsLatest(const std::string &DeviceType, const std::string &Revision) {
         SubMutexGuard G(Mutex_);
 
-        std::string Result;
         auto E=FirmwareCache_.find(DeviceType);
         if(E!=FirmwareCache_.end()) {
             return E->second.Revision == Revision;
