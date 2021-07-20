@@ -95,6 +95,7 @@ namespace uCentral::FMSObjects {
         std::string revision;
         std::string uri;
         uint64_t age=0;
+        bool latest=true;
 
         void to_json(Poco::JSON::Object &Obj) const;
         bool from_json(const Poco::JSON::Object::Ptr &Obj);

@@ -216,13 +216,13 @@ namespace uCentral {
                 Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0,6));
                 FMSObjects::FirmwareAgeDetails Age;
                 if(ComputeFirmwareAge(DeviceType, Revision, Age)) {
-                    if(Age.age==0) {
-                        Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
+                    if(Age.latest) {
+                        Types::UpdateCountedMap(Report.UsingLatest_, Revision);
+                    } else {
+                        if (Age.age == 0) {
+                            Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
+                        }
                     }
-                }
-                if(LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
-                    std::cout << "Device using latest..." << std::endl;
-                    Types::UpdateCountedMap(Report.UsingLatest_, Revision);
                 }
                 More = RSet.moveNext();
             }

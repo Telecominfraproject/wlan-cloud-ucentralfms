@@ -167,6 +167,7 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj,"revision", revision);
         field_to_json(Obj,"uri", uri);
         field_to_json(Obj,"age", age);
+        field_to_json(Obj,"latest",latest);
     }
 
     bool FirmwareAgeDetails::from_json(const Poco::JSON::Object::Ptr &Obj) {
@@ -177,6 +178,7 @@ namespace uCentral::FMSObjects {
             field_from_json(Obj,"revision", revision);
             field_from_json(Obj,"uri", uri);
             field_from_json(Obj,"age", age);
+            field_from_json(Obj,"latest", latest);
             return true;
         } catch(...) {
 

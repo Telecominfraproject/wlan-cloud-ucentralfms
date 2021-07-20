@@ -175,6 +175,8 @@ components:
           type: integer
           format: int64
           example: this is in seconds. a 0 means we cannot determine the age. something like 'unknown' should be shown to the user.
+        latest:
+          type: boolean
 
     DeviceConnectionInformation:
       type: object

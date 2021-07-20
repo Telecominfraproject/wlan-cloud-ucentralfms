@@ -316,6 +316,7 @@ namespace uCentral {
             AgeDetails.image = LatestFirmware.image;
             AgeDetails.revision = LatestFirmware.revision;
             AgeDetails.latestId = LatestFirmware.id;
+            AgeDetails.latest = (LatestFirmware.revision == Revision);
             AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
             return true;
         } catch (const Poco::Exception &E) {
