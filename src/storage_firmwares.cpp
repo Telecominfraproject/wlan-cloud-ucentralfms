@@ -302,9 +302,14 @@ namespace uCentral {
             FMSObjects::Firmware    CurrentFirmware;
             FMSObjects::Firmware    LatestFirmware;
             bool CurrentFirmwareExists = false;
+
             if(GetFirmwareByRevision(Revision,DeviceType,CurrentFirmware)) {
                 CurrentFirmwareExists = true;
+                std::cout << "Firmware exists in DB: " << std::endl;
+            } else {
+                std::cout << "Firmware does not exist in DB: " << std::endl;
             }
+
 
             LatestFirmwareCacheEntry    LE;
             if(LatestFirmwareCache()->FindLatestFirmware(DeviceType,LE)) {
