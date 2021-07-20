@@ -48,6 +48,18 @@ namespace uCentral {
         return false;
     }
 
+    bool LatestFirmwareCache::IsLatest(const std::string &DeviceType, const std::string &Revision) {
+        SubMutexGuard G(Mutex_);
+
+        std::string Result;
+        auto E=FirmwareCache_.find(DeviceType);
+        if(E!=FirmwareCache_.end()) {
+            return E->second.Revision == Revision;
+        }
+        return false;
+    }
+
+
     void LatestFirmwareCache::DumpCache() {
         SubMutexGuard G(Mutex_);
 

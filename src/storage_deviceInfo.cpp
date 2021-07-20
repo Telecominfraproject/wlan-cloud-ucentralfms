@@ -6,6 +6,7 @@
 #include "StorageService.h"
 #include "Utils.h"
 #include "Poco/Data/RecordSet.h"
+#include "LatestFirmwareCache.h"
 
 /*
             "serialNumber=?, "
@@ -213,6 +214,14 @@ namespace uCentral {
                 Types::UpdateCountedMap(Report.Status_, Status);
                 Types::UpdateCountedMap(Report.EndPoints_, EndPoint);
                 Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0,6));
+                FMSObjects::FirmwareAgeDetails Age;
+                if(ComputeFirmwareAge(DeviceType, Revision, Age)) {
+                    if(Age.age==0) {
+                        Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
+                    }
+                }
+                if(LatestFirmwareCache()->IsLatest(DeviceType, Revision))
+                    Types::UpdateCountedMap(Report.UsingLatest_,Revision);
                 More = RSet.moveNext();
             }
             return true;

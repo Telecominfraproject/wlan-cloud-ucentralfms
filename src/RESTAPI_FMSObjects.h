@@ -117,6 +117,8 @@ namespace uCentral::FMSObjects {
         Types::CountedMap      DeviceTypes_;
         Types::CountedMap      Status_;
         Types::CountedMap      EndPoints_;
+        Types::CountedMap      UsingLatest_;
+        Types::CountedMap      UnknownFirmwares_;
 
         void to_json(Poco::JSON::Object &Obj) const;
         bool from_json(const Poco::JSON::Object::Ptr &Obj);

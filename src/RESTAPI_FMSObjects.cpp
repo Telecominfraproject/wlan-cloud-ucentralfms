@@ -214,6 +214,8 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "deviceTypes", DeviceTypes_);
         field_to_json(Obj, "status", Status_);
         field_to_json(Obj,"endPoints", EndPoints_);
+        field_to_json(Obj, "usingLatest", UsingLatest_);
+        field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
     }
 
     bool DeviceReport::from_json(const Poco::JSON::Object::Ptr &Obj) {

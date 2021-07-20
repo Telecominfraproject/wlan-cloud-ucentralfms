@@ -39,6 +39,7 @@ namespace uCentral {
         void DumpCache();
         inline Types::StringSet GetRevisions() { SubMutexGuard G(Mutex_); return RevisionSet_; };
         inline Types::StringSet GetDevices() { SubMutexGuard G(Mutex_); return DeviceSet_; };
+        bool IsLatest(const std::string &DeviceType, const std::string &Revision);
 
     private:
         static LatestFirmwareCache 	*instance_;

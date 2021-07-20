@@ -219,6 +219,10 @@ components:
           $ref: '#/components/schemas/TagIntPairList'
         endPoints:
           $ref: '#/components/schemas/TagIntPairList'
+        unknownFirmwares:
+          $ref: '#/components/schemas/TagIntPairList'
+        usingLatest:
+          $ref: '#/components/schemas/TagIntPairList'
 
     #########################################################################################
     ##
