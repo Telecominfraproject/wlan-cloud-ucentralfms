@@ -323,6 +323,7 @@ namespace uCentral {
             AgeDetails.latestId = LatestFirmware.id;
             AgeDetails.latest = (LatestFirmware.revision == Revision);
             AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
+            std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
             if(AgeDetails.latest)
                 std::cout << "Found latest firmware" << std::endl;
             return true;
