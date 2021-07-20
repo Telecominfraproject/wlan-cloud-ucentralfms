@@ -323,6 +323,8 @@ namespace uCentral {
             AgeDetails.latestId = LatestFirmware.id;
             AgeDetails.latest = (LatestFirmware.revision == Revision);
             AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
+            if(AgeDetails.latest)
+                std::cout << "Found latest firmware" << std::endl;
             return true;
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
