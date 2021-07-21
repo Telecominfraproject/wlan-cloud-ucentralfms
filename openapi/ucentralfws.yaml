@@ -675,7 +675,6 @@ paths:
   ## These are endpoints that all services in the uCentral stack must provide
   ##
   #########################################################################################
-
   /system:
     post:
       tags:
@@ -699,4 +698,30 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
+    get:
+      tags:
+        - System Commands
+      summary: Retrieve different values from the running service.
+      operationId: getSystemCommand
+      parameters:
+        - in: query
+          description: Get a value
+          name: command
+          schema:
+            type: string
+            enum:
+              - version
+              - times
+        required: true
 
+      responses:
+        200:
+          description: Successfull command execution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagValuePair'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
