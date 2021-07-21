@@ -120,8 +120,9 @@ namespace uCentral::FMSObjects {
         Types::CountedMap      EndPoints_;
         Types::CountedMap      UsingLatest_;
         Types::CountedMap      UnknownFirmwares_;
-
         void to_json(Poco::JSON::Object &Obj) const;
+        void reset();
+
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };
 }

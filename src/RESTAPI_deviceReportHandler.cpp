@@ -6,6 +6,7 @@
 #include "StorageService.h"
 #include "RESTAPI_FMSObjects.h"
 #include "Poco/JSON/Object.h"
+#include "Daemon.h"
 
 namespace uCentral {
     void RESTAPI_deviceReportHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -23,16 +24,10 @@ namespace uCentral {
     void RESTAPI_deviceReportHandler::DoGet(Poco::Net::HTTPServerRequest &Request,
                                             Poco::Net::HTTPServerResponse &Response) {
         try {
-            FMSObjects::DeviceReport    R;
-
-            if(Storage()->GenerateDeviceReport(R)) {
-                Poco::JSON::Object  O;
-                R.to_json(O);
-                ReturnObject(Request, O, Response);
-                return;
-            } else {
-                NotFound(Request, Response);
-            }
+            Storage()->GenerateDeviceReport(Daemon()->GetDashboard());
+            Poco::JSON::Object  O;
+            Daemon()->GetDashboard().to_json(O);
+            ReturnObject(Request, O, Response);
             return;
         } catch ( const Poco::Exception &E) {
             Logger_.log(E);

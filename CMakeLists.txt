@@ -50,6 +50,7 @@ include_directories(/usr/local/include  /usr/local/opt/openssl/include src inclu
 
 add_executable( ucentralfms
                 build
+                src/Dashboard.cpp src/Dashboard.h
                 src/Daemon.cpp src/Daemon.h
                 src/StorageService.cpp src/StorageService.h
                 src/storage_tables.cpp src/storage_sqlite.cpp

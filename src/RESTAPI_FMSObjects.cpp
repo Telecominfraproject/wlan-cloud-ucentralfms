@@ -220,6 +220,16 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
     }
 
+    void DeviceReport::reset() {
+        OUI_.clear();
+        Revisions_.clear();
+        DeviceTypes_.clear();
+        Status_.clear();
+        EndPoints_.clear();
+        UsingLatest_.clear();
+        UnknownFirmwares_.clear();
+    }
+
     bool DeviceReport::from_json(const Poco::JSON::Object::Ptr &Obj) {
         try {
 

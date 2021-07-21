@@ -17,6 +17,7 @@
 
 #include "MicroService.h"
 #include "uCentralTypes.h"
+#include "RESTAPI_FMSObjects.h"
 
 namespace uCentral {
 
@@ -38,8 +39,11 @@ namespace uCentral {
 
         void initialize(Poco::Util::Application &self);
         static Daemon *instance();
+        inline FMSObjects::DeviceReport	& GetDashboard() { return DB_; }
+
     private:
         static Daemon 				*instance_;
+        FMSObjects::DeviceReport    DB_;
     };
 
     inline Daemon * Daemon() { return Daemon::instance(); }
