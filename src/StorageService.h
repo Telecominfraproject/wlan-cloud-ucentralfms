@@ -74,7 +74,7 @@ namespace uCentral {
         bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
 
         bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
-
+        static std::string TrimRevision(const std::string &R);
         static Storage *instance() {
             if (instance_ == nullptr) {
                 instance_ = new Storage;

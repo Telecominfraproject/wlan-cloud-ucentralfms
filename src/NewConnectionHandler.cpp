@@ -25,15 +25,6 @@
 namespace uCentral {
     class NewConnectionHandler *NewConnectionHandler::instance_ = nullptr;
 
-    std::string TrimRevision(const std::string &R) {
-        std::string Result;
-        if(R.size()>63)
-            Result = R.substr(0,63);
-        else
-            Result = R;
-        return Result;
-    }
-
     void NewConnectionHandler::run() {
         Running_ = true ;
         while(Running_) {
@@ -72,7 +63,7 @@ namespace uCentral {
                         if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
                             auto DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
                             auto Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
-                            auto Revision = TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
+                            auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
                             std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
@@ -97,7 +88,7 @@ namespace uCentral {
                         if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
                             PingMessage->has(uCentralProtocol::COMPATIBLE)) {
-                            auto Revision = TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
+                            auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
                             auto SerialNUmber = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
                             auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
                             Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);

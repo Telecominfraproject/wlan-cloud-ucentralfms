@@ -34,6 +34,8 @@ namespace uCentral {
                 return;
             }
 
+            Revision = Storage::TrimRevision(Revision);
+
             FMSObjects::FirmwareAgeDetails  FA;
             if(Storage()->ComputeFirmwareAge(DeviceType, Revision,FA)) {
                 Poco::JSON::Object  Answer;

@@ -305,32 +305,31 @@ namespace uCentral {
 
             if(GetFirmwareByRevision(Revision,DeviceType,CurrentFirmware)) {
                 CurrentFirmwareExists = true;
-                std::cout << "Firmware exists in DB: " << std::endl;
-            } else {
-                std::cout << "Firmware does not exist in DB: " << std::endl;
             }
-
 
             LatestFirmwareCacheEntry    LE;
             if(LatestFirmwareCache()->FindLatestFirmware(DeviceType,LE)) {
-                GetFirmware(LE.Id,LatestFirmware);
-            }
+                std::cout << "LE.id" << LE.Id << std::endl;
 
-            AgeDetails.imageDate = LatestFirmware.imageDate;
-            AgeDetails.uri = LatestFirmware.uri;
-            AgeDetails.image = LatestFirmware.image;
-            AgeDetails.revision = LatestFirmware.revision;
-            AgeDetails.latestId = LatestFirmware.id;
-            AgeDetails.latest = Revision == LatestFirmware.revision;
-            AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
-            std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
-            if(AgeDetails.latest)
-                std::cout << "Found latest firmware" << std::endl;
-            return true;
+                if(GetFirmware(LE.Id, LatestFirmware)) {
+                    AgeDetails.imageDate = LatestFirmware.imageDate;
+                    AgeDetails.uri = LatestFirmware.uri;
+                    AgeDetails.image = LatestFirmware.image;
+                    AgeDetails.revision = LatestFirmware.revision;
+                    AgeDetails.latestId = LatestFirmware.id;
+                    AgeDetails.latest = Revision == LatestFirmware.revision;
+                    AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate - CurrentFirmware.imageDate) : 0;
+                    std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
+                    if (AgeDetails.latest)
+                        std::cout << "Found latest firmware" << std::endl;
+                    return true;
+                } else {
+                    std::cout << "Cannot find firmware: " << LE.Id << std::endl;
+                }
+            }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-
         return false;
     }
 
