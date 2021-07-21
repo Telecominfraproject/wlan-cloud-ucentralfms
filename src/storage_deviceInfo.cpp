@@ -86,31 +86,22 @@ namespace uCentral {
                 Insert.execute();
             } else {
                 Poco::Data::Statement   Update(Sess);
-                uint64_t Now = (uint64_t)std::time(nullptr);
-                DBGLINE
+                auto Now = (uint64_t)std::time(nullptr);
                 // std::cout << "Updating device: " << SerialNumber << std::endl;
                 std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
-                DBGLINE
                 Update <<   ConvertParams(st) ,
                             Poco::Data::Keywords::use(Revision),
                             Poco::Data::Keywords::use(Now),
                             Poco::Data::Keywords::use(EndPoint),
-                            Status,
+                            Poco::Data::Keywords::use(Status),
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
-                DBGLINE
-
                 if(PreviousVersion!=Revision) {
-                    DBGLINE
                     AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
-                    DBGLINE
                 }
-                DBGLINE
             }
             return true;
         } catch (const Poco::Exception &E) {
-            std::cout << "EXC: " << E.what() << " " << E.name() << std::endl;
-            DBGLINE
             Logger_.log(E);
         }
         return false;
@@ -130,7 +121,7 @@ namespace uCentral {
             Update <<   ConvertParams(st) ,
                     Poco::Data::Keywords::use(Now),
                     Poco::Data::Keywords::use(EndPoint),
-                    Status,
+                    Poco::Data::Keywords::use(Status),
                     Poco::Data::Keywords::use(SerialNumber);
             Update.execute();
         } catch (const Poco::Exception &E) {
@@ -161,7 +152,6 @@ namespace uCentral {
 
             return true;
         } catch (const Poco::Exception &E) {
-            std::cout << "Devices..." << E.what() << " " << E.name() << std::endl;
             Logger_.log(E);
         }
         return false;
