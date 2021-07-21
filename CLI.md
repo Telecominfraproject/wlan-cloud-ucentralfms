@@ -37,3 +37,12 @@ Get a list of the currently known devices and the last connection information we
 
 ### `cli connecteddevice <serialNumber>`
 Get the information relevant to a specific device.
+
+### `cli devicereport`
+Give a simplified dashboard report of the data in the service.
+
+### `cli fmsversion`
+Display the version of the service.
+
+### `cli fmstimes`
+Display the uptime and start time of the service.
