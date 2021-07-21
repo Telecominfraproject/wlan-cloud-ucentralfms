@@ -87,9 +87,10 @@ namespace uCentral {
             } else {
                 Poco::Data::Statement   Update(Sess);
                 uint64_t Now = (uint64_t)std::time(nullptr);
-
+                DBGLINE
                 // std::cout << "Updating device: " << SerialNumber << std::endl;
                 std::string st{"UPDATE " + DBNAME_DEVICES + " set revision=?, lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
+                DBGLINE
                 Update <<   ConvertParams(st) ,
                             Poco::Data::Keywords::use(Revision),
                             Poco::Data::Keywords::use(Now),
@@ -97,13 +98,19 @@ namespace uCentral {
                             Status,
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
+                DBGLINE
 
                 if(PreviousVersion!=Revision) {
+                    DBGLINE
                     AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
+                    DBGLINE
                 }
+                DBGLINE
             }
             return true;
         } catch (const Poco::Exception &E) {
+            std::cout << "EXC: " << E.what() << " " << E.name() << std::endl;
+            DBGLINE
             Logger_.log(E);
         }
         return false;
