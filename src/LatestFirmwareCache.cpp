@@ -46,7 +46,7 @@ namespace uCentral {
 
         auto E=FirmwareCache_.find(DeviceType);
         if(E!=FirmwareCache_.end()) {
-            return E->second.Revision == Revision;
+            return Storage::CompareRevision(E->second.Revision,Revision);
         }
         return false;
     }

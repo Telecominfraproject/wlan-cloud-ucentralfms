@@ -218,19 +218,44 @@ namespace uCentral {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
 
-            std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
-                           " FROM " + DBNAME_FIRMWARES + " where Revision=? and DeviceType=?"};
+            //  try the full revision...
+            try {
+                std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
+                               " FROM " + DBNAME_FIRMWARES + " where Revision=? and DeviceType=?"};
 
-            Select << ConvertParams(st),
-                    Poco::Data::Keywords::into(Records),
-                    Poco::Data::Keywords::use(Revision),
-                    Poco::Data::Keywords::use(DeviceType);
-            Select.execute();
+                Select << ConvertParams(st),
+                        Poco::Data::Keywords::into(Records),
+                        Poco::Data::Keywords::use(Revision),
+                        Poco::Data::Keywords::use(DeviceType);
+                Select.execute();
 
-            if(Records.empty())
-                return false;
-            Convert(Records[0],Firmware);
-            return true;
+                if (Records.empty())
+                    return false;
+                Convert(Records[0], Firmware);
+                return true;
+            } catch (...) {
+
+            }
+
+            //  try one digit less...
+            auto NRev = Revision.substr(0,Revision.size()-1);
+            try {
+                std::string st{"SELECT " + DBFIELDS_FIRMWARES_SELECT +
+                               " FROM " + DBNAME_FIRMWARES + " where Revision=? and DeviceType=?"};
+
+                Select << ConvertParams(st),
+                        Poco::Data::Keywords::into(Records),
+                        Poco::Data::Keywords::use(NRev),
+                        Poco::Data::Keywords::use(DeviceType);
+                Select.execute();
+
+                if (Records.empty())
+                    return false;
+                Convert(Records[0], Firmware);
+                return true;
+            } catch (...) {
+
+            }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
@@ -297,6 +322,17 @@ namespace uCentral {
         }
     }
 
+    bool Storage::CompareRevision( const std::string &R1, const std::string &R2) {
+        if(R1.size()>10 && R2.size()>10) {
+            if (R1.size() == R2.size())
+                return R1 == R2;
+            if (R1.size() < (R2.size() - 1))
+                return R1 == R2.substr(0, R2.size() - 1);
+            return R1.substr(0, R1.size() - 1) == R2;
+        }
+        return false;
+    }
+
     bool Storage::ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails) {
         try {
             FMSObjects::Firmware    CurrentFirmware;
@@ -321,7 +357,7 @@ namespace uCentral {
             AgeDetails.image = LatestFirmware.image;
             AgeDetails.revision = LatestFirmware.revision;
             AgeDetails.latestId = LatestFirmware.id;
-            AgeDetails.latest = (LatestFirmware.revision == Revision);
+            AgeDetails.latest = Storage::CompareRevision(LatestFirmware.revision,Revision);
             AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate-CurrentFirmware.imageDate) : 0;
             std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
             if(AgeDetails.latest)

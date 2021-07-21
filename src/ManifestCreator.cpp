@@ -194,7 +194,7 @@ namespace uCentral {
                             uint64_t TimeStamp = ParsedContent->get("timestamp");
                             auto Compatible = ParsedContent->get("compatible").toString();
                             auto Revision = ParsedContent->get("revision").toString();
-                            std::cout << "Revision from bucket in JSON" << Revision << std::endl;
+                            // std::cout << "Revision from bucket in JSON" << Revision << std::endl;
                             auto Image = ParsedContent->get("image").toString();
                             if (It != Bucket.end()) {
                                 It->second.Timestamp = TimeStamp;
