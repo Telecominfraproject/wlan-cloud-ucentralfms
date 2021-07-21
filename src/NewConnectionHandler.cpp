@@ -25,6 +25,15 @@
 namespace uCentral {
     class NewConnectionHandler *NewConnectionHandler::instance_ = nullptr;
 
+    std::string TrimRevision(const std::string &R) {
+        std::string Result;
+        if(R.size()>63)
+            Result = R.substr(0,63);
+        else
+            Result = R;
+        return Result;
+    }
+
     void NewConnectionHandler::run() {
         Running_ = true ;
         while(Running_) {
@@ -56,15 +65,14 @@ namespace uCentral {
                 }
 
                 if(Object->has(uCentralProtocol::PAYLOAD)) {
-                    std::string DeviceType, Serial, Revision;
                     auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
                     if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
                         std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
                         auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
                         if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
-                            DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
-                            Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
-                            Revision = PayloadObj->get(uCentralProtocol::FIRMWARE).toString();
+                            auto DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
+                            auto Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
+                            auto Revision = TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
                             std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
@@ -89,7 +97,7 @@ namespace uCentral {
                         if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
                             PingMessage->has(uCentralProtocol::COMPATIBLE)) {
-                            auto Revision = PingMessage->get(uCentralProtocol::FIRMWARE).toString();
+                            auto Revision = TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
                             auto SerialNUmber = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
                             auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
                             Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);

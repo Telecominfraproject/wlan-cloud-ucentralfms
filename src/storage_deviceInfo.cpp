@@ -209,14 +209,15 @@ namespace uCentral {
                 auto EndPoint = RSet[3].convert<std::string>();
                 auto Status = RSet[5].convert<std::string>();
 
+                // find the real revision for this device...
                 Types::UpdateCountedMap(Report.DeviceTypes_, DeviceType);
                 Types::UpdateCountedMap(Report.Revisions_, Revision);
                 Types::UpdateCountedMap(Report.Status_, Status);
                 Types::UpdateCountedMap(Report.EndPoints_, EndPoint);
-                Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0,6));
+                Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0, 6));
                 FMSObjects::FirmwareAgeDetails Age;
-                if(ComputeFirmwareAge(DeviceType, Revision, Age)) {
-                    if(Age.latest) {
+                if (ComputeFirmwareAge(DeviceType, Revision, Age)) {
+                    if (Age.latest) {
                         Types::UpdateCountedMap(Report.UsingLatest_, Revision);
                     } else {
                         if (Age.age == 0) {

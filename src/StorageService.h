@@ -52,7 +52,6 @@ namespace uCentral {
         bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
         bool GetFirmwareByName(std::string & Release, std::string &DeviceType,FMSObjects::Firmware & C );
         bool GetFirmwareByRevision(std::string & Revision, std::string &DeviceType,FMSObjects::Firmware & C );
-        uint64_t FirmwareVersion();
         bool ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails);
 
         bool GetHistory(std::string &SerialNumber,uint64_t From, uint64_t HowMany,FMSObjects::RevisionHistoryEntryVec &History);
@@ -75,7 +74,6 @@ namespace uCentral {
         bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
 
         bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
-        static bool CompareRevision( const std::string &R1, const std::string &R2);
 
         static Storage *instance() {
             if (instance_ == nullptr) {
