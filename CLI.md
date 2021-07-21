@@ -1,4 +1,4 @@
-# FMS CLI Documentation
+# Firmware Service (FMS) CLI Documentation
 
 ## Before using the CLI
 You must set the environment variable `UCENTRALSEC`. You must specify the host and port for the security service 
