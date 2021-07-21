@@ -179,6 +179,20 @@ devicereport() {
     jq < ${result_file}
 }
 
+fmsversion() {
+    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=version" \
+        -H "accept: application/json" \
+        -H "Authorization: Bearer ${token}" > ${result_file}
+    jq < ${result_file}
+}
+
+fmstimes() {
+    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=times" \
+        -H "accept: application/json" \
+        -H "Authorization: Bearer ${token}" > ${result_file}
+    jq < ${result_file}
+}
+
 
 help() {
   echo
@@ -197,6 +211,8 @@ case "$1" in
     "connecteddevices") login; connecteddevices ; logout ;;
     "connecteddevice") login; connecteddevice "$2" ; logout ;;
     "devicereport") login; devicereport; logout ;;
+    "fmsversion") login; fmsversion; logout ;;
+    "fmstimes") login; fmstimes; logout ;;
     *) help ;;
 esac
 
