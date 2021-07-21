@@ -309,7 +309,7 @@ namespace uCentral {
 
             LatestFirmwareCacheEntry    LE;
             if(LatestFirmwareCache()->FindLatestFirmware(DeviceType,LE)) {
-                std::cout << "LE.id" << LE.Id << std::endl;
+                // std::cout << "LE.id" << LE.Id << std::endl;
 
                 if(GetFirmware(LE.Id, LatestFirmware)) {
                     AgeDetails.imageDate = LatestFirmware.imageDate;
@@ -319,12 +319,12 @@ namespace uCentral {
                     AgeDetails.latestId = LatestFirmware.id;
                     AgeDetails.latest = Revision == LatestFirmware.revision;
                     AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate - CurrentFirmware.imageDate) : 0;
-                    std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
-                    if (AgeDetails.latest)
-                        std::cout << "Found latest firmware" << std::endl;
+                    //std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
+                    //if (AgeDetails.latest)
+                    //    std::cout << "Found latest firmware" << std::endl;
                     return true;
                 } else {
-                    std::cout << "Cannot find firmware: " << LE.Id << std::endl;
+                    //std::cout << "Cannot find firmware: " << LE.Id << std::endl;
                 }
             }
         } catch (const Poco::Exception &E) {
