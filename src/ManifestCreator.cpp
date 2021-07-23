@@ -182,6 +182,7 @@ namespace uCentral {
             Runs++;
             for (const auto &Object : objects) {
                 Count++;
+                std::cout << "Run: " << Runs << "  Count: " << Count << std::endl;
                 Poco::Path FileName(Object.GetKey().c_str());
                 if (!Running_)
                     return false;
