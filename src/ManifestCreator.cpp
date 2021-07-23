@@ -252,7 +252,8 @@ namespace uCentral {
             isDone = !Outcome.GetResult().GetIsTruncated();
             if(!isDone) {
                 std::cout << "Going for next run..." << std::endl;
-                auto Token = Outcome.GetResult().GetContinuationToken();
+                // auto Token = Outcome.GetResult().GetContinuationToken();
+                auto Token = Outcome.GetResult().GetNextContinuationToken();
                 Request.SetContinuationToken(Token);
                 std::cout << "Continuation set..." << std::endl;
             }
