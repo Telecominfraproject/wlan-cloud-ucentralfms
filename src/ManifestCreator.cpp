@@ -169,7 +169,7 @@ namespace uCentral {
         Aws::S3::Model::ListObjectsV2Request Request;
         Request.WithBucket(S3BucketName_.c_str());
         Aws::S3::S3Client S3Client(AwsCreds_,AwsConfig_);
-        Request.SetMaxKeys(1000);
+        Request.SetMaxKeys(100);
         Aws::S3::Model::ListObjectsV2Outcome Outcome;
 
         bool isDone=false;
@@ -252,7 +252,8 @@ namespace uCentral {
             isDone = !Outcome.GetResult().GetIsTruncated();
             if(!isDone) {
                 std::cout << "Going for next run..." << std::endl;
-                Request.SetContinuationToken(Outcome.GetResult().GetContinuationToken());
+                auto Token = Outcome.GetResult().GetContinuationToken();
+                Request.SetContinuationToken(Token);
                 std::cout << "Continuation set..." << std::endl;
             }
         }
