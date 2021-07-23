@@ -177,7 +177,11 @@ namespace uCentral {
 
         while(!isDone) {
             Outcome = S3Client.ListObjectsV2(Request);
-            if(!Outcome.IsSuccess()) return false;
+            if(!Outcome.IsSuccess()) {
+                std::cout << "E:" << std::string{Outcome.GetError().GetExceptionName().c_str()} <<
+                " message: " << std::string{Outcome.GetError().GetMessage().c_str()} << std::endl;
+                return false;
+            }
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
             Runs++;
             for (const auto &Object : objects) {
@@ -247,7 +251,9 @@ namespace uCentral {
 
             isDone = !Outcome.GetResult().GetIsTruncated();
             if(!isDone) {
+                std::cout << "Going for next run..." << std::endl;
                 Request.SetContinuationToken(Outcome.GetResult().GetContinuationToken());
+                std::cout << "Continuation set..." << std::endl;
             }
         }
 
