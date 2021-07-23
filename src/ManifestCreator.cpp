@@ -10,6 +10,7 @@
 #include "Utils.h"
 
 #include <aws/s3/model/ListObjectsRequest.h>
+#include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/GetObjectRequest.h>
 
 #include "Daemon.h"
@@ -165,17 +166,24 @@ namespace uCentral {
 
         Bucket.clear();
 
-        Aws::S3::Model::ListObjectsRequest Request;
+        Aws::S3::Model::ListObjectsV2Request Request;
         Request.WithBucket(S3BucketName_.c_str());
         Aws::S3::S3Client S3Client(AwsCreds_,AwsConfig_);
+        Request.SetMaxKeys(1000);
+        Aws::S3::Model::ListObjectsV2Outcome Outcome;
 
-        auto Outcome = S3Client.ListObjects(Request);
+        bool isDone=false;
+        int Count=0, Runs=0;
 
-        if(Outcome.IsSuccess()) {
+        while(!isDone) {
+            Outcome = S3Client.ListObjectsV2(Request);
+            if(!Outcome.IsSuccess()) return false;
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
+            Runs++;
             for (const auto &Object : objects) {
-                Poco::Path  FileName(Object.GetKey().c_str());
-                if(!Running_)
+                Count++;
+                Poco::Path FileName(Object.GetKey().c_str());
+                if (!Running_)
                     return false;
                 if (FileName.getExtension() == "json") {
                     std::string Release = FileName.getBaseName();
@@ -214,12 +222,12 @@ namespace uCentral {
                     }
                 } else if (FileName.getExtension() == "bin") {
                     //  we must remove -upgrade, so
-                    const auto & ReleaseName = FileName.getBaseName().substr(0,FileName.getBaseName().size()-8);
+                    const auto &ReleaseName = FileName.getBaseName().substr(0, FileName.getBaseName().size() - 8);
                     auto It = Bucket.find(ReleaseName);
-                    auto S3TimeStamp = (uint64_t ) (Object.GetLastModified().Millis()/1000);
+                    auto S3TimeStamp = (uint64_t) (Object.GetLastModified().Millis() / 1000);
                     uint64_t S3Size = Object.GetSize();
                     std::string URI = URIBase + "/" + FileName.getFileName();
-                    if(It != Bucket.end()) {
+                    if (It != Bucket.end()) {
                         It->second.S3TimeStamp = S3TimeStamp;
                         It->second.S3Size = S3Size;
                         It->second.S3Name = ReleaseName;
@@ -229,14 +237,25 @@ namespace uCentral {
                                 .S3Name = ReleaseName,
                                 .S3TimeStamp = S3TimeStamp,
                                 .S3Size = S3Size,
-                                .URI = URI });
+                                .URI = URI});
                     }
                 } else {
                     // std::cout << "Ignoring " << FileName.getFileName() << std::endl;
                 }
             }
-        } else {
-            Logger_.error(Poco::format("Problem with connecting: %s",Outcome.GetError()));
+
+            isDone = !Outcome.GetResult().GetIsTruncated();
+            if(!isDone) {
+                Request.SetContinuationToken(Outcome.GetResult().GetContinuationToken());
+            }
+        }
+
+        std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
+        if(!Outcome.IsSuccess()) {
+            Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
+                                       std::string{Outcome.GetError().GetExceptionName().c_str()},
+                                       std::string{Outcome.GetError().GetMessage().c_str()}));
+            return false;
         }
         return true;
     }

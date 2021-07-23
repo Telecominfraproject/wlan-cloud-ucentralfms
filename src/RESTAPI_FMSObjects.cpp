@@ -211,11 +211,11 @@ namespace uCentral::FMSObjects {
     }
 
     void DeviceReport::to_json(Poco::JSON::Object &Obj) const {
-        field_to_json(Obj,"ouis",OUI_);
+        field_to_json(Obj, "ouis",OUI_);
         field_to_json(Obj, "revisions", Revisions_);
         field_to_json(Obj, "deviceTypes", DeviceTypes_);
         field_to_json(Obj, "status", Status_);
-        field_to_json(Obj,"endPoints", EndPoints_);
+        field_to_json(Obj, "endPoints", EndPoints_);
         field_to_json(Obj, "usingLatest", UsingLatest_);
         field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
     }
