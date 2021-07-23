@@ -178,15 +178,16 @@ namespace uCentral {
         while(!isDone) {
             Outcome = S3Client.ListObjectsV2(Request);
             if(!Outcome.IsSuccess()) {
-                std::cout << "E:" << std::string{Outcome.GetError().GetExceptionName().c_str()} <<
-                " message: " << std::string{Outcome.GetError().GetMessage().c_str()} << std::endl;
+                Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
+                                           std::string{Outcome.GetError().GetExceptionName().c_str()},
+                                           std::string{Outcome.GetError().GetMessage().c_str()}));
                 return false;
             }
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
             Runs++;
             for (const auto &Object : objects) {
                 Count++;
-                std::cout << "Run: " << Runs << "  Count: " << Count << std::endl;
+                // std::cout << "Run: " << Runs << "  Count: " << Count << std::endl;
                 Poco::Path FileName(Object.GetKey().c_str());
                 if (!Running_)
                     return false;
@@ -251,15 +252,15 @@ namespace uCentral {
 
             isDone = !Outcome.GetResult().GetIsTruncated();
             if(!isDone) {
-                std::cout << "Going for next run..." << std::endl;
+                // std::cout << "Going for next run..." << std::endl;
                 // auto Token = Outcome.GetResult().GetContinuationToken();
                 auto Token = Outcome.GetResult().GetNextContinuationToken();
                 Request.SetContinuationToken(Token);
-                std::cout << "Continuation set..." << std::endl;
+                // std::cout << "Continuation set..." << std::endl;
             }
         }
 
-        std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
+        // std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
         if(!Outcome.IsSuccess()) {
             Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
                                        std::string{Outcome.GetError().GetExceptionName().c_str()},
