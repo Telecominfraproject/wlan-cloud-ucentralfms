@@ -178,6 +178,14 @@ components:
         latest:
           type: boolean
 
+    FirmwareAgeDetailsList:
+      type: object
+      properties:
+        ages:
+          type: array
+          items:
+            $ref: '#/components/schemas/FirmwareAgeDetails'
+
     DeviceConnectionInformation:
       type: object
       properties:
@@ -579,13 +587,22 @@ paths:
           schema:
             type: string
           required: true
+        - in: query
+          description: Specify lits of serial  numbers to retrive age for
+          name: select
+          schema:
+            type: string
+            example: select=serial1,serial2,serial4,serial5.
+          required: false
       responses:
         200:
           description: The recommended latest version to update to.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FirmwareAgeDetails'
+                oneOf:
+                  - $ref: '#/components/schemas/FirmwareAgeDetails'
+                  - $ref: '#/components/schemas/FirmwareAgeDetailsList'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:
@@ -712,7 +729,7 @@ paths:
             enum:
               - version
               - times
-        required: true
+          required: true
 
       responses:
         200:
