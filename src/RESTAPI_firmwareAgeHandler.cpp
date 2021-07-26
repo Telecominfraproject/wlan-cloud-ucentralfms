@@ -54,7 +54,7 @@ namespace uCentral {
                 Poco::JSON::Object Answer;
                 Answer.set("ages", Objects);
                 ReturnObject(Request, Answer, Response);
-
+                return;
             } else {
                 auto DeviceType = GetParameter("deviceType", "");
                 auto Revision = GetParameter("revision", "");
