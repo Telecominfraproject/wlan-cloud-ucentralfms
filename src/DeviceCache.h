@@ -33,6 +33,7 @@ namespace uCentral {
                         const std::string &Host, const std::string &Firmware);
         std::string FindLatestFirmware(std::string &DeviceType);
         void DumpCache();
+        bool GetDevice(const std::string &SerialNumber, DeviceCacheEntry & E);
 
     private:
         static DeviceCache 	*instance_;

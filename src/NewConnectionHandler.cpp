@@ -12,6 +12,7 @@
 #include "LatestFirmwareCache.h"
 #include "Utils.h"
 #include "uCentralProtocol.h"
+#include "DeviceCache.h"
 
 /*
 
@@ -73,6 +74,7 @@ namespace uCentral {
                                 else
                                     Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
                             }
+                            DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                         }
                     } else if(PayloadObj->has(uCentralProtocol::DISCONNECTION)) {
                         auto DisconnectMessage = PayloadObj->getObject(uCentralProtocol::DISCONNECTION);
@@ -89,9 +91,10 @@ namespace uCentral {
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
                             PingMessage->has(uCentralProtocol::COMPATIBLE)) {
                             auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
-                            auto SerialNUmber = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
+                            auto Serial = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
                             auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
-                            Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
+                            Storage()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
+                            DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                         }
                     }
                 }
