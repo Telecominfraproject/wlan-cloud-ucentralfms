@@ -9,6 +9,7 @@
 #include "Daemon.h"
 #include "Utils.h"
 #include "DeviceCache.h"
+#include "uCentralProtocol.h"
 
 namespace uCentral {
     void RESTAPI_firmwareAgeHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -38,16 +39,16 @@ namespace uCentral {
                         if(Storage()->ComputeFirmwareAge(E.compatible,E.firmware,FA)) {
                             Poco::JSON::Object  O;
                             FA.to_json(O);
-                            O.set("serialNumber",i);
+                            O.set(uCentralProtocol::SERIALNUMBER,i);
                             Objects.add(O);
                         } else {
                             Poco::JSON::Object  O;
-                            O.set("serialNumber",i);
+                            O.set(uCentralProtocol::SERIALNUMBER,i);
                             Objects.add(O);
                         }
                     } else {
                         Poco::JSON::Object  O;
-                        O.set("serialNumber",i);
+                        O.set(uCentralProtocol::SERIALNUMBER,i);
                         Objects.add(O);
                     }
                 }
