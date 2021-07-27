@@ -133,7 +133,7 @@ namespace uCentral {
                     Poco::Data::Keywords::use(F.digest),
                     Poco::Data::Keywords::use(F.latest),
                     Poco::Data::Keywords::use(Notes),
-                    Poco::Data::Keywords::use(F.created);
+                    Poco::Data::Keywords::use(F.created),
                     Poco::Data::Keywords::use(ID);
             Update.execute();
             return true;
