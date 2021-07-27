@@ -111,7 +111,7 @@ namespace uCentral {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Update(Sess);
 
-            std::string st{"UPDATE " + DBNAME_FIRMWARES + " set " + DBFIELDS_DEVICETYPES_UPDATE +
+            std::string st{"UPDATE " + DBNAME_FIRMWARES + " set " + DBFIELDS_FIRMWARES_UPDATE +
                            " WHERE id=?"};
             auto Notes = RESTAPI_utils::to_string(F.notes);
 
