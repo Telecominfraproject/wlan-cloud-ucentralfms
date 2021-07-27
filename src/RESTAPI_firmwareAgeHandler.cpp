@@ -10,6 +10,7 @@
 #include "Utils.h"
 #include "DeviceCache.h"
 #include "uCentralProtocol.h"
+#include "RESTAPI_protocol.h"
 
 namespace uCentral {
     void RESTAPI_firmwareAgeHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -25,8 +26,7 @@ namespace uCentral {
             BadRequest(Request, Response);
     }
 
-    void
-    RESTAPI_firmwareAgeHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    void RESTAPI_firmwareAgeHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
         try {
             InitQueryBlock();
             if (!QB_.Select.empty()) {
@@ -36,7 +36,7 @@ namespace uCentral {
                     DeviceCacheEntry E;
                     if (DeviceCache()->GetDevice(i, E)) {
                         FMSObjects::FirmwareAgeDetails FA;
-                        if(Storage()->ComputeFirmwareAge(E.compatible,E.firmware,FA)) {
+                        if(Storage()->ComputeFirmwareAge(E.deviceType,E.revision,FA)) {
                             Poco::JSON::Object  O;
                             FA.to_json(O);
                             O.set(uCentralProtocol::SERIALNUMBER,i);
@@ -53,12 +53,12 @@ namespace uCentral {
                     }
                 }
                 Poco::JSON::Object Answer;
-                Answer.set("ages", Objects);
+                Answer.set(RESTAPI::Protocol::AGES, Objects);
                 ReturnObject(Request, Answer, Response);
                 return;
             } else {
-                auto DeviceType = GetParameter("deviceType", "");
-                auto Revision = GetParameter("revision", "");
+                auto DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
+                auto Revision = GetParameter(RESTAPI::Protocol::REVISION, "");
 
                 if (DeviceType.empty() || Revision.empty()) {
                     BadRequest(Request, Response, "Both deviceType and revision must be set.");

@@ -16,19 +16,19 @@ namespace uCentral {
 
     void DeviceCache::AddToCache(
                         const std::string &SerialNumber, const std::string & DeviceType,
-                        const std::string &Host, const std::string &Firmware) {
+                        const std::string &Host, const std::string &Revision) {
         SubMutexGuard G(Mutex_);
         auto Device = DeviceCache_.find(SerialNumber);
 
         if(Device==DeviceCache_.end()) {
             DeviceCache_[SerialNumber]=DeviceCacheEntry{
-                                                .compatible=DeviceType,
+                                                .deviceType=DeviceType,
                                                 .host=Host,
-                                                .firmware=Firmware};
+                                                .revision=Revision};
         } else {
-            Device->second.firmware=Firmware;
+            Device->second.revision=Revision;
             Device->second.host=Host;
-            Device->second.compatible=DeviceType;
+            Device->second.deviceType=DeviceType;
         }
     }
 

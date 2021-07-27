@@ -5,6 +5,7 @@
 #include "RESTAPI_connectedDeviceHandler.h"
 #include "RESTAPI_FMSObjects.h"
 #include "StorageService.h"
+#include "RESTAPI_protocol.h"
 
 namespace uCentral {
     void RESTAPI_connectedDeviceHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -22,7 +23,7 @@ namespace uCentral {
     void RESTAPI_connectedDeviceHandler::DoGet(Poco::Net::HTTPServerRequest &Request,
                                                 Poco::Net::HTTPServerResponse &Response) {
         try {
-            auto SerialNumber = GetBinding("serialNumber","");
+            auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
 
             if(SerialNumber.empty()) {
                 BadRequest(Request, Response, "SerialNumber must be specified.");

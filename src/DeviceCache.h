@@ -12,9 +12,9 @@
 namespace uCentral {
 
     struct DeviceCacheEntry {
-        std::string     compatible;
+        std::string     deviceType;
         std::string     host;
-        std::string     firmware;
+        std::string     revision;
     };
     typedef std::map<std::string, DeviceCacheEntry> DeviceCacheMap;
 
@@ -30,8 +30,7 @@ namespace uCentral {
         int Start() override;
         void Stop() override;
         void AddToCache(const std::string &serialNumber, const std::string & DeviceType,
-                        const std::string &Host, const std::string &Firmware);
-        std::string FindLatestFirmware(std::string &DeviceType);
+                        const std::string &Host, const std::string &Revision);
         void DumpCache();
         bool GetDevice(const std::string &SerialNumber, DeviceCacheEntry & E);
 

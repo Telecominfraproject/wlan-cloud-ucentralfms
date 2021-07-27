@@ -20,11 +20,11 @@
 #include "RESTAPI_server.h"
 #include "RESTAPI_InternalServer.h"
 #include "ManifestCreator.h"
-#include "ALBHealthCheckServer.h"
 #include "KafkaManager.h"
 #include "NewConnectionHandler.h"
 #include "LatestFirmwareCache.h"
 #include "DeviceCache.h"
+#include "FirmwareCache.h"
 
 namespace uCentral {
     class Daemon *Daemon::instance_ = nullptr;
@@ -37,6 +37,7 @@ namespace uCentral {
                                    vDAEMON_APP_NAME,
                                    vDAEMON_BUS_TIMER,
                                    Types::SubSystemVec{Storage(),
+                                                       FirmwareCache(),
                                                        LatestFirmwareCache(),
                                                        DeviceCache(),
                                                        NewConnectionHandler(),

@@ -20,7 +20,7 @@ namespace uCentral {
         uint64_t        TimeStamp=0;
         std::string     Revision;
     };
-    typedef std::map<std::string, LatestFirmwareCacheEntry> FirmwareCache;
+    typedef std::map<std::string, LatestFirmwareCacheEntry> LatestFirmwareCacheMap;
 
     class LatestFirmwareCache : public SubSystemServer {
     public:
@@ -43,7 +43,7 @@ namespace uCentral {
 
     private:
         static LatestFirmwareCache 	*instance_;
-        FirmwareCache               FirmwareCache_;
+        LatestFirmwareCacheMap      Cache_;
         Types::StringSet            RevisionSet_;
         Types::StringSet            DeviceSet_;
         explicit LatestFirmwareCache() noexcept:

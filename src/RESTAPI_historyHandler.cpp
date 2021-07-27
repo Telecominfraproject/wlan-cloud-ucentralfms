@@ -10,6 +10,7 @@
 
 #include "RESTAPI_historyHandler.h"
 #include "StorageService.h"
+#include "RESTAPI_protocol.h"
 
 namespace uCentral {
     void RESTAPI_historyHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -30,7 +31,7 @@ namespace uCentral {
     void
     RESTAPI_historyHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
         try {
-            auto SerialNumber = GetBinding("serialNumber", "");
+            auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
 
             if (!SerialNumber.empty()) {
                 FMSObjects::RevisionHistoryEntryVec H;
@@ -43,7 +44,7 @@ namespace uCentral {
                         A.add(O);
                     }
                     Poco::JSON::Object Answer;
-                    Answer.set("history", A);
+                    Answer.set(RESTAPI::Protocol::HISTORY, A);
                     ReturnObject(Request, Answer, Response);
                 } else {
                     NotFound(Request, Response);
@@ -59,8 +60,8 @@ namespace uCentral {
     void RESTAPI_historyHandler::DoDelete(Poco::Net::HTTPServerRequest &Request,
                                           Poco::Net::HTTPServerResponse &Response) {
         try {
-            auto SerialNumber = GetBinding("serialNumber", "");
-            auto Id = GetParameter("id", "");
+            auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
+            auto Id = GetParameter(RESTAPI::Protocol::ID, "");
             if (SerialNumber.empty() || Id.empty()) {
                 BadRequest(Request, Response, "SerialNumber and Id must not be empty.");
                 return;

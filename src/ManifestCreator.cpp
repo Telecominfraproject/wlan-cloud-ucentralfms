@@ -179,8 +179,8 @@ namespace uCentral {
             Outcome = S3Client.ListObjectsV2(Request);
             if(!Outcome.IsSuccess()) {
                 Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
-                                           std::string{Outcome.GetError().GetExceptionName().c_str()},
-                                           std::string{Outcome.GetError().GetMessage().c_str()}));
+                                           std::string{Outcome.GetError().GetExceptionName()},
+                                           std::string{Outcome.GetError().GetMessage()}));
                 return false;
             }
             Aws::Vector<Aws::S3::Model::Object> objects = Outcome.GetResult().GetContents();
@@ -263,8 +263,8 @@ namespace uCentral {
         // std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
         if(!Outcome.IsSuccess()) {
             Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
-                                       std::string{Outcome.GetError().GetExceptionName().c_str()},
-                                       std::string{Outcome.GetError().GetMessage().c_str()}));
+                                       std::string{Outcome.GetError().GetExceptionName()},
+                                       std::string{Outcome.GetError().GetMessage()}));
             return false;
         }
         return true;

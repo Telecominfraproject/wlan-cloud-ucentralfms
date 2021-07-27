@@ -7,6 +7,7 @@
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Array.h"
 #include "StorageService.h"
+#include "RESTAPI_protocol.h"
 
 namespace uCentral {
     void RESTAPI_connectedDevicesHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -36,7 +37,7 @@ namespace uCentral {
                     AnswerArr.add(Obj);
                 }
                 Poco::JSON::Object AnswerObj;
-                AnswerObj.set("devices", AnswerArr);
+                AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
                 ReturnObject(Request, AnswerObj, Response);
                 return;
             }

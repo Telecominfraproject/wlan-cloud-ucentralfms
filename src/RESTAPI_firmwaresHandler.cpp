@@ -5,6 +5,7 @@
 #include "RESTAPI_firmwaresHandler.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
+#include "RESTAPI_protocol.h"
 
 namespace uCentral {
     void RESTAPI_firmwaresHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
@@ -26,11 +27,11 @@ namespace uCentral {
         try {
 
             InitQueryBlock();
-            std::string DeviceType = GetParameter("deviceType","");
-            bool IdOnly = GetBoolParameter("idOnly",false);
-            bool RevisionSet = GetBoolParameter("revisionSet",false);
-            bool LatestOnly = GetBoolParameter("latestOnly",false);
-            bool DeviceSet = GetBoolParameter("deviceSet",false);
+            std::string DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
+            bool IdOnly = GetBoolParameter(RESTAPI::Protocol::IDONLY, false);
+            bool RevisionSet = GetBoolParameter(RESTAPI::Protocol::REVISIONSET, false);
+            bool LatestOnly = GetBoolParameter(RESTAPI::Protocol::LATESTONLY, false);
+            bool DeviceSet = GetBoolParameter(RESTAPI::Protocol::DEVICESET, false);
 
             if(DeviceSet) {
                 auto Revisions = LatestFirmwareCache()->GetDevices();
@@ -39,7 +40,7 @@ namespace uCentral {
                     ObjectArray.add(i);
                 }
                 Poco::JSON::Object RetObj;
-                RetObj.set("deviceTypes", ObjectArray);
+                RetObj.set(RESTAPI::Protocol::DEVICETYPES, ObjectArray);
                 ReturnObject(Request, RetObj, Response);
                 return;
             }
@@ -51,7 +52,7 @@ namespace uCentral {
                     ObjectArray.add(i);
                 }
                 Poco::JSON::Object RetObj;
-                RetObj.set("revisions", ObjectArray);
+                RetObj.set(RESTAPI::Protocol::REVISIONS, ObjectArray);
                 ReturnObject(Request, RetObj, Response);
                 return;
             }
@@ -88,7 +89,7 @@ namespace uCentral {
                             }
                         }
                         Poco::JSON::Object RetObj;
-                        RetObj.set("firmwares", ObjectArray);
+                        RetObj.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
                         ReturnObject(Request, RetObj, Response);
                         return;
                     } else {
@@ -110,7 +111,7 @@ namespace uCentral {
                     }
                 }
                 Poco::JSON::Object RetObj;
-                RetObj.set("firmwares", ObjectArray);
+                RetObj.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
                 ReturnObject(Request, RetObj, Response);
                 return;
             }
