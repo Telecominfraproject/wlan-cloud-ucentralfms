@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(ucentralfms VERSION 0.2.0)
+project(ucentralfms VERSION 2.0.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
