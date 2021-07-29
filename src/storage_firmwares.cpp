@@ -318,7 +318,7 @@ namespace uCentral {
                     AgeDetails.revision = LatestFirmware.revision;
                     AgeDetails.latestId = LatestFirmware.id;
                     std::cout << "   Revision='" << Revision << "'" << std::endl;
-                    std::cout << "LF Revision='" << Revision << "'" << std::endl;
+                    std::cout << "LF Revision='" << LatestFirmware.revision << "'" << std::endl;
 
                     AgeDetails.latest = (Revision == LatestFirmware.revision);
                     std::cout << "Latest=" << AgeDetails.latest << std::endl;
