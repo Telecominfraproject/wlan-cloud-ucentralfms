@@ -1,13 +1,13 @@
 FROM alpine AS builder
 
-RUN apk update && \
-    apk add --no-cache openssl openssh && \
-    apk add --no-cache ncurses-libs && \
-    apk add --no-cache bash util-linux coreutils curl && \
-    apk add --no-cache make cmake gcc g++ libstdc++ libgcc git zlib-dev && \
-    apk add --no-cache openssl-dev boost-dev curl-dev util-linux-dev && \
-    apk add --no-cache unixodbc-dev postgresql-dev mariadb-dev && \
-    apk add --no-cache librdkafka-dev
+RUN apk add --update --no-cache \
+    openssl openssh \
+    ncurses-libs \
+    bash util-linux coreutils curl \
+    make cmake gcc g++ libstdc++ libgcc git zlib-dev \
+    openssl-dev boost-dev curl-dev util-linux-dev \
+    unixodbc-dev postgresql-dev mariadb-dev \
+    librdkafka-dev
 
 RUN git clone https://github.com/stephb9959/poco /poco
 RUN git clone https://github.com/stephb9959/cppkafka /cppkafka
@@ -37,7 +37,7 @@ RUN cmake ..
 RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
 
-ADD CMakeLists.txt /ucentralfms/
+ADD CMakeLists.txt build /ucentralfms/
 ADD cmake /ucentralfms/cmake
 ADD src /ucentralfms/src
 
@@ -49,11 +49,16 @@ RUN cmake --build . --config Release -j8
 
 FROM alpine
 
-RUN addgroup -S ucentralfms && adduser -S -G ucentralfms ucentralfms
+ENV UCENTRALFMS_USER=ucentralfms \
+    UCENTRALFMS_ROOT=/ucentralfms-data \
+    UCENTRALFMS_CONFIG=/ucentralfms-data
+
+RUN addgroup -S "$UCENTRALFMS_USER" && \
+    adduser -S -G "$UCENTRALFMS_USER" "$UCENTRALFMS_USER"
 
 RUN mkdir /ucentral
-RUN mkdir /ucentralfms-data
-RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc 
+RUN mkdir -p "$UCENTRALFMS_ROOT" "$UCENTRALFMS_CONFIG"
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec
 
 COPY --from=builder /ucentralfms/cmake-build/ucentralfms /ucentral/ucentralfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
@@ -61,9 +66,8 @@ COPY --from=builder /poco/cmake-build/lib/* /lib/
 COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-core/libaws-cpp-sdk-core.so /lib/
 COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-s3/libaws-cpp-sdk-s3.so /lib/
 
-EXPOSE 16004
-EXPOSE 17004
-EXPOSE 16104
+EXPOSE 16004 17004 16104
 
-USER ucentralfms
-ENTRYPOINT /ucentral/ucentralfms
+COPY docker-entrypoint.sh /
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["/ucentral/ucentralfms"]
