@@ -63,16 +63,16 @@ namespace uCentral {
 
             // find the older software and change to latest = 0
             F.id = Daemon()->CreateUUID();
-            if(F.latest)
-            {
+            if(LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate)) {
+                F.latest = true ;
                 Poco::Data::Statement   Update(Sess);
                 std::string st{"UPDATE " + DBNAME_FIRMWARES + " SET latest=0 WHERE deviceType=? AND Latest=1"};
                 Update <<   ConvertParams(st),
                             Poco::Data::Keywords::use(F.deviceType);
                 Update.execute();
+            } else {
+                F.latest = false;
             }
-
-            LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate);
 
             auto Notes = RESTAPI_utils::to_string(F.notes);
             std::string st{"INSERT INTO " + DBNAME_FIRMWARES + " (" +

@@ -16,17 +16,19 @@ namespace uCentral {
     void LatestFirmwareCache::Stop() {
     }
 
-    void LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Revision, const std::string &Id, uint64_t TimeStamp) {
+    bool LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Revision, const std::string &Id, uint64_t TimeStamp) {
         SubMutexGuard G(Mutex_);
 
         RevisionSet_.insert(Revision);
         DeviceSet_.insert(DeviceType);
         auto E = Cache_.find(DeviceType);
-        if((E==Cache_.end()) || (TimeStamp > E->second.TimeStamp)) {
-            Cache_[DeviceType] = LatestFirmwareCacheEntry{.Id=Id,
+        if((E==Cache_.end()) || (TimeStamp >= E->second.TimeStamp)) {
+            Cache_[DeviceType] = LatestFirmwareCacheEntry{  .Id=Id,
                                                             .TimeStamp=TimeStamp,
                                                             .Revision=Revision};
+            return true;
         }
+        return false;
     }
 
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
