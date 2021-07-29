@@ -114,7 +114,7 @@ namespace uCentral {
             Poco::Data::Statement   Update(Sess);
             uint64_t Now = (uint64_t)std::time(nullptr);
 
-            std::string Status{"disconnected"};
+            std::string Status{"not connected"};
 
             // std::cout << "Updating device: " << SerialNumber << std::endl;
             std::string st{"UPDATE " + DBNAME_DEVICES + " set lastUpdate=?, endpoint=?, status=? " + " where serialNumber=?"};
@@ -192,6 +192,8 @@ namespace uCentral {
         try {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Select(Sess);
+
+            Report.reset();
 
             Select << "SELECT " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES;
             Select.execute();

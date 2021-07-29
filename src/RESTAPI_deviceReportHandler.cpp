@@ -24,7 +24,7 @@ namespace uCentral {
     void RESTAPI_deviceReportHandler::DoGet(Poco::Net::HTTPServerRequest &Request,
                                             Poco::Net::HTTPServerResponse &Response) {
         try {
-            Storage()->GenerateDeviceReport(Daemon()->GetDashboard());
+            Daemon()->CreateDashboard();
             Poco::JSON::Object  O;
             Daemon()->GetDashboard().to_json(O);
             ReturnObject(Request, O, Response);
