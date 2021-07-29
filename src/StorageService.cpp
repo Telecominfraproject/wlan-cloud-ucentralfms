@@ -66,11 +66,12 @@ namespace uCentral {
     }
 
     std::string Storage::TrimRevision(const std::string &R) {
-        std::string Result;
-        if(R.size()>63)
+        std::string Result = R;
+/*        if(R.size()>63)
             Result = R.substr(0,63);
         else
             Result = R;
+*/
         return Result;
     }
 
