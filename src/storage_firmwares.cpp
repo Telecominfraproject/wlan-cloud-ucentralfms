@@ -321,6 +321,7 @@ namespace uCentral {
                     std::cout << "LF Revision='" << Revision << "'" << std::endl;
 
                     AgeDetails.latest = (Revision == LatestFirmware.revision);
+                    std::cout << "Latest=" << AgeDetails.latest << std::endl;
                     AgeDetails.age = CurrentFirmwareExists ? (LatestFirmware.imageDate - CurrentFirmware.imageDate) : 0;
                     //std::cout << "Revision: '" << Revision << "' vs '" << LatestFirmware.revision << "'" << std::endl;
                     //if (AgeDetails.latest)
