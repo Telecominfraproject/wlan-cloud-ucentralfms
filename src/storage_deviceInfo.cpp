@@ -202,6 +202,7 @@ namespace uCentral {
 
             bool More = RSet.moveFirst();
             while(More) {
+                Report.numberOfDevices++;
                 auto SerialNumber = RSet[0].convert<std::string>();
                 auto Revision = RSet[1].convert<std::string>();
                 auto DeviceType = RSet[2].convert<std::string>();
@@ -218,10 +219,10 @@ namespace uCentral {
                 if (ComputeFirmwareAge(DeviceType, Revision, Age)) {
                     if (Age.latest) {
                         Types::UpdateCountedMap(Report.UsingLatest_, Revision);
+                    } else if (Age.age == 0) {
+                        Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
                     } else {
-                        if (Age.age == 0) {
-                            Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
-                        }
+
                     }
                 }
                 More = RSet.moveNext();

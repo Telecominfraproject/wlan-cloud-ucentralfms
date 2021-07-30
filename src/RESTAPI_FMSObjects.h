@@ -113,6 +113,8 @@ namespace uCentral::FMSObjects {
     };
 
     struct DeviceReport {
+        uint64_t               snapshot=0;
+        uint64_t               numberOfDevices=0;
         Types::CountedMap      OUI_;
         Types::CountedMap      Revisions_;
         Types::CountedMap      DeviceTypes_;
@@ -122,7 +124,6 @@ namespace uCentral::FMSObjects {
         Types::CountedMap      UnknownFirmwares_;
         void to_json(Poco::JSON::Object &Obj) const;
         void reset();
-
         bool from_json(const Poco::JSON::Object::Ptr &Obj);
     };
 }

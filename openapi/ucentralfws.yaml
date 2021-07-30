@@ -219,6 +219,12 @@ components:
     DeviceReport:
       type: object
       properties:
+        snapshot:
+          type: integer
+          format: int64
+        numberOfDevices:
+          type: integer
+          format: int64
         ouis:
           $ref: '#/components/schemas/TagIntPairList'
         revisions:

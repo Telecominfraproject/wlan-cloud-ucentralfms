@@ -218,6 +218,8 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "endPoints", EndPoints_);
         field_to_json(Obj, "usingLatest", UsingLatest_);
         field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
+        field_to_json(Obj,"snapshot",snapshot);
+        field_to_json(Obj,"numberOfDevices",numberOfDevices);
     }
 
     void DeviceReport::reset() {
@@ -228,6 +230,8 @@ namespace uCentral::FMSObjects {
         EndPoints_.clear();
         UsingLatest_.clear();
         UnknownFirmwares_.clear();
+        numberOfDevices = 0 ;
+        snapshot = std::time(nullptr);
     }
 
     bool DeviceReport::from_json(const Poco::JSON::Object::Ptr &Obj) {
