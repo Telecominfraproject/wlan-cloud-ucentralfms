@@ -47,12 +47,11 @@ namespace uCentral {
             Poco::Data::Statement   Select(Sess);
 
             std::string st{"SELECT " + DBFIELDS_HISTORY_SELECT +
-                           " FROM " + DBNAME_HISTORY + " where SerialNumber=?" };
+                           " FROM " + DBNAME_HISTORY + " where SerialNumber=? ORDER BY Upgraded " };
 
-            Select << ConvertParams(st),
+            Select << ConvertParams(st) + ComputeRange(From, HowMany),
                     Poco::Data::Keywords::into(Records),
-                    Poco::Data::Keywords::use(SerialNumber),
-                    Poco::Data::Keywords::range(From, From + HowMany);
+                    Poco::Data::Keywords::use(SerialNumber);
             Select.execute();
 
             for(const auto &R:Records) {
