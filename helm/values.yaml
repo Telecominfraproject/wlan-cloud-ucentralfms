@@ -109,14 +109,13 @@ secret_env_variables: {}
 configProperties:
   # -> Public part
   # REST API
-  ucentral.restapi.host.0.backlog: 100
-  ucentral.restapi.host.0.security: relaxed
-  ucentral.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
-  ucentral.restapi.host.0.address: "*"
-  ucentral.restapi.host.0.port: 16004
-  ucentral.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
-  ucentral.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
-  ucentral.restapi.wwwassets: $UCENTRALFMS_ROOT/wwwassets
+  ucentralfws.restapi.host.0.backlog: 100
+  ucentralfws.restapi.host.0.security: relaxed
+  ucentralfws.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
+  ucentralfws.restapi.host.0.address: "*"
+  ucentralfws.restapi.host.0.port: 16004
+  ucentralfws.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
+  ucentralfws.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
   ucentral.internal.restapi.host.0.backlog: 100
   ucentral.internal.restapi.host.0.security: relaxed
   ucentral.internal.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
