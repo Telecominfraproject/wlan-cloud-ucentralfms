@@ -1,0 +1,207 @@
+# System
+replicaCount: 1
+strategyType: Recreate
+
+nameOverride: ""
+fullnameOverride: ""
+
+images:
+  ucentralfms:
+    repository: tip-tip-wlan-cloud-ucentral.jfrog.io/ucentralfms
+    tag: main
+    pullPolicy: Always
+#    regcred:
+#      registry: tip-tip-wlan-cloud-ucentral.jfrog.io
+#      username: username
+#      password: password
+
+services:
+  ucentralfms:
+    type: LoadBalancer
+    ports:
+      restapi:
+        servicePort: 16004
+        targetPort: 16004
+        protocol: TCP
+      restapiinternal:
+        servicePort: 17004
+        targetPort: 17004
+        protocol: TCP
+
+checks:
+  ucentralfms:
+    liveness:
+      httpGet:
+        path: /
+        port: 16104
+    readiness:
+      httpGet:
+        path: /
+        port: 16104
+
+ingresses:
+  restapi:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    hosts:
+    - restapi.chart-example.local
+    paths:
+    - path: /
+      serviceName: ucentralfms
+      servicePort: restapi
+
+volumes:
+  ucentralfms:
+    - name: config
+      mountPath: /ucentralfms-data/ucentralfms.properties
+      subPath: ucentralfms.properties
+      # Template below will be rendered in template
+      volumeDefinition: |
+        secret:
+          secretName: {{ include "ucentralfms.fullname" . }}-config
+    - name: certs
+      mountPath: /ucentralfms-data/certs
+      volumeDefinition: |
+        secret:
+          secretName: {{ include "ucentralfms.fullname" . }}-certs
+    # Change this if you want to use another volume type
+    - name: persist
+      mountPath: /ucentralfms-data/persist
+      volumeDefinition: |
+        persistentVolumeClaim:
+          claimName: {{ template "ucentralfms.fullname" . }}-pvc
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  enabled: true
+  # storageClassName: "-"
+  accessModes:
+    - ReadWriteOnce
+  size: 10Gi
+  annotations: {}
+
+# Application
+public_env_variables:
+  UCENTRALSEC_ROOT: /ucentralfms-data
+  UCENTRALSEC_CONFIG: /ucentralfms-data
+
+secret_env_variables: {}
+
+configProperties:
+  # -> Public part
+  # REST API
+  ucentral.restapi.host.0.backlog: 100
+  ucentral.restapi.host.0.security: relaxed
+  ucentral.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
+  ucentral.restapi.host.0.address: "*"
+  ucentral.restapi.host.0.port: 16004
+  ucentral.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
+  ucentral.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
+  ucentral.restapi.wwwassets: $UCENTRALFMS_ROOT/wwwassets
+  ucentral.internal.restapi.host.0.backlog: 100
+  ucentral.internal.restapi.host.0.security: relaxed
+  ucentral.internal.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
+  ucentral.internal.restapi.host.0.address: "*"
+  ucentral.internal.restapi.host.0.port: 17004
+  ucentral.internal.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
+  ucentral.internal.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
+  # Firmware Microservice Specific Section
+  s3.bucketname: ucentral-ap-firmware
+  s3.region: us-east-1
+  s3.retry: 60
+  s3.bucket.uri: ucentral-ap-firmware.s3.amazonaws.com
+  firmwaredb.refresh: 1800
+  # ALB
+  alb.enable: "true"
+  alb.port: 16104
+  # Kafka
+  ucentral.kafka.enable: "false"
+  ucentral.kafka.group.id: firmware
+  ucentral.kafka.client.id: firmware1
+  ucentral.kafka.brokerlist: localhost:9092
+  ucentral.kafka.auto.commit: false
+  ucentral.kafka.queue.buffering.max.ms: 50
+  # Storage
+  storage.type: sqlite # (sqlite|postgresql|mysql|odbc)
+  ## SQLite
+  storage.type.sqlite.db: firmware.db
+  storage.type.sqlite.idletime: 120
+  storage.type.sqlite.maxsessions: 128
+  ## PostgreSQL
+  storage.type.postgresql.maxsessions: 64
+  storage.type.postgresql.idletime: 60
+  storage.type.postgresql.host: localhost
+  storage.type.postgresql.database: ucentral
+  storage.type.postgresql.port: 5432
+  storage.type.postgresql.connectiontimeout: 60
+  ## MySQL
+  storage.type.mysql.maxsessions: 64
+  storage.type.mysql.idletime: 60
+  storage.type.mysql.host: localhost
+  storage.type.mysql.database: ucentral
+  storage.type.mysql.port: 3306
+  storage.type.mysql.connectiontimeout: 60
+  # System
+  ucentral.service.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
+  ucentral.system.data: $UCENTRALFMS_ROOT/persist
+  ucentral.system.debug: "true"
+  ucentral.system.uri.private: https://localhost:17004
+  ucentral.system.uri.public: https://localhost:16004
+  ucentral.system.uri.ui: https://localhost
+  ucentral.system.commandchannel: /tmp/app_ucentralfms
+  # Logging
+  logging.formatters.f1.class: PatternFormatter
+  logging.formatters.f1.pattern: "%Y-%m-%d %H:%M:%S %s: [%p] %t"
+  logging.formatters.f1.times: UTC
+  logging.channels.c1.class: ConsoleChannel
+  logging.channels.c1.formatter: f1
+  logging.channels.c2.class: FileChannel
+  logging.channels.c2.path: /tmp/log_ucentralfms
+  logging.channels.c2.formatter.class: PatternFormatter
+  logging.channels.c2.formatter.pattern: "%Y-%m-%d %H:%M:%S %s: [%p] %t"
+  logging.channels.c2.rotation: "20 M"
+  logging.channels.c2.archive: timestamp
+  logging.channels.c2.purgeCount: 20
+  logging.channels.c3.class: ConsoleChannel
+  logging.channels.c3.pattern: "%s: [%p] %t"
+  logging.loggers.root.channel: c1
+  logging.loggers.root.level: debug
+
+  # -> Secret part
+  # REST API
+  ucentral.restapi.host.0.key.password: mypassword
+  ucentral.internal.restapi.host.0.key.password: mypassword
+  # Firmware Microservice Specific Section
+  s3.secret: TOFILL
+  s3.key: TOFILL
+  # Storage
+  ## PostgreSQL
+  storage.type.postgresql.username: stephb
+  storage.type.postgresql.password: snoopy99
+  ## MySQL
+  storage.type.mysql.username: stephb
+  storage.type.mysql.password: snoopy99
+
+certs:
+  # restapi-ca.pem: ""
+  # restapi-cert.pem: ""
+  # restapi-key.pem: ""
