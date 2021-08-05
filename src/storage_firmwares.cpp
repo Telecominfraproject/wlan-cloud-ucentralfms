@@ -246,11 +246,11 @@ namespace uCentral {
             std::string st;
 
             if(Compatible.empty()) {
-                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES + " ORDER BY Id ";
+                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES + " ORDER BY Id ASC ";
                 Select << ConvertParams(st) + ComputeRange(From, HowMany),
                         Poco::Data::Keywords::into(Records);
             } else {
-                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES + " where DeviceType=? ORDER BY Id ";
+                st = "SELECT " + DBFIELDS_FIRMWARES_SELECT + " FROM " + DBNAME_FIRMWARES + " where DeviceType=? ORDER BY Id ASC ";
                 Select << ConvertParams(st) + ComputeRange(From, HowMany),
                         Poco::Data::Keywords::into(Records),
                         Poco::Data::Keywords::use(Compatible);

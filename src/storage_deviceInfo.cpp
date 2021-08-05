@@ -138,7 +138,7 @@ namespace uCentral {
 
             DevicesRecordList   Records;
 
-            std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " ORDER BY SerialNumber "};
+            std::string St{"select " + DBFIELDS_DEVICES_SELECT + " from " + DBNAME_DEVICES + " ORDER BY SerialNumber ASC "};
             Select <<   ConvertParams(St) + ComputeRange(From, HowMany),
                     Poco::Data::Keywords::into(Records);
             Select.execute();
