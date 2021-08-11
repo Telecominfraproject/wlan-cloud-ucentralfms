@@ -491,7 +491,7 @@ paths:
             format: uuid
           required: true
       responses:
-        200:
+        204:
           description: Successfully deleted Firmware for the device.
           content:
             application/json:
@@ -563,7 +563,7 @@ paths:
             format: uuid
           required: true
       responses:
-        200:
+        204:
           description: Success.
           content:
             application/json:
