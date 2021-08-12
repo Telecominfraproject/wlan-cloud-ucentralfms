@@ -221,7 +221,7 @@ namespace uCentral {
                     } else if (Age.age == 0) {
                         Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
                     } else {
-
+                        Types::UpdateCountedMap(Report.totalSecondsOld_,"total_seconds", Age.age);
                     }
                 }
                 More = RSet.moveNext();

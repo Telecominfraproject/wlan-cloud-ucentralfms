@@ -220,6 +220,7 @@ namespace uCentral::FMSObjects {
         field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
         field_to_json(Obj,"snapshot",snapshot);
         field_to_json(Obj,"numberOfDevices",numberOfDevices);
+        field_to_json(Obj, "totalSecondsOld", totalSecondsOld_);
     }
 
     void DeviceReport::reset() {

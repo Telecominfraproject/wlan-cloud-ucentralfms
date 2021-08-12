@@ -239,6 +239,8 @@ components:
           $ref: '#/components/schemas/TagIntPairList'
         usingLatest:
           $ref: '#/components/schemas/TagIntPairList'
+        totalSecondsOld:
+          $ref: '#/components/schemas/TagIntPairList'
 
     #########################################################################################
     ##
