@@ -55,13 +55,13 @@ namespace uCentral {
                 if(Object->has(uCentralProtocol::PAYLOAD)) {
                     auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
                     if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
-                        std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
+                        // std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
                         auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
                         if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
                             auto DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
                             auto Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
                             auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
-                            std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
+                            // std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                             FMSObjects::FirmwareAgeDetails  FA;
                             if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                 Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
@@ -78,7 +78,7 @@ namespace uCentral {
                             auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
                             auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
                             Storage()->SetDeviceDisconnected(SNum,EndPoint);
-                            std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
+                            // std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
                         }
                     } else if(PayloadObj->has(uCentralProtocol::PING)) {
                         // std::cout << "PING:" << SerialNumber << std::endl;
