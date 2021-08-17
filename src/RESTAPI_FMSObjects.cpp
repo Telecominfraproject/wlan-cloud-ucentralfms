@@ -231,6 +231,7 @@ namespace uCentral::FMSObjects {
         EndPoints_.clear();
         UsingLatest_.clear();
         UnknownFirmwares_.clear();
+        totalSecondsOld_.clear();
         numberOfDevices = 0 ;
         snapshot = std::time(nullptr);
     }
