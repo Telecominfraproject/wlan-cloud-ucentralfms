@@ -7,7 +7,7 @@
 
 #include "Poco/Tuple.h"
 
-namespace uCentral {
+namespace OpenWifi {
     static const std::string DBNAME_FIRMWARES{"firmwares"};
     static const std::string DBFIELDS_FIRMWARES_CREATION {
             "Id              varchar(36) UNIQUE PRIMARY KEY, "

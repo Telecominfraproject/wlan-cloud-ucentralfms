@@ -13,7 +13,7 @@
 #include "RESTAPI_SecurityObjects.h"
 #include "SubSystemServer.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     struct LatestFirmwareCacheEntry {
         std::string     Id;

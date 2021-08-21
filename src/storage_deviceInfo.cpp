@@ -16,7 +16,7 @@
             "lastUpdate=?, "
             "status=?
  */
-namespace uCentral {
+namespace OpenWifi {
 
     bool Convert(const DevicesRecord &T, FMSObjects::DeviceConnectionInformation & F) {
         F.serialNumber = T.get<0>();

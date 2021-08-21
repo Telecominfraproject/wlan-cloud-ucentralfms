@@ -17,7 +17,7 @@
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class ManifestCreator *ManifestCreator::instance_ = nullptr;
 
     void ManifestCreator::run() {

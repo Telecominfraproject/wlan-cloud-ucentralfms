@@ -11,7 +11,7 @@
 #include "RESTAPI_protocol.h"
 #include "RESTAPI_utils.h"
 
-namespace uCentral {
+namespace OpenWifi {
     void RESTAPI_firmwareHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
                                                 Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))

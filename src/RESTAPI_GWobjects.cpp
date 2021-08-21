@@ -19,11 +19,11 @@
 #include "RESTAPI_utils.h"
 #include "Utils.h"
 
-using uCentral::RESTAPI_utils::field_to_json;
-using uCentral::RESTAPI_utils::field_from_json;
-using uCentral::RESTAPI_utils::EmbedDocument;
+using OpenWifi::RESTAPI_utils::field_to_json;
+using OpenWifi::RESTAPI_utils::field_from_json;
+using OpenWifi::RESTAPI_utils::EmbedDocument;
 
-namespace uCentral::GWObjects {
+namespace OpenWifi::GWObjects {
 
 	void Device::to_json(Poco::JSON::Object &Obj) const {
 		field_to_json(Obj,"serialNumber", SerialNumber);
@@ -57,13 +57,15 @@ namespace uCentral::GWObjects {
 		if (DeviceRegistry()->GetState(SerialNumber, ConState)) {
 			ConState.to_json(Obj);
 		} else {
-			field_to_json(Obj,"ipAddress", "N/A");
+			field_to_json(Obj,"ipAddress", "");
 			field_to_json(Obj,"txBytes", (uint64_t) 0);
 			field_to_json(Obj,"rxBytes", (uint64_t )0);
 			field_to_json(Obj,"messageCount", (uint64_t )0);
 			field_to_json(Obj,"connected", false);
-			field_to_json(Obj,"lastContact", "N/A");
+			field_to_json(Obj,"lastContact", "");
 			field_to_json(Obj,"verifiedCertificate", "NO_CERTIFICATE");
+			field_to_json(Obj,"associations_2G", (uint64_t) 0);
+			field_to_json(Obj,"associations_5G", (uint64_t) 0);
 		}
 #endif
 	}
@@ -176,6 +178,9 @@ namespace uCentral::GWObjects {
 		field_to_json(Obj,"connected", Connected);
 		field_to_json(Obj,"firmware", Firmware);
 		field_to_json(Obj,"lastContact", LastContact);
+		field_to_json(Obj,"associations_2G", Associations_2G);
+		field_to_json(Obj,"associations_5G", Associations_5G);
+
 		switch(VerifiedCertificate) {
 			case NO_CERTIFICATE:
 				field_to_json(Obj,"verifiedCertificate", "NO_CERTIFICATE"); break;
@@ -203,5 +208,40 @@ namespace uCentral::GWObjects {
 		field_to_json(Obj,"password",DevicePassword);
 	}
 
+	void Dashboard::to_json(Poco::JSON::Object &Obj) const {
+		field_to_json(Obj,"commands",commands);
+		field_to_json(Obj,"upTimes",upTimes);
+		field_to_json(Obj,"memoryUsed",memoryUsed);
+		field_to_json(Obj,"load1",load1);
+		field_to_json(Obj,"load5",load5);
+		field_to_json(Obj,"load15",load15);
+		field_to_json(Obj,"vendors",vendors);
+		field_to_json(Obj,"status",status);
+		field_to_json(Obj,"deviceType",deviceType);
+		field_to_json(Obj,"healths",healths);
+		field_to_json(Obj,"certificates",certificates);
+		field_to_json(Obj,"lastContact",lastContact);
+		field_to_json(Obj,"associations",associations);
+		field_to_json(Obj,"snapshot",snapshot);
+		field_to_json(Obj,"numberOfDevices",numberOfDevices);
+	}
+
+	void Dashboard::reset()  {
+		commands.clear();
+		upTimes.clear();
+		memoryUsed.clear();
+		load1.clear();
+		load5.clear();
+		load15.clear();
+		vendors.clear();
+		status.clear();
+		deviceType.clear();
+		healths.clear();
+		certificates.clear();
+		lastContact.clear();
+		associations.clear();
+		numberOfDevices = 0 ;
+		snapshot = std::time(nullptr);
+	}
 }
 

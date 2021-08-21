@@ -20,7 +20,7 @@
 #include "Daemon.h"
 #include "SubSystemServer.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
 	class ALBRequestHandler: public Poco::Net::HTTPRequestHandler
 			/// Return a HTML document with the current date and time.
@@ -85,7 +85,7 @@ namespace uCentral {
 
             int Start() {
                 if(Daemon()->ConfigGetBool("alb.enable",false)) {
-                    Port_ = (int)Daemon()->ConfigGetInt("alb.port",15016);
+                    Port_ = (int)Daemon()->ConfigGetInt("alb.port",15015);
                     Socket_ = std::make_unique<Poco::Net::ServerSocket>(Port_);
                     auto Params = new Poco::Net::HTTPServerParams;
                     Server_ = std::make_unique<Poco::Net::HTTPServer>(new ALBRequestHandlerFactory(Logger_), *Socket_, Params);

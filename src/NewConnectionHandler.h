@@ -7,9 +7,9 @@
 
 
 #include "SubSystemServer.h"
-#include "uCentralTypes.h"
+#include "OpenWifiTypes.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     class NewConnectionHandler : public SubSystemServer, Poco::Runnable {
     public:

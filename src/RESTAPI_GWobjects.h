@@ -12,7 +12,7 @@
 #include "Poco/JSON/Object.h"
 #include "RESTAPI_SecurityObjects.h"
 
-namespace uCentral::GWObjects {
+namespace OpenWifi::GWObjects {
 
 	enum CertificateValidation {
 		NO_CERTIFICATE,
@@ -24,14 +24,17 @@ namespace uCentral::GWObjects {
 	struct ConnectionState {
 		uint64_t MessageCount = 0 ;
 		std::string SerialNumber;
-		std::string Address = "N/A";
+		std::string Address;
 		uint64_t UUID = 0 ;
 		uint64_t PendingUUID = 0 ;
 		uint64_t TX = 0, RX = 0;
+		uint64_t Associations_2G=0;
+		uint64_t Associations_5G=0;
 		bool Connected = false;
 		uint64_t LastContact=0;
 		std::string Firmware;
 		CertificateValidation VerifiedCertificate = NO_CERTIFICATE;
+		std::string Compatible;
 		void to_json(Poco::JSON::Object &Obj) const;
 	};
 
@@ -155,6 +158,26 @@ namespace uCentral::GWObjects {
 		uint64_t 	ViewPort;
 		std::string DevicePassword;
 		void to_json(Poco::JSON::Object &Obj) const;
+	};
+
+	struct Dashboard {
+		uint64_t 		  snapshot;
+		uint64_t 		  numberOfDevices;
+		Types::CountedMap commands;
+		Types::CountedMap upTimes;
+		Types::CountedMap memoryUsed;
+		Types::CountedMap load1;
+		Types::CountedMap load5;
+		Types::CountedMap load15;
+		Types::CountedMap vendors;
+		Types::CountedMap status;
+		Types::CountedMap deviceType;
+		Types::CountedMap healths;
+		Types::CountedMap certificates;
+		Types::CountedMap lastContact;
+		Types::CountedMap associations;
+		void to_json(Poco::JSON::Object &Obj) const;
+		void reset();
 	};
 }
 

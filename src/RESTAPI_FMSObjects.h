@@ -9,9 +9,9 @@
 
 
 #include "RESTAPI_SecurityObjects.h"
-#include "uCentralTypes.h"
+#include "OpenWifiTypes.h"
 
-namespace uCentral::FMSObjects {
+namespace OpenWifi::FMSObjects {
 
     struct Firmware {
         std::string     id;

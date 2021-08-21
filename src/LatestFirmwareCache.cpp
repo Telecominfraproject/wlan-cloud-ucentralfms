@@ -5,7 +5,7 @@
 #include "LatestFirmwareCache.h"
 #include "StorageService.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class LatestFirmwareCache *LatestFirmwareCache::instance_ = nullptr;
 
     int LatestFirmwareCache::Start() {

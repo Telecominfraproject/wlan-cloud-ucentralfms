@@ -4,7 +4,7 @@
 
 #include "FirmwareCache.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class FirmwareCache *FirmwareCache::instance_ = nullptr;
 
     int FirmwareCache::Start() {

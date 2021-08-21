@@ -8,7 +8,7 @@
 #include "Poco/JSON/Object.h"
 #include "Daemon.h"
 
-namespace uCentral {
+namespace OpenWifi {
     void RESTAPI_deviceReportHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
                                                     Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))

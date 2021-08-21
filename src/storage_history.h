@@ -8,7 +8,7 @@
 #include <string>
 #include "Poco/Tuple.h"
 
-namespace uCentral {
+namespace OpenWifi {
     static const std::string DBNAME_HISTORY{"history"};
     static const std::string DBFIELDS_HISTORY_CREATION {
         " id         varchar(36) UNIQUE PRIMARY KEY, "

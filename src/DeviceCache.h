@@ -7,9 +7,9 @@
 
 #include <string>
 #include "SubSystemServer.h"
-#include "uCentralTypes.h"
+#include "OpenWifiTypes.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     struct DeviceCacheEntry {
         std::string     deviceType;

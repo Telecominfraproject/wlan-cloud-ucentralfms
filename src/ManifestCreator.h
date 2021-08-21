@@ -11,7 +11,7 @@
 
 #include "SubSystemServer.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     struct S3BucketEntry {
         bool            Valid = false;

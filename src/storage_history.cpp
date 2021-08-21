@@ -7,7 +7,7 @@
 #include "RESTAPI_FMSObjects.h"
 #include "Daemon.h"
 
-namespace uCentral {
+namespace OpenWifi {
 /*
  *             " id, "
             "serialNumber, "

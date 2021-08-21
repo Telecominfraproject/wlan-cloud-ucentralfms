@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace uCentral {
+namespace OpenWifi {
     static const std::string DBNAME_DEVICETYPES{"deviceTypes"};
     static const std::string DBFIELDS_DEVICETYPES_CREATION {
             " id         varchar(36) UNIQUE PRIMARY KEY, "

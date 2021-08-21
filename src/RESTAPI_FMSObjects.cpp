@@ -5,10 +5,10 @@
 #include "RESTAPI_FMSObjects.h"
 #include "RESTAPI_utils.h"
 
-using uCentral::RESTAPI_utils::field_to_json;
-using uCentral::RESTAPI_utils::field_from_json;
+using OpenWifi::RESTAPI_utils::field_to_json;
+using OpenWifi::RESTAPI_utils::field_from_json;
 
-namespace uCentral::FMSObjects {
+namespace OpenWifi::FMSObjects {
 
     void Firmware::to_json(Poco::JSON::Object &Obj) const {
         field_to_json(Obj, "id", id);

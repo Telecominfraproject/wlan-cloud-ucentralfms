@@ -26,7 +26,7 @@
 #include "DeviceCache.h"
 #include "FirmwareCache.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class Daemon *Daemon::instance_ = nullptr;
 
     class Daemon *Daemon::instance() {
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 
     int ExitCode=0;
     {
-        auto App = uCentral::Daemon::instance();
+        auto App = OpenWifi::Daemon::instance();
         ExitCode = App->run(argc, argv);
     }
 

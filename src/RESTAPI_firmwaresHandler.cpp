@@ -7,7 +7,7 @@
 #include "LatestFirmwareCache.h"
 #include "RESTAPI_protocol.h"
 
-namespace uCentral {
+namespace OpenWifi {
     void RESTAPI_firmwaresHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
                                                  Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))

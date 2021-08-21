@@ -7,7 +7,7 @@
 
 #include "StorageService.h"
 
-namespace uCentral {
+namespace OpenWifi {
     static const std::string DBNAME_DEVICES{"devices"};
 
     static const std::string DBFIELDS_DEVICES_CREATION {

@@ -11,7 +11,7 @@
 #include "RESTAPI_FMSObjects.h"
 #include "SubSystemServer.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     typedef std::map<std::string,std::shared_ptr<FMSObjects::Firmware>> FirmwareCacheMap;
 

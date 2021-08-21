@@ -8,7 +8,7 @@
 
 #include "RESTAPI_handler.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class RESTAPI_historyHandler : public RESTAPIHandler {
     public:
         RESTAPI_historyHandler(const RESTAPIHandler::BindingMap &bindings, Poco::Logger &L, bool Internal)

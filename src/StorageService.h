@@ -27,7 +27,7 @@
 #include "Poco/Data/MySQL/Connector.h"
 #endif
 
-namespace uCentral {
+namespace OpenWifi {
 
     class Storage : public SubSystemServer {
     public:

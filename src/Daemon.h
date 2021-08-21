@@ -16,11 +16,11 @@
 #include "Poco/Crypto/Cipher.h"
 
 #include "MicroService.h"
-#include "uCentralTypes.h"
+#include "OpenWifiTypes.h"
 #include "RESTAPI_FMSObjects.h"
 #include "Dashboard.h"
 
-namespace uCentral {
+namespace OpenWifi {
 
     static const char * vDAEMON_PROPERTIES_FILENAME = "ucentralfms.properties";
     static const char * vDAEMON_ROOT_ENV_VAR = "UCENTRALFMS_ROOT";

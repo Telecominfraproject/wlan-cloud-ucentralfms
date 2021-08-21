@@ -4,7 +4,7 @@
 
 #include "DeviceCache.h"
 
-namespace uCentral {
+namespace OpenWifi {
     class DeviceCache *DeviceCache::instance_ = nullptr;
 
     int DeviceCache::Start() {

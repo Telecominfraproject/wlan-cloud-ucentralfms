@@ -9,7 +9,7 @@
 #include "StorageService.h"
 #include "Daemon.h"
 
-namespace uCentral {
+namespace OpenWifi {
 	int Storage::Setup_SQLite() {
 		Logger_.notice("SQLite Storage enabled.");
         auto DBName = Daemon()->DataDir() + "/" + Daemon()->ConfigGetString("storage.type.sqlite.db");

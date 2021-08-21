@@ -12,7 +12,7 @@
 #include "uCentralProtocol.h"
 #include "RESTAPI_protocol.h"
 
-namespace uCentral {
+namespace OpenWifi {
     void RESTAPI_firmwareAgeHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
                                                 Poco::Net::HTTPServerResponse &Response) {
         if (!ContinueProcessing(Request, Response))
@@ -31,7 +31,7 @@ namespace uCentral {
             InitQueryBlock();
             if (!QB_.Select.empty()) {
                 Poco::JSON::Array Objects;
-                std::vector<std::string> Numbers = uCentral::Utils::Split(QB_.Select);
+                std::vector<std::string> Numbers = Utils::Split(QB_.Select);
                 for (auto &i : Numbers) {
                     DeviceCacheEntry E;
                     if (DeviceCache()->GetDevice(i, E)) {

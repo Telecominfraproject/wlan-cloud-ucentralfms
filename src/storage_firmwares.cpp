@@ -10,7 +10,7 @@
 #include "Daemon.h"
 #include <limits>
 
-namespace uCentral {
+namespace OpenWifi {
 
     bool Convert(const FirmwaresRecord &T, FMSObjects::Firmware & F) {
         F.id = T.get<0>();
