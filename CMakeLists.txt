@@ -53,11 +53,11 @@ add_executable( ucentralfms
                 src/Dashboard.cpp src/Dashboard.h
                 src/Daemon.cpp src/Daemon.h
                 src/StorageService.cpp src/StorageService.h
-                src/storage_tables.cpp src/storage_sqlite.cpp
+                src/storage_tables.cpp
+                src/storage_setup.cpp
                 src/SubSystemServer.cpp src/SubSystemServer.h
                 src/RESTAPI_handler.cpp src/RESTAPI_handler.h
                 src/storage_firmwares.cpp
-                src/storage_mysql.cpp src/storage_pgql.cpp
                 src/Utils.cpp src/Utils.h
                 src/RESTAPI_server.cpp src/RESTAPI_server.h
                 src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h
