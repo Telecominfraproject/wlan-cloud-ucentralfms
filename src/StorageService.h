@@ -61,7 +61,7 @@ namespace OpenWifi {
 
         int 	Start() override;
         void 	Stop() override;
-        int 	Setup_SQLite();
+
         [[nodiscard]] std::string ConvertParams(const std::string &S) const;
         [[nodiscard]] inline std::string ComputeRange(uint64_t From, uint64_t HowMany) {
             if(dbType_==sqlite) {
@@ -92,11 +92,6 @@ namespace OpenWifi {
             return instance_;
         }
 
-#ifndef SMALL_BUILD
-        int 	Setup_MySQL();
-        int 	Setup_PostgreSQL();
-#endif
-
 	  private:
 		static Storage      							    *instance_;
 		std::unique_ptr<Poco::Data::SessionPool>            Pool_= nullptr;
@@ -111,6 +106,11 @@ namespace OpenWifi {
                 SubSystemServer("Storage", "STORAGE-SVR", "storage")
         {
         }
+
+        int 	Setup_SQLite();
+        int 	Setup_MySQL();
+        int 	Setup_PostgreSQL();
+
     };
 
     inline Storage * Storage() { return Storage::instance(); };
