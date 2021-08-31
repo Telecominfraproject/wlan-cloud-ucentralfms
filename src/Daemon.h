@@ -22,7 +22,7 @@
 
 namespace OpenWifi {
 
-    static const char * vDAEMON_PROPERTIES_FILENAME = "ucentralfms.properties";
+    static const char * vDAEMON_PROPERTIES_FILENAME = "owfms.properties";
     static const char * vDAEMON_ROOT_ENV_VAR = "UCENTRALFMS_ROOT";
     static const char * vDAEMON_CONFIG_ENV_VAR = "UCENTRALFMS_CONFIG";
     static const char * vDAEMON_APP_NAME = uSERVICE_FIRMWARE.c_str();

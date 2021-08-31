@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(ucentralfms VERSION 2.1.0)
+project(owfms VERSION 2.2.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -48,7 +48,7 @@ endif()
 
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka /usr/local/opt/mysql-client/include)
 
-add_executable( ucentralfms
+add_executable( owfms
                 build
                 src/Dashboard.cpp src/Dashboard.h
                 src/Daemon.cpp src/Daemon.h
@@ -88,7 +88,7 @@ add_executable( ucentralfms
                 src/RESTAPI_deviceReportHandler.cpp src/RESTAPI_deviceReportHandler.h
                 src/OpenWifiTypes.h )
 
-target_link_libraries(ucentralfms PUBLIC
+target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
         ${Boost_LIBRARIES}
         ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES}
