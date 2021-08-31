@@ -20,10 +20,10 @@ then
   exit 1
 fi
 
-if [[ "${UCENTRALSEC}" == "" ]]
+if [[ "${OWSEC}" == "" ]]
 then
-  echo "You must set the variable UCENTRALSEC in order to use this script. Something like"
-  echo "UCENTRALSEC=security.isp.com:16001"
+  echo "You must set the variable OWSEC in order to use this script. Something like"
+  echo "OWSEC=security.isp.com:16001"
   exit 1
 fi
 
@@ -41,7 +41,7 @@ browser=""
 
 login() {
   payload="{ \"userId\" : \"$username\" , \"password\" : \"$password\" }"
-  token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${UCENTRALSEC}/api/v1/oauth2" | jq -r '.access_token')
+  token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${OWSEC}/api/v1/oauth2" | jq -r '.access_token')
 
   if [[ "${token}" == "" ]]
   then
@@ -73,7 +73,7 @@ findbrowser() {
 }
 
 setfms() {
-	curl  ${FLAGS} -X GET "https://${UCENTRALSEC}/api/v1/systemEndpoints" \
+	curl  ${FLAGS} -X GET "https://${OWSEC}/api/v1/systemEndpoints" \
         -H "accept: application/json" \
         -H "Authorization: Bearer ${token}"  > ${result_file}
 #	jq < ${result_file}
@@ -101,93 +101,93 @@ setfms() {
 #			echo "  host: $host"
 #			echo "  port: $port"
 #			echo "  path: $path"
-			UCENTRALFMS="${url}"
+			OWFMS="${url}"
 			break
 		fi
 	fi
 	done
-	echo "Using ${UCENTRALFMS}..."
+	echo "Using ${OWFMS}..."
 }
 
 logout() {
   curl  ${FLAGS} -X DELETE -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALSEC}/api/v1/oauth2/${token}"
+        "https://${OWSEC}/api/v1/oauth2/${token}"
   rm -rf token.json
 }
 
 getfirmwares() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?deviceType=$1" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?deviceType=$1" > ${result_file}
 	jq < ${result_file}
 }
 
 latestfirmware() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
     jq < ${result_file}
 }
 
 revisions() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?revisionSet=true" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?revisionSet=true" > ${result_file}
     jq < ${result_file}
 }
 
 devicetypes() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
     jq < ${result_file}
 }
 
 firmwareage() {
     curl  ${FLAGS} -G -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwareAge" --data-urlencode "deviceType=$1" --data-urlencode "revision=$2" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwareAge" --data-urlencode "deviceType=$1" --data-urlencode "revision=$2" > ${result_file}
     jq < ${result_file}
 }
 
 gethistory() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/revisionHistory/$1" > ${result_file}
+        "https://${OWFMS}/api/v1/revisionHistory/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevice() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/connectedDevice/$1" > ${result_file}
+        "https://${OWFMS}/api/v1/connectedDevice/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevices() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/connectedDevices" > ${result_file}
+        "https://${OWFMS}/api/v1/connectedDevices" > ${result_file}
     jq < ${result_file}
 }
 
 devicereport() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/deviceReport" > ${result_file}
+        "https://${OWFMS}/api/v1/deviceReport" > ${result_file}
     jq < ${result_file}
 }
 
 fmsversion() {
-    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=version" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=version" \
         -H "accept: application/json" \
         -H "Authorization: Bearer ${token}" > ${result_file}
     jq < ${result_file}
 }
 
 fmstimes() {
-    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=times" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=times" \
         -H "accept: application/json" \
         -H "Authorization: Bearer ${token}" > ${result_file}
     jq < ${result_file}
