@@ -93,7 +93,7 @@ setfms() {
 	path="$(echo $url | grep / | cut -d/ -f2-)"
 	if [[ ${url} != "null" ]]
 		then
-		if [[ ${svctype} == "ucentralfms" ]]
+		if [[ ${svctype} == "owfms" ]]
 			then
 # echo "url: $url"
 # echo "  proto: $proto"
