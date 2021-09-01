@@ -7,14 +7,14 @@
 #
 # REST API access
 #
-ucentral.restapi.host.0.backlog = 100
-ucentral.restapi.host.0.security = relaxed
-ucentral.restapi.host.0.rootca = ${RESTAPI_HOST_ROOTCA}
-ucentral.restapi.host.0.address = *
-ucentral.restapi.host.0.port = ${RESTAPI_HOST_PORT}
-ucentral.restapi.host.0.cert = ${RESTAPI_HOST_CERT}
-ucentral.restapi.host.0.key = ${RESTAPI_HOST_KEY}
-ucentral.restapi.host.0.key.password = ${RESTAPI_HOST_KEY_PASSWORD}
+ucentralfws.restapi.host.0.backlog = 100
+ucentralfws.restapi.host.0.security = relaxed
+ucentralfws.restapi.host.0.rootca = ${RESTAPI_HOST_ROOTCA}
+ucentralfws.restapi.host.0.address = *
+ucentralfws.restapi.host.0.port = ${RESTAPI_HOST_PORT}
+ucentralfws.restapi.host.0.cert = ${RESTAPI_HOST_CERT}
+ucentralfws.restapi.host.0.key = ${RESTAPI_HOST_KEY}
+ucentralfws.restapi.host.0.key.password = ${RESTAPI_HOST_KEY_PASSWORD}
 
 ucentral.internal.restapi.host.0.backlog = 100
 ucentral.internal.restapi.host.0.security = relaxed
@@ -43,7 +43,7 @@ ucentral.system.uri.ui = ${SYSTEM_URI_UI}
 s3.bucketname = ${S3_BUCKETNAME}
 s3.region = ${S3_REGION}
 s3.secret = ${S3_SECRET}
-s3.key =  ${S3_KEY}
+s3.key = ${S3_KEY}
 s3.retry = 60
 s3.bucket.uri = ${S3_BUCKET_URI}
 
