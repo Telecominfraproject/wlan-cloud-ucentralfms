@@ -13,20 +13,7 @@
 #include "RESTAPI_protocol.h"
 
 namespace OpenWifi {
-    void RESTAPI_firmwareAgeHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
-                                                Poco::Net::HTTPServerResponse &Response) {
-        if (!ContinueProcessing(Request, Response))
-            return;
-        if (!IsAuthorized(Request, Response))
-            return;
-        ParseParameters(Request);
-        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
-            DoGet(Request, Response);
-        else
-            BadRequest(Request, Response);
-    }
-
-    void RESTAPI_firmwareAgeHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    void RESTAPI_firmwareAgeHandler::DoGet() {
         try {
             InitQueryBlock();
             if (!QB_.Select.empty()) {
@@ -54,14 +41,14 @@ namespace OpenWifi {
                 }
                 Poco::JSON::Object Answer;
                 Answer.set(RESTAPI::Protocol::AGES, Objects);
-                ReturnObject(Request, Answer, Response);
+                ReturnObject(Answer);
                 return;
             } else {
                 auto DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
                 auto Revision = GetParameter(RESTAPI::Protocol::REVISION, "");
 
                 if (DeviceType.empty() || Revision.empty()) {
-                    BadRequest(Request, Response, "Both deviceType and revision must be set.");
+                    BadRequest("Both deviceType and revision must be set.");
                     return;
                 }
 
@@ -72,16 +59,16 @@ namespace OpenWifi {
                     Poco::JSON::Object Answer;
 
                     FA.to_json(Answer);
-                    ReturnObject(Request, Answer, Response);
+                    ReturnObject(Answer);
                     return;
                 } else {
-                    NotFound(Request, Response);
+                    NotFound();
                 }
             }
             return;
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 }

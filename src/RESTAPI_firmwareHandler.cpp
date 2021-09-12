@@ -12,55 +12,30 @@
 #include "RESTAPI_utils.h"
 
 namespace OpenWifi {
-    void RESTAPI_firmwareHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
-                                                Poco::Net::HTTPServerResponse &Response) {
-        if (!ContinueProcessing(Request, Response))
-            return;
-
-        if (!IsAuthorized(Request, Response))
-            return;
-
-        ParseParameters(Request);
-
-        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
-            DoGet(Request, Response);
-        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_POST)
-            DoPost(Request, Response);
-        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_PUT)
-            DoPut(Request, Response);
-        else if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE)
-            DoDelete(Request, Response);
-        else
-            BadRequest(Request, Response);
-    }
-
     void
-    RESTAPI_firmwareHandler::DoPost(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    RESTAPI_firmwareHandler::DoPost() {
         try {
-            Poco::JSON::Parser IncomingParser;
-            Poco::JSON::Object::Ptr Obj =
-                    IncomingParser.parse(Request.stream()).extract<Poco::JSON::Object::Ptr>();
-
+            auto Obj = ParseStream();
             FMSObjects::Firmware F;
             if (!F.from_json(Obj)) {
-                BadRequest(Request, Response);
+                BadRequest("Ill formed JSON Document.");
                 return;
             }
             F.id = Daemon()->CreateUUID();
             if(Storage()->AddFirmware(F)) {
                 Poco::JSON::Object  Answer;
                 F.to_json(Answer);
-                ReturnObject(Request, Answer, Response);
+                ReturnObject(Answer);
                 return;
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 
     void
-    RESTAPI_firmwareHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    RESTAPI_firmwareHandler::DoGet() {
         try {
             auto UUID = GetBinding(uCentralProtocol::ID, "");
 
@@ -69,28 +44,28 @@ namespace OpenWifi {
                 if (Storage()->GetFirmware(UUID, F)) {
                     Poco::JSON::Object Object;
                     F.to_json(Object);
-                    ReturnObject(Request, Object, Response);
+                    ReturnObject(Object);
                 } else {
-                    NotFound(Request, Response);
+                    NotFound();
                 }
                 return;
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 
     void
-    RESTAPI_firmwareHandler::DoDelete(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    RESTAPI_firmwareHandler::DoDelete() {
         try {
             auto UUID = GetBinding(uCentralProtocol::ID, "");
 
             if (!UUID.empty()) {
                 if (Storage()->DeleteFirmware(UUID)) {
-                    OK(Request, Response);
+                    OK();
                 } else {
-                    NotFound(Request, Response);
+                    NotFound();
                 }
                 return;
             }
@@ -98,26 +73,28 @@ namespace OpenWifi {
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 
-    void RESTAPI_firmwareHandler::DoPut(Poco::Net::HTTPServerRequest &Request,
-                                        Poco::Net::HTTPServerResponse &Response) {
+    void RESTAPI_firmwareHandler::DoPut() {
         try {
 
             auto UUID = GetBinding(uCentralProtocol::ID, "");
             if(UUID.empty()) {
-                BadRequest(Request, Response, "UUID must be included in the request");
+                BadRequest("UUID must be included in the request");
                 return;
             }
 
-            Poco::JSON::Parser IncomingParser;
-            Poco::JSON::Object::Ptr Obj =
-                    IncomingParser.parse(Request.stream()).extract<Poco::JSON::Object::Ptr>();
-
-            FMSObjects::Firmware F;
+            FMSObjects::Firmware    F;
             if(!Storage()->GetFirmware(UUID, F)) {
-                NotFound(Request, Response);
+                NotFound();
+                return;
+            }
+
+            auto Obj = ParseStream();
+            FMSObjects::Firmware    NewFirmware;
+            if(!NewFirmware.from_json(Obj)) {
+                BadRequest("Ill-formed JSON document.");
                 return;
             }
 
@@ -135,14 +112,14 @@ namespace OpenWifi {
             if(Storage()->UpdateFirmware(UUID, F)) {
                 Poco::JSON::Object  Answer;
                 F.to_json(Answer);
-                ReturnObject(Request, Answer, Response);
+                ReturnObject(Answer);
             } else {
-                BadRequest(Request, Response, "Could not update the firmware entry. Please review your changes.");
+                BadRequest("Could not update the firmware entry. Please review your changes.");
             }
             return;
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 }

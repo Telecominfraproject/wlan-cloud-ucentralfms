@@ -13,23 +13,8 @@
 #include "RESTAPI_protocol.h"
 
 namespace OpenWifi {
-    void RESTAPI_historyHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
-                                               Poco::Net::HTTPServerResponse &Response) {
-        if (!ContinueProcessing(Request, Response))
-            return;
-        if (!IsAuthorized(Request, Response))
-            return;
-        ParseParameters(Request);
-        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
-            DoGet(Request, Response);
-        else if(Request.getMethod() == Poco::Net::HTTPRequest::HTTP_DELETE)
-            DoDelete(Request, Response);
-        else
-            BadRequest(Request, Response);
-    }
-
     void
-    RESTAPI_historyHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    RESTAPI_historyHandler::DoGet() {
         try {
             auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
 
@@ -45,37 +30,36 @@ namespace OpenWifi {
                     }
                     Poco::JSON::Object Answer;
                     Answer.set(RESTAPI::Protocol::HISTORY, A);
-                    ReturnObject(Request, Answer, Response);
+                    ReturnObject(Answer);
                 } else {
-                    NotFound(Request, Response);
+                    NotFound();
                 }
                 return;
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 
-    void RESTAPI_historyHandler::DoDelete(Poco::Net::HTTPServerRequest &Request,
-                                          Poco::Net::HTTPServerResponse &Response) {
+    void RESTAPI_historyHandler::DoDelete() {
         try {
             auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
             auto Id = GetParameter(RESTAPI::Protocol::ID, "");
             if (SerialNumber.empty() || Id.empty()) {
-                BadRequest(Request, Response, "SerialNumber and Id must not be empty.");
+                BadRequest("SerialNumber and Id must not be empty.");
                 return;
             }
 
             if (!Storage()->DeleteHistory(SerialNumber, Id)) {
-                OK(Request, Response);
+                OK();
                 return;
             }
-            NotFound(Request, Response);
+            NotFound();
             return;
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 }

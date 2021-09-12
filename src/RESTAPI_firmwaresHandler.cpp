@@ -8,22 +8,8 @@
 #include "RESTAPI_protocol.h"
 
 namespace OpenWifi {
-    void RESTAPI_firmwaresHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
-                                                 Poco::Net::HTTPServerResponse &Response) {
-        if (!ContinueProcessing(Request, Response))
-            return;
-        if (!IsAuthorized(Request, Response))
-            return;
-
-        ParseParameters(Request);
-        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
-            DoGet(Request, Response);
-        else
-            BadRequest(Request, Response);
-    }
-
     void
-    RESTAPI_firmwaresHandler::DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) {
+    RESTAPI_firmwaresHandler::DoGet() {
         try {
 
             InitQueryBlock();
@@ -41,7 +27,7 @@ namespace OpenWifi {
                 }
                 Poco::JSON::Object RetObj;
                 RetObj.set(RESTAPI::Protocol::DEVICETYPES, ObjectArray);
-                ReturnObject(Request, RetObj, Response);
+                ReturnObject(RetObj);
                 return;
             }
 
@@ -53,7 +39,7 @@ namespace OpenWifi {
                 }
                 Poco::JSON::Object RetObj;
                 RetObj.set(RESTAPI::Protocol::REVISIONS, ObjectArray);
-                ReturnObject(Request, RetObj, Response);
+                ReturnObject(RetObj);
                 return;
             }
 
@@ -62,7 +48,7 @@ namespace OpenWifi {
                 if(LatestOnly) {
                     LatestFirmwareCacheEntry    Entry;
                     if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {
-                        NotFound(Request, Response);
+                        NotFound();
                         return;
                     }
 
@@ -70,10 +56,10 @@ namespace OpenWifi {
                     if(Storage()->GetFirmware(Entry.Id,F)) {
                         Poco::JSON::Object  Answer;
                         F.to_json(Answer);
-                        ReturnObject(Request, Answer, Response);
+                        ReturnObject(Answer);
                         return;
                     }
-                    NotFound(Request, Response);
+                    NotFound();
                     return;
                 } else {
                     std::vector<FMSObjects::Firmware> List;
@@ -90,10 +76,10 @@ namespace OpenWifi {
                         }
                         Poco::JSON::Object RetObj;
                         RetObj.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
-                        ReturnObject(Request, RetObj, Response);
+                        ReturnObject(RetObj);
                         return;
                     } else {
-                        NotFound(Request, Response);
+                        NotFound();
                         return;
                     }
                 }
@@ -112,12 +98,12 @@ namespace OpenWifi {
                 }
                 Poco::JSON::Object RetObj;
                 RetObj.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
-                ReturnObject(Request, RetObj, Response);
+                ReturnObject(RetObj);
                 return;
             }
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 }

@@ -17,8 +17,11 @@ namespace OpenWifi {
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS},
                                           Internal) {}
         static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/connectedDevice/{serialNumber}"};}
-        void handleRequest(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response) override;
-        void DoGet(Poco::Net::HTTPServerRequest &Request, Poco::Net::HTTPServerResponse &Response);
+
+        void DoGet() final;
+        void DoDelete() final {};
+        void DoPost() final {};
+        void DoPut() final {};
     };
 }
 
