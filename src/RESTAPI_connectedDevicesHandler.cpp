@@ -11,25 +11,20 @@
 
 namespace OpenWifi {
     void RESTAPI_connectedDevicesHandler::DoGet() {
-        try {
-            InitQueryBlock();
-
-            std::vector<FMSObjects::DeviceConnectionInformation> Devices;
-            if (Storage()->GetDevices(QB_.Offset, QB_.Limit, Devices)) {
-                Poco::JSON::Array AnswerArr;
-                for (const auto &i:Devices) {
-                    Poco::JSON::Object Obj;
-                    i.to_json(Obj);
-                    AnswerArr.add(Obj);
-                }
-                Poco::JSON::Object AnswerObj;
-                AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
-                ReturnObject(AnswerObj);
-                return;
+        std::vector<FMSObjects::DeviceConnectionInformation> Devices;
+        Poco::JSON::Object AnswerObj;
+        Poco::JSON::Array AnswerArr;
+        if (Storage()->GetDevices(QB_.Offset, QB_.Limit, Devices)) {
+            for (const auto &i:Devices) {
+                Poco::JSON::Object Obj;
+                i.to_json(Obj);
+                AnswerArr.add(Obj);
             }
-        } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
+            ReturnObject(AnswerObj);
+            return;
         }
-        BadRequest("Internal error.");
+        AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
+        ReturnObject(AnswerObj);
     }
 }
