@@ -8,25 +8,13 @@
 #include "RESTAPI_protocol.h"
 
 namespace OpenWifi {
-    void RESTAPI_connectedDeviceHandler::handleRequest(Poco::Net::HTTPServerRequest &Request,
-                                                        Poco::Net::HTTPServerResponse &Response) {
-        if (!ContinueProcessing(Request, Response))
-            return;
-        if (!IsAuthorized(Request, Response))
-            return;
-        if (Request.getMethod() == Poco::Net::HTTPRequest::HTTP_GET)
-            DoGet(Request, Response);
-        else
-            BadRequest(Request, Response);
-    }
 
-    void RESTAPI_connectedDeviceHandler::DoGet(Poco::Net::HTTPServerRequest &Request,
-                                                Poco::Net::HTTPServerResponse &Response) {
+    void RESTAPI_connectedDeviceHandler::DoGet() {
         try {
             auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
 
             if(SerialNumber.empty()) {
-                BadRequest(Request, Response, "SerialNumber must be specified.");
+                BadRequest("SerialNumber must be specified.");
                 return;
             }
 
@@ -34,15 +22,15 @@ namespace OpenWifi {
             if(Storage()->GetDevice(SerialNumber, DevInfo)) {
                 Poco::JSON::Object  Answer;
                 DevInfo.to_json(Answer);
-                ReturnObject(Request, Answer, Response);
+                ReturnObject(Answer);
                 return;
             }
-            NotFound(Request, Response);
+            NotFound();
             return;
         } catch (const Poco::Exception &E) {
             Logger_.log(E);
         }
-        BadRequest(Request, Response);
+        BadRequest("Internal error.");
     }
 
 }

@@ -20,11 +20,10 @@ namespace OpenWifi {
                                           Poco::Net::HTTPRequest::HTTP_OPTIONS},
                                           Internal) {}
         static const std::list<const char *> PathName() { return std::list<const char *>{"/api/v1/firmware/{id}"};}
-        void handleRequest(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response) override;
-        void DoPost(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
-        void DoGet(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
-        void DoDelete(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
-        void DoPut(Poco::Net::HTTPServerRequest &request, Poco::Net::HTTPServerResponse &response);
+        void DoGet()  final;
+        void DoDelete() final;
+        void DoPost() final;
+        void DoPut() final;
     };
 }
 
