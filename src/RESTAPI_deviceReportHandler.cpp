@@ -10,15 +10,9 @@
 
 namespace OpenWifi {
     void RESTAPI_deviceReportHandler::DoGet() {
-        try {
-            Daemon()->CreateDashboard();
-            Poco::JSON::Object  O;
-            Daemon()->GetDashboard().to_json(O);
-            ReturnObject(O);
-            return;
-        } catch ( const Poco::Exception &E) {
-            Logger_.log(E);
-        }
-        BadRequest("Internal error.");
+        Daemon()->CreateDashboard();
+        Poco::JSON::Object  O;
+        Daemon()->GetDashboard().to_json(O);
+        ReturnObject(O);
     }
 }

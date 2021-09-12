@@ -10,27 +10,20 @@
 namespace OpenWifi {
 
     void RESTAPI_connectedDeviceHandler::DoGet() {
-        try {
-            auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
+        auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
 
-            if(SerialNumber.empty()) {
-                BadRequest("SerialNumber must be specified.");
-                return;
-            }
-
-            FMSObjects::DeviceConnectionInformation DevInfo;
-            if(Storage()->GetDevice(SerialNumber, DevInfo)) {
-                Poco::JSON::Object  Answer;
-                DevInfo.to_json(Answer);
-                ReturnObject(Answer);
-                return;
-            }
-            NotFound();
+        if(SerialNumber.empty()) {
+            BadRequest("SerialNumber must be specified.");
             return;
-        } catch (const Poco::Exception &E) {
-            Logger_.log(E);
         }
-        BadRequest("Internal error.");
-    }
 
+        FMSObjects::DeviceConnectionInformation DevInfo;
+        if(Storage()->GetDevice(SerialNumber, DevInfo)) {
+            Poco::JSON::Object  Answer;
+            DevInfo.to_json(Answer);
+            ReturnObject(Answer);
+            return;
+        }
+        NotFound();
+    }
 }
