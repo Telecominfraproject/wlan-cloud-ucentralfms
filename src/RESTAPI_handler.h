@@ -92,8 +92,8 @@ namespace OpenWifi {
 
 		typedef std::map<std::string, std::string> BindingMap;
 
-		RESTAPIHandler(BindingMap map, Poco::Logger &l, std::vector<std::string> Methods, bool Internal=false)
-			: Bindings_(std::move(map)), Logger_(l), Methods_(std::move(Methods)), Internal_(Internal) {}
+		RESTAPIHandler(BindingMap map, Poco::Logger &l, std::vector<std::string> Methods, bool Internal=false, bool AlwaysAuthorize=true)
+		: Bindings_(std::move(map)), Logger_(l), Methods_(std::move(Methods)), Internal_(Internal), AlwaysAuthorize_(AlwaysAuthorize) {}
 
 		static bool ParseBindings(const std::string & Request, const std::list<const char *> & EndPoints, BindingMap &Keys);
 		void PrintBindings();
@@ -171,6 +171,8 @@ namespace OpenWifi {
 		bool                        QueryBlockInitialized_=false;
 		Poco::Net::HTTPServerRequest    *Request= nullptr;
 		Poco::Net::HTTPServerResponse   *Response= nullptr;
+		bool                        AlwaysAuthorize_=true;
+		Poco::JSON::Parser          IncomingParser_;
 	};
 
 	class RESTAPI_UnknownRequestHandler : public RESTAPIHandler {
