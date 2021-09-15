@@ -86,7 +86,9 @@ add_executable( owfms
                 src/FirmwareCache.cpp src/FirmwareCache.h
                 src/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI_connectedDeviceHandler.h
                 src/RESTAPI_deviceReportHandler.cpp src/RESTAPI_deviceReportHandler.h
-                src/OpenWifiTypes.h )
+                src/RESTAPI_GenericServer.cpp src/RESTAPI_GenericServer.h
+                src/OpenWifiTypes.h
+                src/RESTAPI_errors.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
