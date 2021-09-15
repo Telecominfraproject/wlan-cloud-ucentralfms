@@ -54,9 +54,6 @@ namespace OpenWifi {
     }
 
     Poco::Net::HTTPRequestHandler *RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest & Request) {
-
-        Logger_.debug(Poco::format("REQUEST(%s): %s %s", Utils::FormatIPv6(Request.clientAddress().toString()), Request.getMethod(), Request.getURI()));
-
         Poco::URI uri(Request.getURI());
         auto *Path = uri.getPath().c_str();
         RESTAPIHandler::BindingMap Bindings;
