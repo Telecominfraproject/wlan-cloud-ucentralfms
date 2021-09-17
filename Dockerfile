@@ -59,7 +59,7 @@ RUN addgroup -S "$UCENTRALFMS_USER" && \
 RUN mkdir /ucentral
 RUN mkdir -p "$UCENTRALFMS_ROOT" "$UCENTRALFMS_CONFIG" && \
     chown "$UCENTRALFMS_USER": "$UCENTRALFMS_ROOT" "$UCENTRALFMS_CONFIG"
-RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates
 
 COPY --from=builder /ucentralfms/cmake-build/ucentralfms /ucentral/ucentralfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
