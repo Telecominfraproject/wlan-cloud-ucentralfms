@@ -37,8 +37,8 @@ namespace OpenWifi {
         // void AddRevision(const std::string &Revision);
         bool FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry );
         void DumpCache();
-        inline Types::StringSet GetRevisions() { SubMutexGuard G(Mutex_); return RevisionSet_; };
-        inline Types::StringSet GetDevices() { SubMutexGuard G(Mutex_); return DeviceSet_; };
+        inline Types::StringSet GetRevisions() { std::lock_guard G(Mutex_); return RevisionSet_; };
+        inline Types::StringSet GetDevices() { std::lock_guard G(Mutex_); return DeviceSet_; };
         bool IsLatest(const std::string &DeviceType, const std::string &Revision);
 
     private:

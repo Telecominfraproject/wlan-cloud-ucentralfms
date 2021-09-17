@@ -36,7 +36,7 @@ namespace OpenWifi {
 
                 Types::StringPair  S;
                 {
-                    SubMutexGuard G(Mutex_);
+                    std::lock_guard G(Mutex_);
                     S = NewConnections_.front();
                     NewConnections_.pop();
                 }
@@ -118,7 +118,7 @@ namespace OpenWifi {
     }
 
     void NewConnectionHandler::ConnectionReceived( const std::string & Key, const std::string & Message) {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
         NewConnections_.push(std::make_pair(Key,Message));
     }
 }
