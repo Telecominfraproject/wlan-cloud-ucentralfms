@@ -17,7 +17,7 @@ namespace OpenWifi {
     void DeviceCache::AddToCache(
                         const std::string &SerialNumber, const std::string & DeviceType,
                         const std::string &Host, const std::string &Revision) {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
         auto Device = DeviceCache_.find(SerialNumber);
 
         if(Device==DeviceCache_.end()) {
@@ -33,7 +33,7 @@ namespace OpenWifi {
     }
 
     bool DeviceCache::GetDevice(const std::string &SerialNumber, DeviceCacheEntry & E) {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
         auto Device = DeviceCache_.find(SerialNumber);
         if(Device==DeviceCache_.end())
             return false;
