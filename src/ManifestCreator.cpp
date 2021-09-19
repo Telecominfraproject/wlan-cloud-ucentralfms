@@ -44,6 +44,7 @@ namespace OpenWifi {
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
         uint64_t Limit = std::time(nullptr) - MaxAge_;
+        std::cout << "Limit: " << Limit << std::endl;
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
 
@@ -70,10 +71,11 @@ namespace OpenWifi {
                         Entry.Valid = true;
                     } else {
                         std::cout << "Firmware too old..." << std::endl;
+                        Entry.Valid = false;
                     }
-
                 } else {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
+                    Entry.Valid = false;
                 }
             } catch (const Poco::Exception  &E ) {
                 std::cout << "Exception parsing: " << C << std::endl;

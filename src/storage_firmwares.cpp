@@ -167,6 +167,7 @@ namespace OpenWifi {
             Poco::Data::Session     Sess = Pool_->get();
             Poco::Data::Statement   Delete(Sess);
 
+            std::cout << "Removing old firmware..." << std::endl;
             uint64_t Limit = std::time(nullptr) - ManifestCreator()->MaxAge();
 
             std::string st{"DELETE FROM " + DBNAME_FIRMWARES + " WHERE imageDate<?"};
