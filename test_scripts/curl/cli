@@ -219,17 +219,34 @@ systeminfo() {
 }
 
 reloadsubsystem() {
-    payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"OUIServer\" , \"CommandManager\" ] }"
+    payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"$1\" ] }"
             curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
             -H  "accept: application/json" \
             -H "Authorization: Bearer ${token}" \
             -d "$payload"
 }
 
-
 help() {
-  echo
-  echo
+
+    echo    "Usage: cli <cmd> [args]"
+    echo
+    echo    "getfirmwares                           Get a lit of firmwares"
+    echo    "latestfirmware <device_type>           Get the latest firmware for the device_type specified"
+    echo    "revisions                              Get a list of revisions available."
+    echo    "devicetypes                            Get the list of device types supported."
+    echo    "firmwareage <device_type> <revision>   Calculate how out of date a specific release it."
+    echo    "gethistory <device serial number>      Get the device firmware history."
+    echo    "connecteddevice <device serial number> Get the device status."
+    echo    "connectedDevices                       Get the list of connected devices."
+    echo    "devicereport                           Get the dashboard."
+    echo    "setloglevel <subsystem> <loglevel>     Set the log level for s specific subsystem."
+    echo    "getloglevels                           Get the current log levels for all subsystems."
+    echo    "getloglevelnames                       Get the log level names available."
+    echo    "getsubsystemnames                      Get the list of subsystems."
+    echo    "systeminfo                             Get basic system information."
+    echo    "reloadsubsystem <subsystem name>       Reload the configuration for a subsystem."
+    echo
+    echo
 }
 
 shopt -s nocasematch
@@ -248,7 +265,7 @@ case "$1" in
     "getloglevels") login; getloglevels; logout ;;
     "getloglevelnames") login; getloglevelnames; logout ;;
     "getsubsystemnames") login; getsubsystemnames; logout ;;
-    "reloadsubsystem") login; reloadsubsystem; logout ;;
+    "reloadsubsystem") login; reloadsubsystem "$2"; logout ;;
     "systeminfo") login; systeminfo ; logout;;
     *) help ;;
 esac
