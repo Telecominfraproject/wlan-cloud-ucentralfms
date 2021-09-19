@@ -128,30 +128,6 @@ cmake ..
 make -j
 ```
 
-### Raspberry
-The build on a rPI takes a while. You can shorten that build time and requirements by disabling all the larger database
-support. You can build with only SQLite support by not installing the packages for ODBC, PostgreSQL, and MySQL by
-adding -DSMALL_BUILD=1 on the cmake build line.
-
-```
-sudo apt install git cmake g++ libssl-dev libaprutil1-dev apache2-dev libboost-all-dev libyaml-cpp-dev
-git clone https://github.com/stephb9959/poco
-cd poco
-mkdir cmake-build
-cd cmake-build
-cmake ..
-cmake --build . --config Release
-sudo cmake --build . --target install
-
-cd ~
-git clone https://github.com/Telecominfraproject/wlan-cloud-ucentralfms
-cd wlan-cloud-ucentralfms
-mkdir cmake-build
-cd cmake-build
-cmake -DSMALL_BUILD=1 ..
-make
-```
-
 ### After completing the build
 After completing the build, you can remove the Poco source as it is no longer needed.
 
@@ -167,11 +143,77 @@ mkdir data
 Love'em of hate'em, we gotta use'em. So we tried to make this as easy as possible for you.
 
 #### The `certs` directory
-For all deployments, you will need the following certs directory, populated with the proper files.
+For all deployments, you will need the following `certs` directory, populated with the proper files.
 
 ```asm
-certs ---+--- root.pem
+certs ---+--- 
          +--- restapi-ca.pem
          +--- restapi-cert.pem
          +--- restapi-key.pem
+```
+
+### Configuration
+The configuration is kep in the file `owfms.properties`. This is a text file read by the service at startup time.
+
+#### Basic configuration
+You must set the environment variables:
+- OWFMS_ROOT: represents where the root of the installation is for this service.
+- OWFMS_CONFIG: represents the path where the configuration is kept.
+
+#### The file section
+#### RESTAPI
+```json
+openwifi.restapi.host.0.backlog = 100
+openwifi.restapi.host.0.security = relaxed
+openwifi.restapi.host.0.rootca = $OWFMS_ROOT/certs/restapi-ca.pem
+openwifi.restapi.host.0.address = *
+openwifi.restapi.host.0.port = 16004
+openwifi.restapi.host.0.cert = $OWFMS_ROOT/certs/restapi-cert.pem
+openwifi.restapi.host.0.key = $OWFMS_ROOT/certs/restapi-key.pem
+openwifi.restapi.host.0.key.password = mypassword
+```
+Of importance are the `.port` which should point to the port used.
+
+#### Internal microservice interface
+```json
+openwifi.internal.restapi.host.0.backlog = 100
+openwifi.internal.restapi.host.0.security = relaxed
+openwifi.internal.restapi.host.0.rootca = $OWFMS_ROOT/certs/restapi-ca.pem
+openwifi.internal.restapi.host.0.address = *
+openwifi.internal.restapi.host.0.port = 17004
+openwifi.internal.restapi.host.0.cert = $OWFMS_ROOT/certs/restapi-cert.pem
+openwifi.internal.restapi.host.0.key = $OWFMS_ROOT/certs/restapi-key.pem
+openwifi.internal.restapi.host.0.key.password = mypassword
+```
+You can leave all the default values for this one. 
+
+#### System values
+In the following values, you need to change `.uri.public` and `uri.ui`. The `.uri.public` must point to an externally available FQDN to access the service. The `.uri.ui` must point to web server running 
+the UI for the service. `firmwaredb.refresh` tells the service how often to refresh the firmware database in seconds. `firmwaredb.maxage` tells the service how old you
+want to accept release for. This value is in days.
+
+```json
+openwifi.service.key = $OWFMS_ROOT/certs/restapi-key.pem
+openwifi.service.key.password = mypassword
+openwifi.system.data = $OWFMS_ROOT/data
+openwifi.system.debug = false
+openwifi.system.uri.private = https://localhost:17004
+openwifi.system.uri.public = https://ucentral.dpaas.arilia.com:16004
+openwifi.system.commandchannel = /tmp/app.owfms
+openwifi.system.uri.ui = ucentral-ui.arilia.com
+firmwaredb.refresh = 1800
+firmwaredb.maxage = 90
+```
+
+#### S3 configuration
+The service mua read the information about firmware from an Amazon S3 Bucket. You need to replace `s3.secret` and `s3.key` with your own. 
+
+```json
+s3.bucketname = ucentral-ap-firmware
+s3.region = us-east-1
+s3.secret = *******************************************
+s3.key =  *******************************************
+s3.retry = 60
+s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
+
 ```
