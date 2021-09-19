@@ -49,6 +49,7 @@ namespace OpenWifi {
         bool GetBucketObjectContent(Aws::S3::S3Client &S3Client, const std::string &ObjectName, std::string & ObjectContent);
         void CloseBucket();
         void Print(const S3BucketContent &B);
+        uint64_t MaxAge() const { return MaxAge_; }
 
     private:
         static ManifestCreator      *instance_;
@@ -62,6 +63,7 @@ namespace OpenWifi {
         Aws::Client::ClientConfiguration    AwsConfig_{"ARILIA"};
         Aws::Auth::AWSCredentials           AwsCreds_;
         uint64_t                     DBRefresh_ = 30 * 60;
+        uint64_t                    MaxAge_ = 0 ;
 
         ManifestCreator() noexcept:
                 SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {
