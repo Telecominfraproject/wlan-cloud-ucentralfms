@@ -68,7 +68,10 @@ namespace OpenWifi {
                             continue;
                         }
                         Entry.Valid = true;
+                    } else {
+                        std::cout << "Firmware too old..." << std::endl;
                     }
+
                 } else {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
                 }
