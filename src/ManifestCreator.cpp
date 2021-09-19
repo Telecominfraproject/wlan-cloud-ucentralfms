@@ -43,8 +43,7 @@ namespace OpenWifi {
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
-        uint64_t Limit = std::time(nullptr) - MaxAge_, Rejected=0;
-        std::cout << "Limit: " << Limit << std::endl;
+        uint64_t Limit = std::time(nullptr) - MaxAge_, Rejected=0, Accepted=0, BadFormat=0, MissingJson=0;
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
 
@@ -66,25 +65,29 @@ namespace OpenWifi {
                         if(FullNme!=Entry.Image) {
                             Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
                             Entry.Valid = false;
+                            BadFormat++;
                             continue;
                         }
+                        Accepted++;
                         Entry.Valid = true;
                     } else {
-                        std::cout << "Firmware too old..." << std::endl;
                         Rejected++;
                         Entry.Valid = false;
                     }
                 } else {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
+                    MissingJson++;
                     Entry.Valid = false;
                 }
             } catch (const Poco::Exception  &E ) {
-                std::cout << "Exception parsing: " << C << std::endl;
                 Logger_.log(E);
             }
         }
 
-        std::cout << "Rejected firmwares: " << Rejected << std::endl;
+        Logger_.information(Poco::format("Accepted %Lu firmwares.", Accepted));
+        Logger_.information(Poco::format("Rejected %Lu too old firmwares.", Rejected));
+        Logger_.information(Poco::format("Rejected %Lu bad JSON.", BadFormat));
+        Logger_.information(Poco::format("Rejected %Lu missing JSON.", MissingJson));
 
         return true;
     }
