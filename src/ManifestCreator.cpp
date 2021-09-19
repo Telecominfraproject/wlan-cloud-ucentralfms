@@ -43,7 +43,7 @@ namespace OpenWifi {
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
-        uint64_t Limit = std::time(nullptr) - MaxAge_;
+        uint64_t Limit = std::time(nullptr) - MaxAge_, Rejected=0;
         std::cout << "Limit: " << Limit << std::endl;
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
@@ -71,6 +71,7 @@ namespace OpenWifi {
                         Entry.Valid = true;
                     } else {
                         std::cout << "Firmware too old..." << std::endl;
+                        Rejected++;
                         Entry.Valid = false;
                     }
                 } else {
@@ -82,6 +83,9 @@ namespace OpenWifi {
                 Logger_.log(E);
             }
         }
+
+        std::cout << "Rejected firmwares: " << Rejected << std::endl;
+
         return true;
     }
 
@@ -117,7 +121,7 @@ namespace OpenWifi {
         S3Retry_ = Daemon()->ConfigGetInt("s3.retry",60);
 
         DBRefresh_ = Daemon()->ConfigGetInt("firmwaredb.refresh",30*60);
-        MaxAge_ = Daemon()->ConfigGetInt("firmwaredb.maxage",120) * 24 * 60 * 60;
+        MaxAge_ = Daemon()->ConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;
