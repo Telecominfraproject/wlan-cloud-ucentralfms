@@ -294,28 +294,6 @@ components:
           items:
             $ref: '#/components/schemas/TagIntPair'
 
-    SystemCommandDetails:
-      type: object
-      properties:
-        command:
-          type: string
-          enum:
-            - setloglevels
-            - getloglevels
-            - getSubSystemNames
-            - getLogLevelNames
-            - stats
-        parameters:
-          oneOf:
-            - $ref: '#/components/schemas/StringList'
-            - $ref: '#/components/schemas/TagValuePairList'
-
-    SystemCommandResults:
-      type: object
-      oneOf:
-        - $ref: '#/components/schemas/StringList'
-        - $ref: '#/components/schemas/TagValuePairList'
-
     NoteInfo:
       type: object
       properties:
@@ -345,12 +323,84 @@ components:
         hostname:
           type: string
 
-#########################################################################################
-##
-## End of uCentral system wide values
-##
-#########################################################################################
+    SystemCommandSetLogLevel:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - setloglevel
+        subsystems:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagValuePair'
 
+    SystemCommandReload:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - reload
+        subsystems:
+          type: array
+          items:
+            type: string
+            example: these are the SubSystems names retrieve with the GetSubSystemsNamesResult.
+
+    SystemCommandGetLogLevels:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - getloglevels
+
+    SystemGetLogLevelsResult:
+      type: object
+      properties:
+        taglist:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagValuePair'
+
+    SystemCommandGetLogLevelNames:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - getloglevelnames
+
+    SystemCommandGetSubsystemNames:
+      type: object
+      properties:
+        command:
+          type: string
+          enum:
+            - getsubsystemnames
+
+    SystemCommandGetLogLevelNamesResult:
+      type: object
+      properties:
+        list:
+          type: array
+          items:
+            type: string
+
+    SystemGetSubSystemNemesResult:
+      type: object
+      properties:
+        taglist:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagValuePair'
+
+#########################################################################################
+##
+## End of uCentral system-wide values
+##
+#########################################################################################
 paths:
   /firmwares:
     get:
@@ -722,21 +772,29 @@ paths:
     post:
       tags:
         - System Commands
-      summary: Perform some systeme wide commands
+      summary: Perform some system wide commands
       operationId: systemCommand
       requestBody:
         description: Command details
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SystemCommandDetails'
+              oneOf:
+                - $ref: '#/components/schemas/SystemCommandSetLogLevel'
+                - $ref: '#/components/schemas/SystemCommandReload'
+                - $ref: '#/components/schemas/SystemCommandGetLogLevels'
+                - $ref: '#/components/schemas/SystemCommandGetLogLevelNames'
+                - $ref: '#/components/schemas/SystemCommandGetSubsystemNames'
       responses:
         200:
           description: Successfull command execution
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SystemCommandResults'
+                oneOf:
+                  - $ref: '#/components/schemas/SystemGetLogLevelsResult'
+                  - $ref: '#/components/schemas/SystemCommandGetLogLevelNamesResult'
+                  - $ref: '#/components/schemas/SystemGetSubSystemNemesResult'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:
