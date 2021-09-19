@@ -179,11 +179,28 @@ devicereport() {
     jq < ${result_file}
 }
 
-systeminfo() {
-    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=info" \
-    -H "accept: application/json" \
-    -H "Authorization: Bearer ${token}" > ${result_file}
-    jq < ${result_file}
+setloglevel() {
+    payload="{ \"command\" : \"setloglevel\" , \"subsystems\" : [ { \"tag\" : \"$1\" , \"value\" : \"$2\" } ] }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+getloglevels() {
+    payload="{ \"command\" : \"getloglevels\" }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+getloglevelnames() {
+    payload="{ \"command\" : \"getloglevelnames\" }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
 }
 
 getsubsystemnames() {
@@ -194,6 +211,13 @@ getsubsystemnames() {
             -d "$payload"
 }
 
+systeminfo() {
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=info" \
+    -H "accept: application/json" \
+    -H "Authorization: Bearer ${token}" > ${result_file}
+    jq < ${result_file}
+}
+
 reloadsubsystem() {
     payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"OUIServer\" , \"CommandManager\" ] }"
             curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
@@ -201,6 +225,7 @@ reloadsubsystem() {
             -H "Authorization: Bearer ${token}" \
             -d "$payload"
 }
+
 
 help() {
   echo
@@ -219,9 +244,12 @@ case "$1" in
     "connecteddevices") login; connecteddevices ; logout ;;
     "connecteddevice") login; connecteddevice "$2" ; logout ;;
     "devicereport") login; devicereport; logout ;;
-    "systeminfo") login; systeminfo; logout ;;
+    "setloglevel") login; setloglevel "$2" "$3"  ; logout ;;
+    "getloglevels") login; getloglevels; logout ;;
+    "getloglevelnames") login; getloglevelnames; logout ;;
     "getsubsystemnames") login; getsubsystemnames; logout ;;
     "reloadsubsystem") login; reloadsubsystem; logout ;;
+    "systeminfo") login; systeminfo ; logout;;
     *) help ;;
 esac
 
