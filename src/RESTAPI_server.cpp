@@ -80,6 +80,7 @@ namespace OpenWifi {
     }
 
     void RESTAPI_server::reinitialize(Poco::Util::Application &self) {
+        Daemon()->LoadConfigurationFile();
         Logger_.information("Reinitializing.");
         Stop();
         Start();
