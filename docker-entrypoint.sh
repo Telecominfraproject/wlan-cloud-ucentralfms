@@ -1,6 +1,10 @@
 #!/bin/sh
 set -e
 
+if [ "$SELFSIGNED_CERTS" = 'true' ]; then
+    update-ca-certificates
+fi
+
 if [[ "$TEMPLATE_CONFIG" = 'true' && ! -f "$UCENTRALFMS_CONFIG"/ucentralfms.properties ]]; then
   RESTAPI_HOST_ROOTCA=${RESTAPI_HOST_ROOTCA:-"\$UCENTRALFMS_ROOT/certs/restapi-ca.pem"} \
   RESTAPI_HOST_PORT=${RESTAPI_HOST_PORT:-"16004"} \

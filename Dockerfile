@@ -59,7 +59,7 @@ RUN addgroup -S "$UCENTRALFMS_USER" && \
 RUN mkdir /ucentral
 RUN mkdir -p "$UCENTRALFMS_ROOT" "$UCENTRALFMS_CONFIG" && \
     chown "$UCENTRALFMS_USER": "$UCENTRALFMS_ROOT" "$UCENTRALFMS_CONFIG"
-RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates
 
 COPY --from=builder /ucentralfms/cmake-build/ucentralfms /ucentral/ucentralfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
@@ -69,6 +69,8 @@ COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-s3/libaws-cpp-sdk-s3.so
 
 COPY ucentralfms.properties.tmpl ${UCENTRALFMS_CONFIG}/
 COPY docker-entrypoint.sh /
+RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
+    -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.pem
 
 EXPOSE 16004 17004 16104
 
