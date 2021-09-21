@@ -69,6 +69,8 @@ COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-s3/libaws-cpp-sdk-s3.so
 
 COPY ucentralfms.properties.tmpl ${UCENTRALFMS_CONFIG}/
 COPY docker-entrypoint.sh /
+RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
+    -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.pem
 
 EXPOSE 16004 17004 16104
 
