@@ -61,7 +61,7 @@ RUN mkdir -p "$OWFMS_ROOT" "$OWFMS_CONFIG" && \
     chown "$OWFMS_USER": "$OWFMS_ROOT" "$OWFMS_CONFIG"
 RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates
 
-COPY --from=builder /owfms/cmake-build/ucentralfms /openwifi/owfms
+COPY --from=builder /owfms/cmake-build/owfms /openwifi/owfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
 COPY --from=builder /poco/cmake-build/lib/* /lib/
 COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-core/libaws-cpp-sdk-core.so /lib/
