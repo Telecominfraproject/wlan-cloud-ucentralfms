@@ -6,8 +6,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 images:
-  ucentralfms:
-    repository: tip-tip-wlan-cloud-ucentral.jfrog.io/ucentralfms
+  owfms:
+    repository: tip-tip-wlan-cloud-ucentral.jfrog.io/owfms
     tag: main
     pullPolicy: Always
 #    regcred:
@@ -16,7 +16,7 @@ images:
 #      password: password
 
 services:
-  ucentralfms:
+  owfms:
     type: LoadBalancer
     ports:
       restapi:
@@ -29,7 +29,7 @@ services:
         protocol: TCP
 
 checks:
-  ucentralfms:
+  owfms:
     liveness:
       httpGet:
         path: /
@@ -49,29 +49,29 @@ ingresses:
     - restapi.chart-example.local
     paths:
     - path: /
-      serviceName: ucentralfms
+      serviceName: owfms
       servicePort: restapi
 
 volumes:
-  ucentralfms:
+  owfms:
     - name: config
-      mountPath: /ucentralfms-data/ucentralfms.properties
-      subPath: ucentralfms.properties
+      mountPath: /owfms-data/owfms.properties
+      subPath: owfms.properties
       # Template below will be rendered in template
       volumeDefinition: |
         secret:
-          secretName: {{ include "ucentralfms.fullname" . }}-config
+          secretName: {{ include "owfms.fullname" . }}-config
     - name: certs
-      mountPath: /ucentralfms-data/certs
+      mountPath: /owfms-data/certs
       volumeDefinition: |
         secret:
-          secretName: {{ include "ucentralfms.fullname" . }}-certs
+          secretName: {{ include "owfms.fullname" . }}-certs
     # Change this if you want to use another volume type
     - name: persist
-      mountPath: /ucentralfms-data/persist
+      mountPath: /owfms-data/persist
       volumeDefinition: |
         persistentVolumeClaim:
-          claimName: {{ template "ucentralfms.fullname" . }}-pvc
+          claimName: {{ template "owfms.fullname" . }}-pvc
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -101,28 +101,28 @@ persistence:
 
 # Application
 public_env_variables:
-  UCENTRALSEC_ROOT: /ucentralfms-data
-  UCENTRALSEC_CONFIG: /ucentralfms-data
+  OWFMS_ROOT: /owfms-data
+  OWFMS_CONFIG: /owfms-data
 
 secret_env_variables: {}
 
 configProperties:
   # -> Public part
   # REST API
-  ucentralfws.restapi.host.0.backlog: 100
-  ucentralfws.restapi.host.0.security: relaxed
-  ucentralfws.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
-  ucentralfws.restapi.host.0.address: "*"
-  ucentralfws.restapi.host.0.port: 16004
-  ucentralfws.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
-  ucentralfws.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
-  ucentral.internal.restapi.host.0.backlog: 100
-  ucentral.internal.restapi.host.0.security: relaxed
-  ucentral.internal.restapi.host.0.rootca: $UCENTRALFMS_ROOT/certs/restapi-ca.pem
-  ucentral.internal.restapi.host.0.address: "*"
-  ucentral.internal.restapi.host.0.port: 17004
-  ucentral.internal.restapi.host.0.cert: $UCENTRALFMS_ROOT/certs/restapi-cert.pem
-  ucentral.internal.restapi.host.0.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
+  openwifi.restapi.host.0.backlog: 100
+  openwifi.restapi.host.0.security: relaxed
+  openwifi.restapi.host.0.rootca: $OWFMS_ROOT/certs/restapi-ca.pem
+  openwifi.restapi.host.0.address: "*"
+  openwifi.restapi.host.0.port: 16004
+  openwifi.restapi.host.0.cert: $OWFMS_ROOT/certs/restapi-cert.pem
+  openwifi.restapi.host.0.key: $OWFMS_ROOT/certs/restapi-key.pem
+  openwifi.internal.restapi.host.0.backlog: 100
+  openwifi.internal.restapi.host.0.security: relaxed
+  openwifi.internal.restapi.host.0.rootca: $OWFMS_ROOT/certs/restapi-ca.pem
+  openwifi.internal.restapi.host.0.address: "*"
+  openwifi.internal.restapi.host.0.port: 17004
+  openwifi.internal.restapi.host.0.cert: $OWFMS_ROOT/certs/restapi-cert.pem
+  openwifi.internal.restapi.host.0.key: $OWFMS_ROOT/certs/restapi-key.pem
   # Firmware Microservice Specific Section
   s3.bucketname: ucentral-ap-firmware
   s3.region: us-east-1
@@ -133,12 +133,12 @@ configProperties:
   alb.enable: "true"
   alb.port: 16104
   # Kafka
-  ucentral.kafka.enable: "false"
-  ucentral.kafka.group.id: firmware
-  ucentral.kafka.client.id: firmware1
-  ucentral.kafka.brokerlist: localhost:9092
-  ucentral.kafka.auto.commit: false
-  ucentral.kafka.queue.buffering.max.ms: 50
+  openwifi.kafka.enable: "false"
+  openwifi.kafka.group.id: firmware
+  openwifi.kafka.client.id: firmware1
+  openwifi.kafka.brokerlist: localhost:9092
+  openwifi.kafka.auto.commit: false
+  openwifi.kafka.queue.buffering.max.ms: 50
   # Storage
   storage.type: sqlite # (sqlite|postgresql|mysql|odbc)
   ## SQLite
@@ -149,24 +149,24 @@ configProperties:
   storage.type.postgresql.maxsessions: 64
   storage.type.postgresql.idletime: 60
   storage.type.postgresql.host: localhost
-  storage.type.postgresql.database: ucentral
+  storage.type.postgresql.database: owfms
   storage.type.postgresql.port: 5432
   storage.type.postgresql.connectiontimeout: 60
   ## MySQL
   storage.type.mysql.maxsessions: 64
   storage.type.mysql.idletime: 60
   storage.type.mysql.host: localhost
-  storage.type.mysql.database: ucentral
+  storage.type.mysql.database: owfms
   storage.type.mysql.port: 3306
   storage.type.mysql.connectiontimeout: 60
   # System
-  ucentral.service.key: $UCENTRALFMS_ROOT/certs/restapi-key.pem
-  ucentral.system.data: $UCENTRALFMS_ROOT/persist
-  ucentral.system.debug: "true"
-  ucentral.system.uri.private: https://localhost:17004
-  ucentral.system.uri.public: https://localhost:16004
-  ucentral.system.uri.ui: https://localhost
-  ucentral.system.commandchannel: /tmp/app_ucentralfms
+  openwifi.service.key: $OWFMS_ROOT/certs/restapi-key.pem
+  openwifi.system.data: $OWFMS_ROOT/persist
+  openwifi.system.debug: "true"
+  openwifi.system.uri.private: https://localhost:17004
+  openwifi.system.uri.public: https://localhost:16004
+  openwifi.system.uri.ui: https://localhost
+  openwifi.system.commandchannel: /tmp/app_owfms
   # Logging
   logging.formatters.f1.class: PatternFormatter
   logging.formatters.f1.pattern: "%Y-%m-%d %H:%M:%S %s: [%p] %t"
@@ -174,7 +174,7 @@ configProperties:
   logging.channels.c1.class: ConsoleChannel
   logging.channels.c1.formatter: f1
   logging.channels.c2.class: FileChannel
-  logging.channels.c2.path: /tmp/log_ucentralfms
+  logging.channels.c2.path: /tmp/log_owfms
   logging.channels.c2.formatter.class: PatternFormatter
   logging.channels.c2.formatter.pattern: "%Y-%m-%d %H:%M:%S %s: [%p] %t"
   logging.channels.c2.rotation: "20 M"
@@ -187,8 +187,8 @@ configProperties:
 
   # -> Secret part
   # REST API
-  ucentral.restapi.host.0.key.password: mypassword
-  ucentral.internal.restapi.host.0.key.password: mypassword
+  openwifi.restapi.host.0.key.password: mypassword
+  openwifi.internal.restapi.host.0.key.password: mypassword
   # Firmware Microservice Specific Section
   s3.secret: TOFILL
   s3.key: TOFILL

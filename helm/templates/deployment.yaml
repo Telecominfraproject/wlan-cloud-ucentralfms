@@ -3,10 +3,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "ucentralfms.fullname" . }}
+  name: {{ include "owfms.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "ucentralfms.name" . }}
-    helm.sh/chart: {{ include "ucentralfms.chart" . }}
+    app.kubernetes.io/name: {{ include "owfms.name" . }}
+    helm.sh/chart: {{ include "owfms.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
@@ -15,28 +15,28 @@ spec:
     type: {{ .Values.strategyType }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "ucentralfms.name" . }}
+      app.kubernetes.io/name: {{ include "owfms.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
-      {{- with .Values.services.ucentralfms.labels }}
+      {{- with .Values.services.owfms.labels }}
       {{- toYaml . | nindent 6 }}
       {{- end }}
   template:
     metadata:
       annotations:
-        checksum/config: {{ include "ucentralfms.config" . | sha256sum }}
+        checksum/config: {{ include "owfms.config" . | sha256sum }}
       labels:
-        app.kubernetes.io/name: {{ include "ucentralfms.name" . }}
+        app.kubernetes.io/name: {{ include "owfms.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
-        {{- with .Values.services.ucentralfms.labels }}
+        {{- with .Values.services.owfms.labels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
 
       containers:
 
-        - name: ucentralfms
-          image: "{{ .Values.images.ucentralfms.repository }}:{{ .Values.images.ucentralfms.tag }}"
-          imagePullPolicy: {{ .Values.images.ucentralfms.pullPolicy }}
+        - name: owfms
+          image: "{{ .Values.images.owfms.repository }}:{{ .Values.images.owfms.tag }}"
+          imagePullPolicy: {{ .Values.images.owfms.pullPolicy }}
 
           env:
             - name: KUBERNETES_DEPLOYED
@@ -49,19 +49,19 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "ucentralfms.fullname" $root }}-env
+                  name: {{ include "owfms.fullname" $root }}-env
                   key: {{ $key }}
           {{- end }}
 
           ports:
-          {{- range $port, $portValue := .Values.services.ucentralfms.ports }}
+          {{- range $port, $portValue := .Values.services.owfms.ports }}
             - name: {{ $port }}
               containerPort: {{ $portValue.targetPort }}
               protocol: {{ $portValue.protocol }}
           {{- end }}
 
           volumeMounts:
-          {{- range .Values.volumes.ucentralfms }}
+          {{- range .Values.volumes.owfms }}
           - name: {{ .name }}
             mountPath: {{ .mountPath }}
             {{- if .subPath }}
@@ -69,13 +69,13 @@ spec:
             {{- end }}
           {{- end }}
 
-          {{- if .Values.checks.ucentralfms.liveness }}
+          {{- if .Values.checks.owfms.liveness }}
           livenessProbe:
-            {{- toYaml .Values.checks.ucentralfms.liveness | nindent 12 }}
+            {{- toYaml .Values.checks.owfms.liveness | nindent 12 }}
           {{- end }}
-          {{- if .Values.checks.ucentralfms.readiness }}
+          {{- if .Values.checks.owfms.readiness }}
           readinessProbe:
-            {{- toYaml .Values.checks.ucentralfms.readiness | nindent 12 }}
+            {{- toYaml .Values.checks.owfms.readiness | nindent 12 }}
           {{- end }}
 
           {{- with .Values.resources }}
@@ -89,7 +89,7 @@ spec:
       imagePullSecrets:
       {{- range $image, $imageValue := .Values.images }}
         {{- if $imageValue.regcred }}
-      - name: {{ include "ucentralfms.fullname" $root }}-{{ $image }}-regcred
+      - name: {{ include "owfms.fullname" $root }}-{{ $image }}-regcred
         {{- end }}
       {{- end }}
 
