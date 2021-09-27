@@ -1,10 +1,10 @@
 # Firmware Service (FMS) CLI Documentation
 
 ## Before using the CLI
-You must set the environment variable `UCENTRALSEC`. You must specify the host and port for the security service 
+You must set the environment variable `OWSEC`. You must specify the host and port for the security service 
 associated with the FMS Service. Here is an example
 ```csh
-export UCENTRALSEC=mysecurityservice,example.com:16001
+export OWSEC=mysecurityservice.example.com:16001
 ```
 Once set, you can start using the `CLI`.
 
@@ -12,37 +12,48 @@ Once set, you can start using the `CLI`.
 Most commands will take from 0 to 2 parameters. You should include all parameters in double quotes when possible.
 
 ## The commands
+### getfirmwares
+Get a lit of firmwares.
 
-### `cli getfirmwares <device_type>`
-This will list all firmwares that apply to the `device_type`. You can get a list of `device_types` with the `cli devicetypes` command.
+### latestfirmware <device_type>
+Get the latest firmware for the device_type specified.
 
-### `latestfirmware <device_type>`
-Get the latest firmware version for a given `device_type`.
+### revisions
+Get a list of revisions available.
 
-### `cli revisions`
-Get the list of currently available revisions.
+### devicetypes
+Get the list of device types supported.
 
-### `cli devicetypes`
-Retrieve the list of known `device_types`
+### firmwareage <device_type> <revision>   
+Calculate how out of date a specific release it.
 
-### `cli firmwareage <device_type> <revision>`
-If you specify your `device_type` and `revision`, the system will do its best to estimate how 
-far in the past you `revision` is compared to the latest revision.
+### gethistory <device serial number>
+Get the device firmware history.
 
-### `cli gethistory <serialNumber>`
-Get the revision history for a given device.
+### connecteddevice <device serial number> 
+Get the device status.
 
-### `cli connecteddevices`
-Get a list of the currently known devices and the last connection information we have about the,
+### connectedDevices
+Get the list of connected devices.
 
-### `cli connecteddevice <serialNumber>`
-Get the information relevant to a specific device.
+### devicereport
+Get the dashboard.
 
-### `cli devicereport`
-Give a simplified dashboard report of the data in the service.
+### setloglevel <subsystem> <loglevel>     
+Set the log level for s specific subsystem.
 
-### `cli fmsversion`
-Display the version of the service.
+### getloglevels
+Get the current log levels for all subsystems.
 
-### `cli fmstimes`
-Display the uptime and start time of the service.
+### getloglevelnames
+Get the log level names available.
+
+### getsubsystemnames
+Get the list of subsystems.
+
+### systeminfo
+Get basic system information.
+
+### reloadsubsystem <subsystem name>       
+Reload the configuration for a subsystem.
+

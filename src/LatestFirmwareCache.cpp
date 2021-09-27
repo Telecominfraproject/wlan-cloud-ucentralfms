@@ -17,7 +17,7 @@ namespace OpenWifi {
     }
 
     bool LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Revision, const std::string &Id, uint64_t TimeStamp) {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
 
         RevisionSet_.insert(Revision);
         DeviceSet_.insert(DeviceType);
@@ -32,7 +32,7 @@ namespace OpenWifi {
     }
 
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
 
         auto E=Cache_.find(DeviceType);
         if(E!=Cache_.end()) {
@@ -44,7 +44,7 @@ namespace OpenWifi {
     }
 
     bool LatestFirmwareCache::IsLatest(const std::string &DeviceType, const std::string &Revision) {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
 
         auto E=Cache_.find(DeviceType);
         if(E!=Cache_.end()) {
@@ -55,7 +55,7 @@ namespace OpenWifi {
 
 
     void LatestFirmwareCache::DumpCache() {
-        SubMutexGuard G(Mutex_);
+        std::lock_guard G(Mutex_);
 
         for( auto &[Id,E]:Cache_) {
             std::cout << "Device: " << Id << "    ID:" << E.Id << std::endl;

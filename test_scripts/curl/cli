@@ -20,10 +20,10 @@ then
   exit 1
 fi
 
-if [[ "${UCENTRALSEC}" == "" ]]
+if [[ "${OWSEC}" == "" ]]
 then
-  echo "You must set the variable UCENTRALSEC in order to use this script. Something like"
-  echo "UCENTRALSEC=security.isp.com:16001"
+  echo "You must set the variable OWSEC in order to use this script. Something like"
+  echo "OWSEC=security.isp.com:16001"
   exit 1
 fi
 
@@ -41,7 +41,7 @@ browser=""
 
 login() {
   payload="{ \"userId\" : \"$username\" , \"password\" : \"$password\" }"
-  token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${UCENTRALSEC}/api/v1/oauth2" | jq -r '.access_token')
+  token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${OWSEC}/api/v1/oauth2" | jq -r '.access_token')
 
   if [[ "${token}" == "" ]]
   then
@@ -73,7 +73,7 @@ findbrowser() {
 }
 
 setfms() {
-	curl  ${FLAGS} -X GET "https://${UCENTRALSEC}/api/v1/systemEndpoints" \
+	curl  ${FLAGS} -X GET "https://${OWSEC}/api/v1/systemEndpoints" \
         -H "accept: application/json" \
         -H "Authorization: Bearer ${token}"  > ${result_file}
 #	jq < ${result_file}
@@ -93,7 +93,7 @@ setfms() {
 	path="$(echo $url | grep / | cut -d/ -f2-)"
 	if [[ ${url} != "null" ]]
 		then
-		if [[ ${svctype} == "ucentralfms" ]]
+		if [[ ${svctype} == "owfms" ]]
 			then
 # echo "url: $url"
 # echo "  proto: $proto"
@@ -101,102 +101,152 @@ setfms() {
 #			echo "  host: $host"
 #			echo "  port: $port"
 #			echo "  path: $path"
-			UCENTRALFMS="${url}"
+			OWFMS="${url}"
 			break
 		fi
 	fi
 	done
-	echo "Using ${UCENTRALFMS}..."
+	echo "Using ${OWFMS}..."
 }
 
 logout() {
   curl  ${FLAGS} -X DELETE -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALSEC}/api/v1/oauth2/${token}"
+        "https://${OWSEC}/api/v1/oauth2/${token}"
   rm -rf token.json
 }
 
 getfirmwares() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?deviceType=$1" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?deviceType=$1" > ${result_file}
 	jq < ${result_file}
 }
 
 latestfirmware() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
     jq < ${result_file}
 }
 
 revisions() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?revisionSet=true" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?revisionSet=true" > ${result_file}
     jq < ${result_file}
 }
 
 devicetypes() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
     jq < ${result_file}
 }
 
 firmwareage() {
     curl  ${FLAGS} -G -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/firmwareAge" --data-urlencode "deviceType=$1" --data-urlencode "revision=$2" > ${result_file}
+        "https://${OWFMS}/api/v1/firmwareAge" --data-urlencode "deviceType=$1" --data-urlencode "revision=$2" > ${result_file}
     jq < ${result_file}
 }
 
 gethistory() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/revisionHistory/$1" > ${result_file}
+        "https://${OWFMS}/api/v1/revisionHistory/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevice() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/connectedDevice/$1" > ${result_file}
+        "https://${OWFMS}/api/v1/connectedDevice/$1" > ${result_file}
     jq < ${result_file}
 }
 
 connecteddevices() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/connectedDevices" > ${result_file}
+        "https://${OWFMS}/api/v1/connectedDevices" > ${result_file}
     jq < ${result_file}
 }
 
 devicereport() {
     curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${UCENTRALFMS}/api/v1/deviceReport" > ${result_file}
+        "https://${OWFMS}/api/v1/deviceReport" > ${result_file}
     jq < ${result_file}
 }
 
-fmsversion() {
-    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=version" \
-        -H "accept: application/json" \
-        -H "Authorization: Bearer ${token}" > ${result_file}
+setloglevel() {
+    payload="{ \"command\" : \"setloglevel\" , \"subsystems\" : [ { \"tag\" : \"$1\" , \"value\" : \"$2\" } ] }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+getloglevels() {
+    payload="{ \"command\" : \"getloglevels\" }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+getloglevelnames() {
+    payload="{ \"command\" : \"getloglevelnames\" }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+getsubsystemnames() {
+    payload="{ \"command\" : \"getsubsystemnames\" }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
+}
+
+systeminfo() {
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=info" \
+    -H "accept: application/json" \
+    -H "Authorization: Bearer ${token}" > ${result_file}
     jq < ${result_file}
 }
 
-fmstimes() {
-    curl  ${FLAGS} -X GET "https://${UCENTRALFMS}/api/v1/system?command=times" \
-        -H "accept: application/json" \
-        -H "Authorization: Bearer ${token}" > ${result_file}
-    jq < ${result_file}
+reloadsubsystem() {
+    payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"$1\" ] }"
+            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+            -H  "accept: application/json" \
+            -H "Authorization: Bearer ${token}" \
+            -d "$payload"
 }
-
 
 help() {
-  echo
-  echo
+
+    echo    "Usage: cli <cmd> [args]"
+    echo
+    echo    "getfirmwares                           Get a lit of firmwares"
+    echo    "latestfirmware <device_type>           Get the latest firmware for the device_type specified"
+    echo    "revisions                              Get a list of revisions available."
+    echo    "devicetypes                            Get the list of device types supported."
+    echo    "firmwareage <device_type> <revision>   Calculate how out of date a specific release it."
+    echo    "gethistory <device serial number>      Get the device firmware history."
+    echo    "connecteddevice <device serial number> Get the device status."
+    echo    "connectedDevices                       Get the list of connected devices."
+    echo    "devicereport                           Get the dashboard."
+    echo    "setloglevel <subsystem> <loglevel>     Set the log level for s specific subsystem."
+    echo    "getloglevels                           Get the current log levels for all subsystems."
+    echo    "getloglevelnames                       Get the log level names available."
+    echo    "getsubsystemnames                      Get the list of subsystems."
+    echo    "systeminfo                             Get basic system information."
+    echo    "reloadsubsystem <subsystem name>       Reload the configuration for a subsystem."
+    echo
+    echo
 }
 
 shopt -s nocasematch
@@ -211,8 +261,12 @@ case "$1" in
     "connecteddevices") login; connecteddevices ; logout ;;
     "connecteddevice") login; connecteddevice "$2" ; logout ;;
     "devicereport") login; devicereport; logout ;;
-    "fmsversion") login; fmsversion; logout ;;
-    "fmstimes") login; fmstimes; logout ;;
+    "setloglevel") login; setloglevel "$2" "$3"  ; logout ;;
+    "getloglevels") login; getloglevels; logout ;;
+    "getloglevelnames") login; getloglevelnames; logout ;;
+    "getsubsystemnames") login; getsubsystemnames; logout ;;
+    "reloadsubsystem") login; reloadsubsystem "$2"; logout ;;
+    "systeminfo") login; systeminfo ; logout;;
     *) help ;;
 esac
 

@@ -31,6 +31,7 @@ namespace OpenWifi {
             FirstRun = false;
             Logger_.information("Performing DB refresh");
             S3BucketContent BucketList;
+            Storage()->RemoveOldFirmware();
             ReadBucket(BucketList);
             if(!Running_)
                 break;
@@ -42,6 +43,7 @@ namespace OpenWifi {
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
+        uint64_t Limit = std::time(nullptr) - MaxAge_, Rejected=0, Accepted=0, BadFormat=0, MissingJson=0;
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
 
@@ -55,24 +57,38 @@ namespace OpenWifi {
                     ParsedContent->has("timestamp"))
                 {
                     Entry.Timestamp = ParsedContent->get("timestamp");
-                    Entry.Compatible = ParsedContent->get("compatible").toString();
-                    Entry.Revision = ParsedContent->get("revision").toString();
-                    Entry.Image = ParsedContent->get("image").toString();
-                    auto FullNme = Name + "-upgrade.bin";
-                    if(FullNme!=Entry.Image) {
-                        Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
+                    if(Entry.Timestamp>Limit) {
+                        Entry.Compatible = ParsedContent->get("compatible").toString();
+                        Entry.Revision = ParsedContent->get("revision").toString();
+                        Entry.Image = ParsedContent->get("image").toString();
+                        auto FullNme = Name + "-upgrade.bin";
+                        if(FullNme!=Entry.Image) {
+                            Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
+                            Entry.Valid = false;
+                            BadFormat++;
+                            continue;
+                        }
+                        Accepted++;
+                        Entry.Valid = true;
+                    } else {
+                        Rejected++;
                         Entry.Valid = false;
-                        continue;
                     }
-                    Entry.Valid = true;
                 } else {
                     Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
+                    MissingJson++;
+                    Entry.Valid = false;
                 }
             } catch (const Poco::Exception  &E ) {
-                std::cout << "Exception parsing: " << C << std::endl;
                 Logger_.log(E);
             }
         }
+
+        Logger_.information(Poco::format("Accepted %Lu firmwares.", Accepted));
+        Logger_.information(Poco::format("Rejected %Lu too old firmwares.", Rejected));
+        Logger_.information(Poco::format("Rejected %Lu bad JSON.", BadFormat));
+        Logger_.information(Poco::format("Rejected %Lu missing JSON.", MissingJson));
+
         return true;
     }
 
@@ -108,6 +124,7 @@ namespace OpenWifi {
         S3Retry_ = Daemon()->ConfigGetInt("s3.retry",60);
 
         DBRefresh_ = Daemon()->ConfigGetInt("firmwaredb.refresh",30*60);
+        MaxAge_ = Daemon()->ConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;

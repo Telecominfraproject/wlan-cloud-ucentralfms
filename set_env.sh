@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export UCENTRALFMS_CONFIG=`pwd`
-export UCENTRALFMS_ROOT=`pwd`
+export OWFMS_CONFIG=`pwd`
+export OWFMS_ROOT=`pwd`

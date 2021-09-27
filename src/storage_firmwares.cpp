@@ -9,6 +9,7 @@
 #include "LatestFirmwareCache.h"
 #include "Daemon.h"
 #include <limits>
+#include "ManifestCreator.h"
 
 namespace OpenWifi {
 
@@ -159,6 +160,23 @@ namespace OpenWifi {
             Logger_.log(E);
         }
         return false;
+    }
+
+    void Storage::RemoveOldFirmware() {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Delete(Sess);
+
+            std::cout << "Removing old firmware..." << std::endl;
+            uint64_t Limit = std::time(nullptr) - ManifestCreator()->MaxAge();
+
+            std::string st{"DELETE FROM " + DBNAME_FIRMWARES + " WHERE imageDate<?"};
+            Delete << ConvertParams(st),
+                Poco::Data::Keywords::use(Limit);
+            Delete.execute();
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
     }
 
     bool Storage::GetFirmware(std::string & ID, FMSObjects::Firmware & F) {

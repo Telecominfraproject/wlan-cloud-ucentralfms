@@ -1,6 +1,6 @@
-# ucentralfms
+# owfms
 
-This Helm chart helps to deploy uCentralSec to the Kubernetes clusters. It is mainly used in [assembly chart](https://github.com/Telecominfraproject/wlan-cloud-ucentral-deploy/tree/main/chart) as uCentralSec requires other services as dependencies that are considered in that Helm chart. This chart is purposed to define deployment logic close to the application code itself and define default values that could be overriden during deployment.
+This Helm chart helps to deploy OpenWIFI Firmware service (further on refered as __Firmware__) to the Kubernetes clusters. It is mainly used in [assembly chart](https://github.com/Telecominfraproject/wlan-cloud-ucentral-deploy/tree/main/chart) as uCentralSec requires other services as dependencies that are considered in that Helm chart. This chart is purposed to define deployment logic close to the application code itself and define default values that could be overriden during deployment.
 
 
 ## TL;DR;
@@ -11,7 +11,7 @@ $ helm install .
 
 ## Introduction
 
-This chart bootstraps an ucentralfms on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+This chart bootstraps the Firmware on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
 
 ## Installing the Chart
 
@@ -23,7 +23,7 @@ To install the chart with the release name `my-release`:
 $ helm install --name my-release git+https://github.com/Telecominfraproject/wlan-cloud-ucentralfms@helm?ref=main
 ```
 
-The command deploys ucentralfms on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+The command deploys the Firmware on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
 
 > **Tip**: List all releases using `helm list`
 
@@ -47,30 +47,30 @@ The following table lists the configurable parameters of the chart and their def
 | strategyType | string | Application deployment strategy | `'Recreate'` |
 | nameOverride | string | Override to be used for application deployment |  |
 | fullnameOverride | string | Override to be used for application deployment (has priority over nameOverride) |  |
-| images.ucentralfms.repository | string | Docker image repository |  |
-| images.ucentralfms.tag | string | Docker image tag | `'master'` |
-| images.ucentralfms.pullPolicy | string | Docker image pull policy | `'Always'` |
-| services.ucentralfms.type | string | uCentralSec service type | `'LoadBalancer'` |
-| services.ucentralfms.ports.restapi.servicePort | number | REST API endpoint port to be exposed on service | `16001` |
-| services.ucentralfms.ports.restapi.targetPort | number | REST API endpoint port to be targeted by service | `16001` |
-| services.ucentralfms.ports.restapi.protocol | string | REST API endpoint protocol | `'TCP'` |
-| services.ucentralfms.ports.restapiinternal.servicePort | string | Internal REST API endpoint port to be exposed on service | `17001` |
-| services.ucentralfms.ports.restapiinternal.targetPort | number | Internal REST API endpoint port to be targeted by service | `17001` |
-| services.ucentralfms.ports.restapiinternal.protocol | string | Internal REST API endpoint protocol | `'TCP'` |
-| checks.ucentralfms.liveness.httpGet.path | string | Liveness check path to be used | `'/'` |
-| checks.ucentralfms.liveness.httpGet.port | number | Liveness check port to be used (should be pointint to ALB endpoint) | `16101` |
-| checks.ucentralfms.readiness.httpGet.path | string | Readiness check path to be used | `'/'` |
-| checks.ucentralfms.readiness.httpGet.port | number | Readiness check port to be used (should be pointint to ALB endpoint) | `16101` |
+| images.owfms.repository | string | Docker image repository |  |
+| images.owfms.tag | string | Docker image tag | `'master'` |
+| images.owfms.pullPolicy | string | Docker image pull policy | `'Always'` |
+| services.owfms.type | string | OpenWIFI Firmware service type | `'LoadBalancer'` |
+| services.owfms.ports.restapi.servicePort | number | REST API endpoint port to be exposed on service | `16001` |
+| services.owfms.ports.restapi.targetPort | number | REST API endpoint port to be targeted by service | `16001` |
+| services.owfms.ports.restapi.protocol | string | REST API endpoint protocol | `'TCP'` |
+| services.owfms.ports.restapiinternal.servicePort | string | Internal REST API endpoint port to be exposed on service | `17001` |
+| services.owfms.ports.restapiinternal.targetPort | number | Internal REST API endpoint port to be targeted by service | `17001` |
+| services.owfms.ports.restapiinternal.protocol | string | Internal REST API endpoint protocol | `'TCP'` |
+| checks.owfms.liveness.httpGet.path | string | Liveness check path to be used | `'/'` |
+| checks.owfms.liveness.httpGet.port | number | Liveness check port to be used (should be pointint to ALB endpoint) | `16101` |
+| checks.owfms.readiness.httpGet.path | string | Readiness check path to be used | `'/'` |
+| checks.owfms.readiness.httpGet.port | number | Readiness check port to be used (should be pointint to ALB endpoint) | `16101` |
 | ingresses.restapi.enabled | boolean | Defines if REST API endpoint should be exposed via Ingress controller | `False` |
 | ingresses.restapi.hosts | array | List of hosts for exposed REST API |  |
 | ingresses.restapi.paths | array | List of paths to be exposed for REST API |  |
-| volumes.ucentralfms | array | Defines list of volumes to be attached to uCentralSec |  |
-| persistence.enabled | boolean | Defines if uCentralSec requires Persistent Volume (required for permanent files storage and SQLite DB if enabled) | `True` |
+| volumes.owfms | array | Defines list of volumes to be attached to the Firmware |  |
+| persistence.enabled | boolean | Defines if the Firmware requires Persistent Volume (required for permanent files storage and SQLite DB if enabled) | `True` |
 | persistence.accessModes | array | Defines PV access modes |  |
 | persistence.size | string | Defines PV size | `'10Gi'` |
-| public_env_variables | hash | Defines list of environment variables to be passed to uCentralSec | |
-| configProperties | hash | Configuration properties that should be passed to the application in `ucentralfms.properties`. May be passed by key in set (i.e. `configProperties."rtty\.token"`) | |
-| certs | hash | Defines files (keys and certificates) that should be passed to uCentralSec (PEM format is adviced to be used) (see `volumes.ucentralfms` on where it is mounted) |  |
+| public_env_variables | hash | Defines list of environment variables to be passed to the Firmware | |
+| configProperties | hash | Configuration properties that should be passed to the application in `owfms.properties`. May be passed by key in set (i.e. `configProperties."rtty\.token"`) | |
+| certs | hash | Defines files (keys and certificates) that should be passed to the Firmware (PEM format is adviced to be used) (see `volumes.owfms` on where it is mounted) |  |
 
 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,

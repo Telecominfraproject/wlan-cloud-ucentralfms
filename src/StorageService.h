@@ -58,6 +58,7 @@ namespace OpenWifi {
         bool AddHistory(FMSObjects::RevisionHistoryEntry &History);
 
         void PopulateLatestFirmwareCache();
+        void RemoveOldFirmware();
 
         int 	Start() override;
         void 	Stop() override;

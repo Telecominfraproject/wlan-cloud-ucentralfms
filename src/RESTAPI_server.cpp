@@ -22,12 +22,13 @@ namespace OpenWifi {
     class RESTAPI_server *RESTAPI_server::instance_ = nullptr;
 
     RESTAPI_server::RESTAPI_server() noexcept:
-            SubSystemServer("RESTAPIServer", "RESTAPIServer", "ucentralfws.restapi")
+            SubSystemServer("RESTAPIServer", "RESTAPIServer", "openwifi.restapi")
     {
     }
 
     int RESTAPI_server::Start() {
         Logger_.information("Starting.");
+        Server_.InitLogging();
 
         for(const auto & Svr: ConfigServersList_) {
             Logger_.information(Poco::format("Starting: %s:%s Keyfile:%s CertFile: %s", Svr.Address(), std::to_string(Svr.Port()),
@@ -44,7 +45,7 @@ namespace OpenWifi {
             Params->setMaxQueued(200);
             Params->setKeepAlive(true);
 
-            auto NewServer = std::make_unique<Poco::Net::HTTPServer>(new RequestHandlerFactory, Pool_, Sock, Params);
+            auto NewServer = std::make_unique<Poco::Net::HTTPServer>(new RequestHandlerFactory(Server_), Pool_, Sock, Params);
             NewServer->start();
             RESTServers_.push_back(std::move(NewServer));
         }
@@ -53,9 +54,6 @@ namespace OpenWifi {
     }
 
     Poco::Net::HTTPRequestHandler *RequestHandlerFactory::createRequestHandler(const Poco::Net::HTTPServerRequest & Request) {
-
-        Logger_.debug(Poco::format("REQUEST(%s): %s %s", Utils::FormatIPv6(Request.clientAddress().toString()), Request.getMethod(), Request.getURI()));
-
         Poco::URI uri(Request.getURI());
         auto *Path = uri.getPath().c_str();
         RESTAPIHandler::BindingMap Bindings;
@@ -71,13 +69,21 @@ namespace OpenWifi {
                 RESTAPI_connectedDeviceHandler,
                 RESTAPI_historyHandler,
                 RESTAPI_deviceReportHandler
-                >(Path,Bindings,Logger_);
+                >(Path,Bindings,Logger_, Server_);
     }
 
     void RESTAPI_server::Stop() {
         Logger_.information("Stopping ");
         for( const auto & svr : RESTServers_ )
             svr->stop();
+        RESTServers_.clear();
+    }
+
+    void RESTAPI_server::reinitialize(Poco::Util::Application &self) {
+        Daemon()->LoadConfigurationFile();
+        Logger_.information("Reinitializing.");
+        Stop();
+        Start();
     }
 
 }  // namespace
