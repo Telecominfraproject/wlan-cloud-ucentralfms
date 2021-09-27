@@ -9,6 +9,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 certs/*.*
+/logs/
+/data/
 _deps
 *.pem
 *.id
