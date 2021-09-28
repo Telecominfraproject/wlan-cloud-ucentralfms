@@ -10,6 +10,7 @@
 #include "uCentralProtocol.h"
 #include "RESTAPI_protocol.h"
 #include "RESTAPI_utils.h"
+#include "RESTAPI_errors.h"
 
 namespace OpenWifi {
     void
@@ -17,7 +18,7 @@ namespace OpenWifi {
         auto Obj = ParseStream();
         FMSObjects::Firmware F;
         if (!F.from_json(Obj)) {
-            BadRequest("Ill formed JSON Document.");
+            BadRequest(RESTAPI::Errors::InvalidJSONDocument);
             return;
         }
         F.id = Daemon()->CreateUUID();
@@ -26,9 +27,8 @@ namespace OpenWifi {
             F.to_json(Answer);
             ReturnObject(Answer);
             return;
-        } else {
-            BadRequest("DFirmware could nto be added.");
         }
+        BadRequest(RESTAPI::Errors::RecordNotCreated);
     }
 
     void
@@ -36,7 +36,7 @@ namespace OpenWifi {
         auto UUID = GetBinding(uCentralProtocol::ID, "");
 
         if(UUID.empty()) {
-            BadRequest("Missing UUID.");
+            BadRequest(RESTAPI::Errors::MissingUUID);
             return;
         }
 
@@ -45,30 +45,30 @@ namespace OpenWifi {
             Poco::JSON::Object Object;
             F.to_json(Object);
             ReturnObject(Object);
-        } else {
-            NotFound();
+            return;
         }
+        NotFound();
     }
 
     void
     RESTAPI_firmwareHandler::DoDelete() {
         auto UUID = GetBinding(uCentralProtocol::ID, "");
         if(UUID.empty()) {
-            BadRequest("Missing UUID.");
+            BadRequest(RESTAPI::Errors::MissingUUID);
             return;
         }
 
         if (Storage()->DeleteFirmware(UUID)) {
             OK();
-        } else {
-            NotFound();
+            return;
         }
+        BadRequest(RESTAPI::Errors::CouldNotBeDeleted);
     }
 
     void RESTAPI_firmwareHandler::DoPut() {
         auto UUID = GetBinding(uCentralProtocol::ID, "");
         if(UUID.empty()) {
-            BadRequest("Missing UUID.");
+            BadRequest(RESTAPI::Errors::MissingUUID);
             return;
         }
 
@@ -81,7 +81,7 @@ namespace OpenWifi {
         auto Obj = ParseStream();
         FMSObjects::Firmware    NewFirmware;
         if(!NewFirmware.from_json(Obj)) {
-            BadRequest("Ill-formed JSON document.");
+            BadRequest(RESTAPI::Errors::InvalidJSONDocument);
             return;
         }
 
@@ -100,8 +100,8 @@ namespace OpenWifi {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);
             ReturnObject(Answer);
-        } else {
-            BadRequest("Could not update the firmware entry. Please review your changes.");
+            return;
         }
+        BadRequest(RESTAPI::Errors::RecordNotUpdated);
     }
 }

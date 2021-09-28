@@ -36,7 +36,13 @@ namespace OpenWifi::RESTAPI::Errors {
     static const std::string ContactMustExist{"Contact must exist."};
     static const std::string LocationMustExist{"Location must exist."};
     static const std::string OnlyWSSupported{"This endpoint only supports WebSocket."};
-
+    static const std::string SerialNumberMismatch{"Serial Number mismatch."};
+    static const std::string InvalidCommand{"Invalid command."};
+    static const std::string NoRecordsDeleted{"No records deleted."};
+    static const std::string DeviceNotConnected{"Device is not currently connected."};
+    static const std::string CannotCreateWS{"Telemetry system could not create WS endpoint. Please try again."};
+    static const std::string BothDeviceTypeRevision{"Both deviceType and revision must be set."};
+    static const std::string IdOrSerialEmpty{"SerialNumber and Id must not be empty."};
 }
 
 #endif //OWPROV_RESTAPI_ERRORS_H

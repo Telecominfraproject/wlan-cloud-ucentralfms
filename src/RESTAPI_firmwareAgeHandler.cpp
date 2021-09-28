@@ -11,6 +11,7 @@
 #include "DeviceCache.h"
 #include "uCentralProtocol.h"
 #include "RESTAPI_protocol.h"
+#include "RESTAPI_errors.h"
 
 namespace OpenWifi {
     void RESTAPI_firmwareAgeHandler::DoGet() {
@@ -46,7 +47,7 @@ namespace OpenWifi {
             auto Revision = GetParameter(RESTAPI::Protocol::REVISION, "");
 
             if (DeviceType.empty() || Revision.empty()) {
-                BadRequest("Both deviceType and revision must be set.");
+                BadRequest(RESTAPI::Errors::BothDeviceTypeRevision);
                 return;
             }
 
@@ -59,9 +60,8 @@ namespace OpenWifi {
                 FA.to_json(Answer);
                 ReturnObject(Answer);
                 return;
-            } else {
-                NotFound();
             }
+            NotFound();
         }
     }
 }

@@ -6,6 +6,7 @@
 #include "RESTAPI_FMSObjects.h"
 #include "StorageService.h"
 #include "RESTAPI_protocol.h"
+#include "RESTAPI_errors.h"
 
 namespace OpenWifi {
 
@@ -13,7 +14,7 @@ namespace OpenWifi {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
 
         if(SerialNumber.empty()) {
-            BadRequest("SerialNumber must be specified.");
+            BadRequest(RESTAPI::Errors::MissingSerialNumber);
             return;
         }
 

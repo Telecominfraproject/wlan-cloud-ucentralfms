@@ -11,6 +11,7 @@
 #include "RESTAPI_historyHandler.h"
 #include "StorageService.h"
 #include "RESTAPI_protocol.h"
+#include "RESTAPI_errors.h"
 
 namespace OpenWifi {
     void
@@ -18,7 +19,7 @@ namespace OpenWifi {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
 
         if(SerialNumber.empty()) {
-            BadRequest("Missing Serial Number.");
+            BadRequest(RESTAPI::Errors::MissingSerialNumber);
             return;
         }
 
@@ -33,16 +34,16 @@ namespace OpenWifi {
             Poco::JSON::Object Answer;
             Answer.set(RESTAPI::Protocol::HISTORY, A);
             ReturnObject(Answer);
-        } else {
-            NotFound();
+            return;
         }
+        NotFound();
     }
 
     void RESTAPI_historyHandler::DoDelete() {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
         auto Id = GetParameter(RESTAPI::Protocol::ID, "");
         if (SerialNumber.empty() || Id.empty()) {
-            BadRequest("SerialNumber and Id must not be empty.");
+            BadRequest(RESTAPI::Errors::IdOrSerialEmpty);
             return;
         }
 
