@@ -40,59 +40,64 @@ namespace OpenWifi {
                     S = NewConnections_.front();
                     NewConnections_.pop();
                 }
-                auto SerialNumber = S.first;
-                Poco::JSON::Parser  Parser;
-                auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
-                std::string EndPoint;
+                try {
+                    auto SerialNumber = S.first;
+                    Poco::JSON::Parser  Parser;
+                    auto Object = Parser.parse(S.second).extract<Poco::JSON::Object::Ptr>();
 
-                if(Object->has(uCentralProtocol::SYSTEM)) {
-                    auto SystemObj = Object->getObject(uCentralProtocol::SYSTEM);
-                    if(SystemObj->has(uCentralProtocol::HOST))
-                        EndPoint = SystemObj->get(uCentralProtocol::HOST).toString();
-                }
+                    std::string EndPoint;
 
-                if(Object->has(uCentralProtocol::PAYLOAD)) {
-                    auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
-                    if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
-                        // std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
-                        auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
-                        if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
-                            auto DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
-                            auto Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
-                            auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
-                            // std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
-                            FMSObjects::FirmwareAgeDetails  FA;
-                            if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
-                                Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
-                                if(FA.age)
-                                    Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest",SerialNumber, Utils::SecondsToNiceText(FA.age)));
-                                else
-                                    Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
+                    if(Object->has(uCentralProtocol::SYSTEM)) {
+                        auto SystemObj = Object->getObject(uCentralProtocol::SYSTEM);
+                        if(SystemObj->has(uCentralProtocol::HOST))
+                            EndPoint = SystemObj->get(uCentralProtocol::HOST).toString();
+                    }
+
+                    if(Object->has(uCentralProtocol::PAYLOAD)) {
+                        auto PayloadObj = Object->getObject(uCentralProtocol::PAYLOAD);
+                        if(PayloadObj->has(uCentralProtocol::CAPABILITIES)) {
+                            // std::cout << "CAPABILITIES:" << SerialNumber << std::endl;
+                            auto CapObj = PayloadObj->getObject(uCentralProtocol::CAPABILITIES);
+                            if(CapObj->has(uCentralProtocol::COMPATIBLE)) {
+                                auto DeviceType = CapObj->get(uCentralProtocol::COMPATIBLE).toString();
+                                auto Serial = PayloadObj->get(uCentralProtocol::SERIAL).toString();
+                                auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
+                                // std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
+                                FMSObjects::FirmwareAgeDetails  FA;
+                                if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
+                                    Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
+                                    if(FA.age)
+                                        Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest",SerialNumber, Utils::SecondsToNiceText(FA.age)));
+                                    else
+                                        Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
+                                }
+                                DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                             }
-                            DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
-                        }
-                    } else if(PayloadObj->has(uCentralProtocol::DISCONNECTION)) {
-                        auto DisconnectMessage = PayloadObj->getObject(uCentralProtocol::DISCONNECTION);
-                        if(DisconnectMessage->has(uCentralProtocol::SERIALNUMBER) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
-                            auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
-                            auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
-                            Storage()->SetDeviceDisconnected(SNum,EndPoint);
-                            // std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
-                        }
-                    } else if(PayloadObj->has(uCentralProtocol::PING)) {
-                        // std::cout << "PING:" << SerialNumber << std::endl;
-                        auto PingMessage = PayloadObj->getObject(uCentralProtocol::PING);
-                        if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
+                        } else if(PayloadObj->has(uCentralProtocol::DISCONNECTION)) {
+                            auto DisconnectMessage = PayloadObj->getObject(uCentralProtocol::DISCONNECTION);
+                            if(DisconnectMessage->has(uCentralProtocol::SERIALNUMBER) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
+                                auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
+                                auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
+                                Storage()->SetDeviceDisconnected(SNum,EndPoint);
+                                // std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
+                            }
+                        } else if(PayloadObj->has(uCentralProtocol::PING)) {
+                            // std::cout << "PING:" << SerialNumber << std::endl;
+                            auto PingMessage = PayloadObj->getObject(uCentralProtocol::PING);
+                            if( PingMessage->has(uCentralProtocol::FIRMWARE) &&
                             PingMessage->has(uCentralProtocol::SERIALNUMBER) &&
                             PingMessage->has(uCentralProtocol::COMPATIBLE)) {
-                            auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
-                            auto Serial = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
-                            auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
-                            Storage()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
-                            DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
+                                auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
+                                auto Serial = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
+                                auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
+                                Storage()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
+                                DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
+                            }
                         }
                     }
+                } catch (const Poco::Exception &E) {
+                    Logger_.log(E);
                 }
             }
         }
