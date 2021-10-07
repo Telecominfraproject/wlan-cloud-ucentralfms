@@ -13,6 +13,7 @@ namespace OpenWifi {
     class AutoUpdater * AutoUpdater::instance_ = nullptr;
 
     int AutoUpdater::Start() {
+        Running_ = true;
         AutoUpdaterFrequency_ = Daemon()->ConfigGetInt("autoupdater.frequency",600);
         AutoUpdaterEnabled_ = Daemon()->ConfigGetBool("autoupdater.enabled", true);
         Thr_.start(*this);
