@@ -21,6 +21,7 @@ namespace OpenWifi::SDK::Prov {
         firmwareRCOnly=false;
         Poco::JSON::Object::Ptr Response;
         if(R.Do(Response) == Poco::Net::HTTPResponse::HTTP_OK) {
+            std::cout << "Received options... " << std::endl;
             std::ostringstream os;
             Poco::JSON::Stringifier::stringify(Response,os);
             std::cout << "Firmware option response - good - Response: " << os.str() << std::endl;
@@ -31,6 +32,7 @@ namespace OpenWifi::SDK::Prov {
                 firmwareRCOnly = Response->get("firmwareRCOnly").toString()=="true";
             return true;
         } else {
+            std::cout << "Failed Received options... " << std::endl;
             std::ostringstream os;
             Poco::JSON::Stringifier::stringify(Response,os);
             std::cout << "Firmware option response - bad- Response: " << os.str() << std::endl;
