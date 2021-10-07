@@ -54,7 +54,8 @@ namespace OpenWifi {
 		}
 		catch (const Poco::Exception &E)
 		{
-			std::cerr << E.displayText() << std::endl;
+		    std::cout << "API-REQUEST: GET failed..." << std::endl;
+			std::cout << E.displayText() << std::endl;
 		}
 		return -1;
 	}
@@ -104,6 +105,7 @@ namespace OpenWifi {
 	    }
 	    catch (const Poco::Exception &E)
 	    {
+	        std::cout << "API-REQUEST: PUT failed..." << std::endl;
 	        std::cerr << E.displayText() << std::endl;
 	    }
 	    return -1;
@@ -154,6 +156,7 @@ namespace OpenWifi {
 	    }
 	    catch (const Poco::Exception &E)
 	    {
+	        std::cout << "API-REQUEST: POST failed..." << std::endl;
 	        std::cerr << E.displayText() << std::endl;
 	    }
 	    return -1;
