@@ -49,10 +49,13 @@ namespace OpenWifi {
                     bool        firmwareRCOnly;
                     SerialCache     C;
                     C.LastCheck = Now;
+                    std::cout << "Retrieving firmware options for " << Entry.first << std::endl;
                     if(OpenWifi::SDK::Prov::GetFirmwareOptions(Entry.first, firmwareUpgrade, firmwareRCOnly)) {
+                        std::cout << "Retrieved options for " << Entry.first << std::endl;
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     } else {
+                        std::cout << "Could not retrieve options for " << Entry.first << std::endl;
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     }
@@ -60,6 +63,7 @@ namespace OpenWifi {
                 } else {
 
                 }
+                std::cout << "Continuing... " << std::endl;
                 LatestFirmwareCacheEntry    fwEntry;
                 FMSObjects::Firmware        fwDetails;
                 std::cout << "Checking last firmware..." << std::endl;
