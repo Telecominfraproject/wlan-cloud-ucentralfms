@@ -64,10 +64,9 @@ namespace OpenWifi {
                     } else {
 
                     }
-                    std::cout << "Continuing... " << std::endl;
                     LatestFirmwareCacheEntry    fwEntry;
                     FMSObjects::Firmware        fwDetails;
-                    std::cout << "Checking last firmware..." << std::endl;
+                    std::cout << "Checking last firmware: " << Entry.first << "  devicetype: " << Entry.second << std::endl;
                     auto LF = LatestFirmwareCache()->FindLatestFirmware(Entry.second, fwEntry );
                     if(LF) {
                         std::cout << "Getting id:" << fwEntry.Id << std::endl;
