@@ -40,9 +40,10 @@ namespace OpenWifi {
             while(!Queue_.empty() && Running_) {
                 auto Entry = Queue_.front();
                 Queue_.pop_front();
+                std::cout << "Preparing to upgrade " << Entry.first << std::endl;
                 auto CacheEntry = Cache_.find(Entry.first);
                 uint64_t Now = std::time(nullptr);
-                if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-Now)) {
+                if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-Now)>300) {
                     //  get the firmware settings for that device.
                     std::string firmwareUpgrade;
                     bool        firmwareRCOnly;
@@ -61,8 +62,10 @@ namespace OpenWifi {
                 }
                 LatestFirmwareCacheEntry    fwEntry;
                 FMSObjects::Firmware        fwDetails;
+                std::cout << "Checking last firmware..." << std::endl;
                 auto LF = LatestFirmwareCache()->FindLatestFirmware(Entry.second, fwEntry );
                 if(LF) {
+                    std::cout << "Getting id:" << fwEntry.Id << std::endl;
                     if(Storage()->GetFirmware(fwEntry.Id,fwDetails)) {
                         //  send the command to upgrade this device...
                         std::cout << "Upgrading " << Entry.first << " to version " << fwDetails.uri << std::endl;
@@ -71,7 +74,11 @@ namespace OpenWifi {
                         } else {
                             std::cout << "Upgrade command NOT sent ... for " << Entry.first << std::endl;
                         }
+                    } else {
+                        std::cout << "Could not find the desired firmware" << std::endl;
                     }
+                } else {
+                    std::cout << "Cannot find latest firmware..." << std::endl;
                 }
             }
         }
