@@ -25,6 +25,7 @@
 #include "LatestFirmwareCache.h"
 #include "DeviceCache.h"
 #include "FirmwareCache.h"
+#include "AutoUpdater.h"
 
 namespace OpenWifi {
     class Daemon *Daemon::instance_ = nullptr;
@@ -43,7 +44,8 @@ namespace OpenWifi {
                                                        NewConnectionHandler(),
                                                        RESTAPI_server(),
                                                        RESTAPI_InternalServer(),
-                                                       ManifestCreator()
+                                                       ManifestCreator(),
+                                                       AutoUpdater()
                                    });
         }
         return instance_;

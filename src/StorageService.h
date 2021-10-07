@@ -27,16 +27,12 @@
 #include "Poco/Data/MySQL/Connector.h"
 #endif
 
+#include "Storage.h"
+
 namespace OpenWifi {
 
     class Storage : public SubSystemServer {
     public:
-
-        enum StorageType {
-            sqlite,
-            pgsql,
-            mysql
-        };
 
         int Create_Tables();
         int Create_Firmwares();
@@ -96,7 +92,7 @@ namespace OpenWifi {
 	  private:
 		static Storage      							    *instance_;
 		std::unique_ptr<Poco::Data::SessionPool>            Pool_= nullptr;
-        StorageType 										dbType_ = sqlite;
+        DBType   										    dbType_ = sqlite;
         std::unique_ptr<Poco::Data::SQLite::Connector>  	SQLiteConn_= nullptr;
 #ifndef SMALL_BUILD
         std::unique_ptr<Poco::Data::PostgreSQL::Connector>  PostgresConn_= nullptr;
