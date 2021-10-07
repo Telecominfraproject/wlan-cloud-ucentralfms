@@ -48,11 +48,9 @@ namespace OpenWifi {
 				if(Response.getStatus()==Poco::Net::HTTPResponse::HTTP_OK) {
 					Poco::JSON::Parser	P;
 					ResponseObject = P.parse(is).extract<Poco::JSON::Object::Ptr>();
-					std::cout << "Received something good" << std::endl;
 				} else {
 				    Poco::JSON::Parser	P;
 				    ResponseObject = P.parse(is).extract<Poco::JSON::Object::Ptr>();
-				    std::cout << "Received something bad" << std::endl;
 				}
 				return Response.getStatus();
 			}

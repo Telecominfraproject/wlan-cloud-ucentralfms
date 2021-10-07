@@ -41,22 +41,21 @@ namespace OpenWifi {
                 auto Entry = Queue_.front();
                 Queue_.pop_front();
                 try {
-                    std::cout << "Preparing to upgrade " << Entry.first << std::endl;
+                    Logger_.debug(Poco::format("Preparing to upgrade %s",Entry.first));
                     auto CacheEntry = Cache_.find(Entry.first);
                     uint64_t Now = std::time(nullptr);
+                    std::string firmwareUpgrade;
+                    bool        firmwareRCOnly;
                     if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-Now)>300) {
                         //  get the firmware settings for that device.
-                        std::string firmwareUpgrade;
-                        bool        firmwareRCOnly;
                         SerialCache     C;
                         C.LastCheck = Now;
-                        std::cout << "Retrieving firmware options for " << Entry.first << std::endl;
                         if(OpenWifi::SDK::Prov::GetFirmwareOptions(Entry.first, firmwareUpgrade, firmwareRCOnly)) {
-                            std::cout << "Retrieved options for " << Entry.first << std::endl;
+                            Logger_.debug(Poco::format("Found firmware options for %s",Entry.first));
                             C.firmwareRCOnly = firmwareRCOnly;
                             C.firmwareUpgrade = firmwareUpgrade;
                         } else {
-                            std::cout << "Could not retrieve options for " << Entry.first << std::endl;
+                            Logger_.debug(Poco::format("Found no firmware options for %s",Entry.first));
                             C.firmwareRCOnly = firmwareRCOnly;
                             C.firmwareUpgrade = firmwareUpgrade;
                         }
@@ -64,28 +63,32 @@ namespace OpenWifi {
                     } else {
 
                     }
+
+                    if(firmwareUpgrade=="no") {
+                        Logger_.information(Poco::format("Device %s not upgradable. Provisioning service settings.",Entry.first));
+                        continue;
+                    }
+
                     LatestFirmwareCacheEntry    fwEntry;
                     FMSObjects::Firmware        fwDetails;
-                    std::cout << "Checking last firmware: " << Entry.first << "  devicetype: " << Entry.second << std::endl;
                     auto LF = LatestFirmwareCache()->FindLatestFirmware(Entry.second, fwEntry );
                     if(LF) {
-                        std::cout << "Getting id:" << fwEntry.Id << std::endl;
                         if(Storage()->GetFirmware(fwEntry.Id,fwDetails)) {
                             //  send the command to upgrade this device...
-                            std::cout << "Upgrading " << Entry.first << " to version " << fwDetails.uri << std::endl;
+                            Logger_.information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
                             if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {
-                                std::cout << "Upgrade command sent ... for " << Entry.first << std::endl;
+                                Logger_.information(Poco::format("Upgrade command sent for %s",Entry.first));
                             } else {
-                                std::cout << "Upgrade command NOT sent ... for " << Entry.first << std::endl;
+                                Logger_.information(Poco::format("Upgrade command not sent for %s",Entry.first));
                             }
                         } else {
-                            std::cout << "Could not find the desired firmware" << std::endl;
+                            Logger_.information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
                         }
                     } else {
-                        std::cout << "Cannot find latest firmware..." << std::endl;
+                        Logger_.information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
                     }
                 } catch (...) {
-                    std::cout << "Exception during upgrade loop." << std::endl;
+                    Logger_.information(Poco::format("Exception during auto update for device %s.", Entry.first ));
                 }
             }
         }
