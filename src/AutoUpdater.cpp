@@ -15,18 +15,23 @@ namespace OpenWifi {
     int AutoUpdater::Start() {
         Running_ = true;
         AutoUpdaterFrequency_ = Daemon()->ConfigGetInt("autoupdater.frequency",600);
-        AutoUpdaterEnabled_ = Daemon()->ConfigGetBool("autoupdater.enabled", true);
-        Thr_.start(*this);
+        AutoUpdaterEnabled_ = Daemon()->ConfigGetBool("autoupdater.enabled", false);
+        if(AutoUpdaterEnabled_)
+            Thr_.start(*this);
         return 0;
     }
 
     void AutoUpdater::Stop() {
         Running_ = false;
-        Thr_.wakeUp();
-        Thr_.join();
+        if(AutoUpdaterEnabled_) {
+            Thr_.wakeUp();
+            Thr_.join();
+        }
     }
 
     void AutoUpdater::ToBeUpgraded(std::string serialNumber, std::string DeviceType) {
+        if(!AutoUpdaterEnabled_)
+            return;
         std::lock_guard G(Mutex_);
         Queue_.emplace_back(std::make_pair(std::move(serialNumber),std::move(DeviceType)));
     }
