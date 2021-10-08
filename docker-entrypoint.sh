@@ -40,7 +40,7 @@ if [[ "$TEMPLATE_CONFIG" = 'true' && ! -f "$OWFMS_CONFIG"/owfms.properties ]]; t
   STORAGE_TYPE_MYSQL_PASSWORD=${STORAGE_TYPE_MYSQL_PASSWORD:-"owfms"} \
   STORAGE_TYPE_MYSQL_DATABASE=${STORAGE_TYPE_MYSQL_DATABASE:-"owfms"} \
   STORAGE_TYPE_MYSQL_PORT=${STORAGE_TYPE_MYSQL_PORT:-"3306"} \
-  envsubst < $OWFMS_CONFIG/owfms.properties.tmpl > $OWFMS_CONFIG/owfms.properties
+  envsubst < /owfms.properties.tmpl > $OWFMS_CONFIG/owfms.properties
 fi
 
 if [ "$1" = '/openwifi/owfms' -a "$(id -u)" = '0' ]; then
