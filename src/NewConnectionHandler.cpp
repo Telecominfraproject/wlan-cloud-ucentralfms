@@ -70,12 +70,16 @@ namespace OpenWifi {
                                 if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                     Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                     if(FA.age)
-                                        Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest",SerialNumber, Utils::SecondsToNiceText(FA.age)));
+                                        Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                     else
-                                        Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
+                                        Logger_.information(Poco::format("Device %s connection. Device firmware is up to date.",SerialNumber));
                                 }
+                                else {
+                                    Logger_.information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
+                                }
+
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
-                                    std::cout << "Device (connection): " << SerialNumber << " to be upgraded ... " << std::endl;
+                                    // std::cout << "Device (connection): " << SerialNumber << " to be upgraded ... " << std::endl;
                                     AutoUpdater()->ToBeUpgraded(SerialNumber, DeviceType);
                                 }
                                 DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
