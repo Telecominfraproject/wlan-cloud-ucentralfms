@@ -3,7 +3,7 @@ FROM alpine AS builder
 RUN apk add --update --no-cache \
     openssl openssh \
     ncurses-libs \
-    bash util-linux coreutils curl \
+    bash util-linux coreutils curl libcurl \
     make cmake gcc g++ libstdc++ libgcc git zlib-dev \
     openssl-dev boost-dev curl-dev util-linux-dev \
     unixodbc-dev postgresql-dev mariadb-dev \
@@ -67,7 +67,7 @@ COPY --from=builder /poco/cmake-build/lib/* /lib/
 COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-core/libaws-cpp-sdk-core.so /lib/
 COPY --from=builder /aws-sdk-cpp/cmake-build/aws-cpp-sdk-s3/libaws-cpp-sdk-s3.so /lib/
 
-COPY owfms.properties.tmpl ${OWFMS_CONFIG}/
+COPY owfms.properties.tmpl /
 COPY docker-entrypoint.sh /
 RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
     -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.pem
