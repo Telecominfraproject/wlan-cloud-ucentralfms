@@ -104,7 +104,7 @@ namespace OpenWifi {
                                 Storage()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
                                 DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
-                                    std::cout << "Device(ping): " << SerialNumber << " to be upgraded ... " << std::endl;
+                                    // std::cout << "Device(ping): " << SerialNumber << " to be upgraded ... " << std::endl;
                                     AutoUpdater()->ToBeUpgraded(SerialNumber, DeviceType);
                                 }
                             }
