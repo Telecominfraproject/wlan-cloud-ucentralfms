@@ -14,16 +14,14 @@ namespace OpenWifi {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
 
         if(SerialNumber.empty()) {
-            BadRequest(RESTAPI::Errors::MissingSerialNumber);
-            return;
+            return BadRequest(RESTAPI::Errors::MissingSerialNumber);
         }
 
         FMSObjects::DeviceConnectionInformation DevInfo;
         if(Storage()->GetDevice(SerialNumber, DevInfo)) {
             Poco::JSON::Object  Answer;
             DevInfo.to_json(Answer);
-            ReturnObject(Answer);
-            return;
+            return ReturnObject(Answer);
         }
         NotFound();
     }

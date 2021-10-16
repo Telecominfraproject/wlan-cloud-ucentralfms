@@ -19,8 +19,7 @@ namespace OpenWifi {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
 
         if(SerialNumber.empty()) {
-            BadRequest(RESTAPI::Errors::MissingSerialNumber);
-            return;
+            return BadRequest(RESTAPI::Errors::MissingSerialNumber);
         }
 
         FMSObjects::RevisionHistoryEntryVec H;
@@ -33,8 +32,7 @@ namespace OpenWifi {
             }
             Poco::JSON::Object Answer;
             Answer.set(RESTAPI::Protocol::HISTORY, A);
-            ReturnObject(Answer);
-            return;
+            return ReturnObject(Answer);
         }
         NotFound();
     }
@@ -43,13 +41,11 @@ namespace OpenWifi {
         auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
         auto Id = GetParameter(RESTAPI::Protocol::ID, "");
         if (SerialNumber.empty() || Id.empty()) {
-            BadRequest(RESTAPI::Errors::IdOrSerialEmpty);
-            return;
+            return BadRequest(RESTAPI::Errors::IdOrSerialEmpty);
         }
 
         if (!Storage()->DeleteHistory(SerialNumber, Id)) {
-            OK();
-            return;
+            return OK();
         }
         NotFound();
     }

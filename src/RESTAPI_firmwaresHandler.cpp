@@ -24,8 +24,7 @@ namespace OpenWifi {
             }
             Poco::JSON::Object RetObj;
             RetObj.set(RESTAPI::Protocol::DEVICETYPES, ObjectArray);
-            ReturnObject(RetObj);
-            return;
+            return ReturnObject(RetObj);
         }
 
         if(RevisionSet) {
@@ -36,8 +35,7 @@ namespace OpenWifi {
             }
             Poco::JSON::Object RetObj;
             RetObj.set(RESTAPI::Protocol::REVISIONS, ObjectArray);
-            ReturnObject(RetObj);
-            return;
+            return ReturnObject(RetObj);
         }
 
         // special cases: if latestOnly and deviceType
@@ -45,19 +43,16 @@ namespace OpenWifi {
             if(LatestOnly) {
                 LatestFirmwareCacheEntry    Entry;
                 if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {
-                    NotFound();
-                    return;
+                    return NotFound();
                 }
 
                 FMSObjects::Firmware    F;
                 if(Storage()->GetFirmware(Entry.Id,F)) {
                     Poco::JSON::Object  Answer;
                     F.to_json(Answer);
-                    ReturnObject(Answer);
-                    return;
+                    return ReturnObject(Answer);
                 }
-                NotFound();
-                return;
+                return NotFound();
             } else {
                 std::vector<FMSObjects::Firmware> List;
                 if (Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
@@ -73,11 +68,9 @@ namespace OpenWifi {
                     }
                     Poco::JSON::Object RetObj;
                     RetObj.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
-                    ReturnObject(RetObj);
-                    return;
+                    return ReturnObject(RetObj);
                 } else {
-                    NotFound();
-                    return;
+                    return NotFound();
                 }
             }
         }

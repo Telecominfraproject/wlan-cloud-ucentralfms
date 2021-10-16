@@ -21,8 +21,7 @@ namespace OpenWifi {
                 AnswerArr.add(Obj);
             }
             AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
-            ReturnObject(AnswerObj);
-            return;
+            return ReturnObject(AnswerObj);
         }
         AnswerObj.set(RESTAPI::Protocol::DEVICES, AnswerArr);
         ReturnObject(AnswerObj);

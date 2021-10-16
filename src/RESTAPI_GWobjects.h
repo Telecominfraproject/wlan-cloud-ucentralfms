@@ -64,6 +64,7 @@ namespace OpenWifi::GWObjects {
 	};
 
 	struct Statistics {
+		std::string SerialNumber;
 		uint64_t 	UUID;
 		std::string Data;
 		uint64_t 	Recorded;
@@ -71,6 +72,7 @@ namespace OpenWifi::GWObjects {
 	};
 
 	struct HealthCheck {
+		std::string SerialNumber;
 		uint64_t 	UUID;
 		std::string Data;
 		uint64_t 	Recorded;
@@ -96,6 +98,7 @@ namespace OpenWifi::GWObjects {
 			LOG_INFO = 6,	 /* informational */
 			LOG_DEBUG = 7	 /* debug-level messages */
 		};
+		std::string SerialNumber;
 		std::string Log;
 		std::string Data;
 		uint64_t 	Severity;
@@ -139,11 +142,12 @@ namespace OpenWifi::GWObjects {
 	};
 
 	struct BlackListedDevice {
-		std::string SerialNumber;
-		std::string Reason;
-		std::string Author;
-		uint64_t Created;
+		std::string serialNumber;
+		std::string reason;
+		std::string author;
+		uint64_t created;
 		void to_json(Poco::JSON::Object &Obj) const;
+		bool from_json(Poco::JSON::Object::Ptr Obj);
 	};
 
 	struct RttySessionDetails {

@@ -40,15 +40,13 @@ namespace OpenWifi {
             }
             Poco::JSON::Object Answer;
             Answer.set(RESTAPI::Protocol::AGES, Objects);
-            ReturnObject(Answer);
-            return;
+            return ReturnObject(Answer);
         } else {
             auto DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
             auto Revision = GetParameter(RESTAPI::Protocol::REVISION, "");
 
             if (DeviceType.empty() || Revision.empty()) {
-                BadRequest(RESTAPI::Errors::BothDeviceTypeRevision);
-                return;
+                return BadRequest(RESTAPI::Errors::BothDeviceTypeRevision);
             }
 
             Revision = Storage::TrimRevision(Revision);
@@ -58,8 +56,7 @@ namespace OpenWifi {
                 Poco::JSON::Object Answer;
 
                 FA.to_json(Answer);
-                ReturnObject(Answer);
-                return;
+                return ReturnObject(Answer);
             }
             NotFound();
         }
