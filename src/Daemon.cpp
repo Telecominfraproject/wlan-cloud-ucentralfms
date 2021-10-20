@@ -17,10 +17,10 @@
 
 #include "Daemon.h"
 #include "StorageService.h"
-#include "RESTAPI_server.h"
-#include "RESTAPI_InternalServer.h"
+#include "RESTAPI/RESTAPI_server.h"
+#include "RESTAPI/RESTAPI_InternalServer.h"
 #include "ManifestCreator.h"
-#include "KafkaManager.h"
+#include "framework/KafkaManager.h"
 #include "NewConnectionHandler.h"
 #include "LatestFirmwareCache.h"
 #include "DeviceCache.h"

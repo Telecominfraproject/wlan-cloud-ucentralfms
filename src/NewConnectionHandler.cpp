@@ -3,15 +3,15 @@
 //
 
 #include "NewConnectionHandler.h"
-#include "Kafka_topics.h"
-#include "KafkaManager.h"
-#include "OpenWifiTypes.h"
+#include "framework/Kafka_topics.h"
+#include "framework/KafkaManager.h"
+#include "framework/OpenWifiTypes.h"
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
-#include "Utils.h"
-#include "uCentralProtocol.h"
+#include "framework/Utils.h"
+#include "framework/uCentralProtocol.h"
 #include "DeviceCache.h"
 #include "AutoUpdater.h"
 

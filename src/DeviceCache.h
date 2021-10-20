@@ -6,8 +6,8 @@
 #define UCENTRALFMS_DEVICECACHE_H
 
 #include <string>
-#include "SubSystemServer.h"
-#include "OpenWifiTypes.h"
+#include "framework/SubSystemServer.h"
+#include "framework/OpenWifiTypes.h"
 
 namespace OpenWifi {
 

@@ -53,42 +53,42 @@ add_executable( owfms
                 src/Dashboard.cpp src/Dashboard.h
                 src/Daemon.cpp src/Daemon.h
                 src/StorageService.cpp src/StorageService.h
-                src/storage_tables.cpp
-                src/storage_setup.cpp
-                src/SubSystemServer.cpp src/SubSystemServer.h
-                src/RESTAPI_handler.cpp src/RESTAPI_handler.h
-                src/storage_firmwares.cpp
-                src/Utils.cpp src/Utils.h
-                src/RESTAPI_server.cpp src/RESTAPI_server.h
-                src/RESTAPI_firmwaresHandler.cpp src/RESTAPI_firmwaresHandler.h
-                src/RESTAPI_firmwareHandler.cpp src/RESTAPI_firmwareHandler.h
-                src/RESTAPI_GWobjects.cpp src/RESTAPI_GWobjects.h
-                src/ALBHealthCheckServer.h
+        src/storage/storage_tables.cpp
+        src/framework/storage_setup.cpp
+        src/framework/SubSystemServer.cpp src/framework/SubSystemServer.h
+        src/framework/RESTAPI_handler.cpp src/framework/RESTAPI_handler.h
+        src/storage/storage_firmwares.cpp
+        src/framework/Utils.cpp src/framework/Utils.h
+        src/RESTAPI/RESTAPI_server.cpp src/RESTAPI/RESTAPI_server.h
+        src/RESTAPI/RESTAPI_firmwaresHandler.cpp src/RESTAPI/RESTAPI_firmwaresHandler.h
+        src/RESTAPI/RESTAPI_firmwareHandler.cpp src/RESTAPI/RESTAPI_firmwareHandler.h
+        src/RESTAPI/RESTAPI_GWobjects.cpp src/RESTAPI/RESTAPI_GWobjects.h
+        src/framework/ALBHealthCheckServer.h
                 src/ManifestCreator.cpp src/ManifestCreator.h
-                src/KafkaManager.cpp src/KafkaManager.h
-                src/MicroService.h src/MicroService.cpp
-                src/AuthClient.h src/AuthClient.cpp
-                src/RESTAPI_SecurityObjects.cpp src/RESTAPI_SecurityObjects.h
-                src/RESTAPI_system_command.cpp src/RESTAPI_system_command.h
-                src/OpenAPIRequest.h src/OpenAPIRequest.cpp
-                src/RESTAPI_InternalServer.cpp src/RESTAPI_InternalServer.h
-                src/RESTAPI_utils.cpp src/RESTAPI_utils.h
-                src/RESTAPI_FMSObjects.cpp src/RESTAPI_FMSObjects.h
-                src/storage_firmwares.h src/storage_history.cpp
-                src/storage_history.h src/storage_deviceTypes.cpp
-                src/RESTAPI_historyHandler.cpp src/RESTAPI_historyHandler.h
+        src/framework/KafkaManager.cpp src/framework/KafkaManager.h
+        src/framework/MicroService.h src/framework/MicroService.cpp
+        src/framework/AuthClient.h src/framework/AuthClient.cpp
+        src/RESTAPI/RESTAPI_SecurityObjects.cpp src/RESTAPI/RESTAPI_SecurityObjects.h
+        src/framework/RESTAPI_system_command.cpp src/framework/RESTAPI_system_command.h
+        src/framework/OpenAPIRequest.h src/framework/OpenAPIRequest.cpp
+        src/RESTAPI/RESTAPI_InternalServer.cpp src/RESTAPI/RESTAPI_InternalServer.h
+        src/framework/RESTAPI_utils.cpp src/framework/RESTAPI_utils.h
+        src/RESTAPI/RESTAPI_FMSObjects.cpp src/RESTAPI/RESTAPI_FMSObjects.h
+        src/storage/storage_firmwares.h src/storage/storage_history.cpp
+        src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
+        src/RESTAPI/RESTAPI_historyHandler.cpp src/RESTAPI/RESTAPI_historyHandler.h
                 src/NewConnectionHandler.cpp src/NewConnectionHandler.h
                 src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h
                 src/DeviceCache.cpp src/DeviceCache.h
-                src/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI_firmwareAgeHandler.h
-                src/storage_deviceInfo.cpp src/storage_deviceInfo.h
-                src/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI_connectedDevicesHandler.h
+        src/RESTAPI/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI/RESTAPI_firmwareAgeHandler.h
+        src/storage/storage_deviceInfo.cpp src/storage/storage_deviceInfo.h
+        src/RESTAPI/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI/RESTAPI_connectedDevicesHandler.h
                 src/FirmwareCache.cpp src/FirmwareCache.h
-                src/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI_connectedDeviceHandler.h
-                src/RESTAPI_deviceReportHandler.cpp src/RESTAPI_deviceReportHandler.h
-                src/RESTAPI_GenericServer.cpp src/RESTAPI_GenericServer.h
-                src/OpenWifiTypes.h src/Storage.h
-                src/RESTAPI_errors.h src/Prov_SDK.cpp src/Prov_SDK.h src/AutoUpdater.cpp src/AutoUpdater.h src/GW_SDK.cpp src/GW_SDK.h)
+        src/RESTAPI/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI/RESTAPI_connectedDeviceHandler.h
+        src/RESTAPI/RESTAPI_deviceReportHandler.cpp src/RESTAPI/RESTAPI_deviceReportHandler.h
+        src/framework/RESTAPI_GenericServer.cpp src/framework/RESTAPI_GenericServer.h
+        src/framework/OpenWifiTypes.h src/framework/Storage.h
+        src/framework/RESTAPI_errors.h src/Prov_SDK.cpp src/Prov_SDK.h src/AutoUpdater.cpp src/AutoUpdater.h src/GW_SDK.cpp src/GW_SDK.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

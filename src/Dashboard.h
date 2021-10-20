@@ -5,8 +5,8 @@
 #ifndef UCENTRALGW_DASHBOARD_H
 #define UCENTRALGW_DASHBOARD_H
 
-#include "OpenWifiTypes.h"
-#include "RESTAPI_FMSObjects.h"
+#include "framework/OpenWifiTypes.h"
+#include "RESTAPI/RESTAPI_FMSObjects.h"
 
 namespace OpenWifi {
 	class DeviceDashboard {

@@ -6,7 +6,7 @@
 #define OWFMS_GW_SDK_H
 
 
-#include "OpenAPIRequest.h"
+#include "framework/OpenAPIRequest.h"
 
 namespace OpenWifi::SDK::GW {
 

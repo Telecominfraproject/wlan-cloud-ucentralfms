@@ -14,20 +14,20 @@
 #include "Poco/Data/SQLite/Connector.h"
 #include "Poco/JSON/Object.h"
 
-#include "RESTAPI_FMSObjects.h"
-#include "SubSystemServer.h"
+#include "RESTAPI/RESTAPI_FMSObjects.h"
+#include "framework/SubSystemServer.h"
 
-#include "storage_firmwares.h"
-#include "storage_history.h"
-#include "storage_deviceTypes.h"
-#include "storage_deviceInfo.h"
+#include "storage/storage_firmwares.h"
+#include "storage/storage_history.h"
+#include "storage/storage_deviceTypes.h"
+#include "storage/storage_deviceInfo.h"
 
 #ifndef SMALL_BUILD
 #include "Poco/Data/PostgreSQL/Connector.h"
 #include "Poco/Data/MySQL/Connector.h"
 #endif
 
-#include "Storage.h"
+#include "framework/Storage.h"
 
 namespace OpenWifi {
 

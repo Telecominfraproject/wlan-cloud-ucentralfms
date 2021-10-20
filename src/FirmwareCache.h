@@ -8,8 +8,8 @@
 #include <map>
 #include <memory>
 
-#include "RESTAPI_FMSObjects.h"
-#include "SubSystemServer.h"
+#include "RESTAPI/RESTAPI_FMSObjects.h"
+#include "framework/SubSystemServer.h"
 
 namespace OpenWifi {
 

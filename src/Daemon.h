@@ -15,9 +15,9 @@
 #include "Poco/Crypto/CipherFactory.h"
 #include "Poco/Crypto/Cipher.h"
 
-#include "MicroService.h"
-#include "OpenWifiTypes.h"
-#include "RESTAPI_FMSObjects.h"
+#include "framework/MicroService.h"
+#include "framework/OpenWifiTypes.h"
+#include "RESTAPI/RESTAPI_FMSObjects.h"
 #include "Dashboard.h"
 
 namespace OpenWifi {
