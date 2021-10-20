@@ -26,7 +26,7 @@
 
 #include "RESTAPI/RESTAPI_SecurityObjects.h"
 #include "RESTAPI_utils.h"
-#include "framework/RESTAPI_GenericServer.h"
+#include "RESTAPI_GenericServer.h"
 
 namespace OpenWifi {
 

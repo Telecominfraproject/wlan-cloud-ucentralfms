@@ -48,17 +48,13 @@ namespace OpenWifi {
 				if(Response.getStatus()==Poco::Net::HTTPResponse::HTTP_OK) {
 					Poco::JSON::Parser	P;
 					ResponseObject = P.parse(is).extract<Poco::JSON::Object::Ptr>();
-				} else {
-				    Poco::JSON::Parser	P;
-				    ResponseObject = P.parse(is).extract<Poco::JSON::Object::Ptr>();
 				}
 				return Response.getStatus();
 			}
 		}
 		catch (const Poco::Exception &E)
 		{
-		    std::cout << "API-REQUEST: GET failed..." << std::endl;
-			std::cout << E.displayText() << std::endl;
+			std::cerr << E.displayText() << std::endl;
 		}
 		return -1;
 	}
@@ -108,7 +104,6 @@ namespace OpenWifi {
 	    }
 	    catch (const Poco::Exception &E)
 	    {
-	        std::cout << "API-REQUEST: PUT failed..." << std::endl;
 	        std::cerr << E.displayText() << std::endl;
 	    }
 	    return -1;
@@ -159,7 +154,6 @@ namespace OpenWifi {
 	    }
 	    catch (const Poco::Exception &E)
 	    {
-	        std::cout << "API-REQUEST: POST failed..." << std::endl;
 	        std::cerr << E.displayText() << std::endl;
 	    }
 	    return -1;
