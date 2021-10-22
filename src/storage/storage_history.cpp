@@ -4,7 +4,7 @@
 
 #include "StorageService.h"
 #include "storage_history.h"
-#include "RESTAPI/RESTAPI_FMSObjects.h"
+#include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "Daemon.h"
 
 namespace OpenWifi {

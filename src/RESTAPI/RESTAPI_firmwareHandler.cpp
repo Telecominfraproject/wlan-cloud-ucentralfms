@@ -6,10 +6,8 @@
 
 #include "RESTAPI_firmwareHandler.h"
 #include "StorageService.h"
-#include "Daemon.h"
-#include "framework/uCentralProtocol.h"
+#include "framework/uCentral_Protocol.h"
 #include "framework/RESTAPI_protocol.h"
-#include "framework/RESTAPI_utils.h"
 #include "framework/RESTAPI_errors.h"
 
 namespace OpenWifi {
@@ -20,8 +18,8 @@ namespace OpenWifi {
         if (!F.from_json(Obj)) {
             return BadRequest(RESTAPI::Errors::InvalidJSONDocument);
         }
-        F.id = Daemon()->CreateUUID();
-        if(Storage()->AddFirmware(F)) {
+        F.id = MicroService::instance().CreateUUID();
+        if(StorageService()->AddFirmware(F)) {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);
             return ReturnObject(Answer);
@@ -38,7 +36,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::Firmware F;
-        if (Storage()->GetFirmware(UUID, F)) {
+        if (StorageService()->GetFirmware(UUID, F)) {
             Poco::JSON::Object Object;
             F.to_json(Object);
             return ReturnObject(Object);
@@ -53,7 +51,7 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::MissingUUID);
         }
 
-        if (Storage()->DeleteFirmware(UUID)) {
+        if (StorageService()->DeleteFirmware(UUID)) {
             return OK();
         }
         BadRequest(RESTAPI::Errors::CouldNotBeDeleted);
@@ -66,7 +64,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::Firmware    F;
-        if(!Storage()->GetFirmware(UUID, F)) {
+        if(!StorageService()->GetFirmware(UUID, F)) {
             return NotFound();
         }
 
@@ -87,7 +85,7 @@ namespace OpenWifi {
             }
         }
 
-        if(Storage()->UpdateFirmware(UUID, F)) {
+        if(StorageService()->UpdateFirmware(UUID, F)) {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);
             return ReturnObject(Answer);

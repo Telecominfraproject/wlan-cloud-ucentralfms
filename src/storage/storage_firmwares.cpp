@@ -2,13 +2,11 @@
 // Created by stephane bourque on 2021-05-09.
 //
 
-#include "StorageService.h"
-
-#include "RESTAPI/RESTAPI_FMSObjects.h"
-#include "framework/RESTAPI_utils.h"
-#include "LatestFirmwareCache.h"
-#include "Daemon.h"
 #include <limits>
+
+#include "StorageService.h"
+#include "RESTObjects/RESTAPI_FMSObjects.h"
+#include "LatestFirmwareCache.h"
 #include "ManifestCreator.h"
 
 namespace OpenWifi {
@@ -63,7 +61,7 @@ namespace OpenWifi {
             Poco::Data::Statement   Insert(Sess);
 
             // find the older software and change to latest = 0
-            F.id = Daemon()->CreateUUID();
+            F.id = MicroService::instance().CreateUUID();
             if(LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate)) {
                 F.latest = true ;
                 Poco::Data::Statement   Update(Sess);

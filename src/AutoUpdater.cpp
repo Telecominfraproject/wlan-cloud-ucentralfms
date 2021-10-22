@@ -3,9 +3,8 @@
 //
 
 #include "AutoUpdater.h"
-#include "Prov_SDK.h"
-#include "GW_SDK.h"
-#include "Daemon.h"
+#include "SDK/Prov_SDK.h"
+#include "SDK/GW_SDK.h"
 #include "LatestFirmwareCache.h"
 #include "StorageService.h"
 
@@ -14,8 +13,8 @@ namespace OpenWifi {
 
     int AutoUpdater::Start() {
         Running_ = true;
-        AutoUpdaterFrequency_ = Daemon()->ConfigGetInt("autoupdater.frequency",600);
-        AutoUpdaterEnabled_ = Daemon()->ConfigGetBool("autoupdater.enabled", false);
+        AutoUpdaterFrequency_ = MicroService::instance().ConfigGetInt("autoupdater.frequency",600);
+        AutoUpdaterEnabled_ = MicroService::instance().ConfigGetBool("autoupdater.enabled", false);
         if(AutoUpdaterEnabled_)
             Thr_.start(*this);
         return 0;
@@ -78,7 +77,7 @@ namespace OpenWifi {
                     FMSObjects::Firmware        fwDetails;
                     auto LF = LatestFirmwareCache()->FindLatestFirmware(Entry.second, fwEntry );
                     if(LF) {
-                        if(Storage()->GetFirmware(fwEntry.Id,fwDetails)) {
+                        if(StorageService()->GetFirmware(fwEntry.Id,fwDetails)) {
                             //  send the command to upgrade this device...
                             Logger_.information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
                             if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {

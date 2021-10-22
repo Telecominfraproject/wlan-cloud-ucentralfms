@@ -14,8 +14,8 @@
 #include "Poco/Data/SQLite/Connector.h"
 #include "Poco/JSON/Object.h"
 
-#include "RESTAPI/RESTAPI_FMSObjects.h"
-#include "framework/SubSystemServer.h"
+#include "RESTObjects/RESTAPI_FMSObjects.h"
+#include "framework/MicroService.h"
 
 #include "storage/storage_firmwares.h"
 #include "storage/storage_history.h"
@@ -27,11 +27,11 @@
 #include "Poco/Data/MySQL/Connector.h"
 #endif
 
-#include "framework/Storage.h"
+#include "framework/StorageClass.h"
 
 namespace OpenWifi {
 
-    class Storage : public SubSystemServer {
+    class Storage : public StorageClass {
     public:
 
         int Create_Tables();
@@ -60,19 +60,8 @@ namespace OpenWifi {
         void 	Stop() override;
 
         [[nodiscard]] std::string ConvertParams(const std::string &S) const;
-        [[nodiscard]] inline std::string ComputeRange(uint64_t From, uint64_t HowMany) {
-            if(dbType_==sqlite) {
-                return " LIMIT " + std::to_string(From-1) + ", " + std::to_string(HowMany) + " ";
-            } else if(dbType_==pgsql) {
-                return " LIMIT " + std::to_string(HowMany) + " OFFSET " + std::to_string(From-1) + " ";
-            } else if(dbType_==mysql) {
-                return " LIMIT " + std::to_string(HowMany) + " OFFSET " + std::to_string(From-1) + " ";
-            }
-            return " LIMIT " + std::to_string(HowMany) + " OFFSET " + std::to_string(From-1) + " ";
-        }
 
-        bool    SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
-
+        bool SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
         bool AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion);
         bool DeleteHistory( std::string & SerialNumber, std::string &Id);
 
@@ -91,26 +80,9 @@ namespace OpenWifi {
 
 	  private:
 		static Storage      							    *instance_;
-		std::unique_ptr<Poco::Data::SessionPool>            Pool_= nullptr;
-        DBType   										    dbType_ = sqlite;
-        std::unique_ptr<Poco::Data::SQLite::Connector>  	SQLiteConn_= nullptr;
-#ifndef SMALL_BUILD
-        std::unique_ptr<Poco::Data::PostgreSQL::Connector>  PostgresConn_= nullptr;
-        std::unique_ptr<Poco::Data::MySQL::Connector>       MySQLConn_= nullptr;
-#endif
-
-        Storage() noexcept:
-                SubSystemServer("Storage", "STORAGE-SVR", "storage")
-        {
-        }
-
-        int 	Setup_SQLite();
-        int 	Setup_MySQL();
-        int 	Setup_PostgreSQL();
-
     };
 
-    inline Storage * Storage() { return Storage::instance(); };
+    inline class Storage * StorageService() { return Storage::instance(); };
 
 }  // namespace
 

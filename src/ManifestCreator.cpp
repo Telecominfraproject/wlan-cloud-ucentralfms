@@ -6,14 +6,11 @@
 #include "Poco/JSON/Parser.h"
 #include "Poco/JSON/Stringifier.h"
 
-#include "ManifestCreator.h"
-#include "framework/Utils.h"
-
 #include <aws/s3/model/ListObjectsRequest.h>
 #include <aws/s3/model/ListObjectsV2Request.h>
 #include <aws/s3/model/GetObjectRequest.h>
 
-#include "Daemon.h"
+#include "ManifestCreator.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
 
@@ -31,7 +28,7 @@ namespace OpenWifi {
             FirstRun = false;
             Logger_.information("Performing DB refresh");
             S3BucketContent BucketList;
-            Storage()->RemoveOldFirmware();
+            StorageService()->RemoveOldFirmware();
             ReadBucket(BucketList);
             if(!Running_)
                 break;
@@ -97,8 +94,8 @@ namespace OpenWifi {
         for(auto &[Release,BucketEntry]:BucketContent) {
             FMSObjects::Firmware    F;
             auto R = Release;
-            if(BucketEntry.Valid && !Storage()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
-                F.id = Daemon()->CreateUUID();
+            if(BucketEntry.Valid && !StorageService()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
+                F.id = MicroService::instance().CreateUUID();
                 F.release = Release;
                 F.size = BucketEntry.S3Size;
                 F.created = std::time(nullptr);
@@ -107,7 +104,7 @@ namespace OpenWifi {
                 F.uri = BucketEntry.URI;
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
-                if(Storage()->AddFirmware(F)) {
+                if(StorageService()->AddFirmware(F)) {
                     Logger_.information(Poco::format("Adding firmware '%s'",Release));
                 } else {
                 }
@@ -117,14 +114,14 @@ namespace OpenWifi {
     }
 
     int ManifestCreator::Start() {
-        S3BucketName_ = Daemon()->ConfigGetString("s3.bucketname");
-        S3Region_ = Daemon()->ConfigGetString("s3.region");
-        S3Secret_ = Daemon()->ConfigGetString("s3.secret");
-        S3Key_ = Daemon()->ConfigGetString("s3.key");
-        S3Retry_ = Daemon()->ConfigGetInt("s3.retry",60);
+        S3BucketName_ = MicroService::instance().ConfigGetString("s3.bucketname");
+        S3Region_ = MicroService::instance().ConfigGetString("s3.region");
+        S3Secret_ = MicroService::instance().ConfigGetString("s3.secret");
+        S3Key_ = MicroService::instance().ConfigGetString("s3.key");
+        S3Retry_ = MicroService::instance().ConfigGetInt("s3.retry",60);
 
-        DBRefresh_ = Daemon()->ConfigGetInt("firmwaredb.refresh",30*60);
-        MaxAge_ = Daemon()->ConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
+        DBRefresh_ = MicroService::instance().ConfigGetInt("firmwaredb.refresh",30*60);
+        MaxAge_ = MicroService::instance().ConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;
@@ -179,7 +176,7 @@ namespace OpenWifi {
         static const std::string UPGRADE("-upgrade.bin");
 
         std::string     URIBase = "https://";
-        URIBase += Daemon()->ConfigGetString("s3.bucket.uri");
+        URIBase += MicroService::instance().ConfigGetString("s3.bucket.uri");
 
         Bucket.clear();
 

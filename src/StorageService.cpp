@@ -6,13 +6,7 @@
 //	Arilia Wireless Inc.
 //
 
-#include <fstream>
 #include "StorageService.h"
-#include "Poco/Util/Application.h"
-
-#include "Daemon.h"
-
-#include "framework/Utils.h"
 
 namespace OpenWifi {
 
@@ -44,16 +38,8 @@ namespace OpenWifi {
         std::lock_guard		Guard(Mutex_);
 
         Logger_.setLevel(Poco::Message::PRIO_NOTICE);
-        Logger_.notice("Starting.");
-        std::string DBType = Daemon()->ConfigGetString("storage.type");
 
-        if (DBType == "sqlite") {
-            Setup_SQLite();
-        } else if (DBType == "postgresql") {
-            Setup_PostgreSQL();
-        } else if (DBType == "mysql") {
-            Setup_MySQL();
-        }
+        StorageClass::Start();
 
         Create_Tables();
 
@@ -63,6 +49,7 @@ namespace OpenWifi {
     void Storage::Stop() {
         std::lock_guard		Guard(Mutex_);
         Logger_.notice("Stopping.");
+        StorageClass::Stop();
     }
 
     std::string Storage::TrimRevision(const std::string &R) {

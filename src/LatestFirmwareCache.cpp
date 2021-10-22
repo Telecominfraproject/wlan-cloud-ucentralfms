@@ -9,7 +9,7 @@ namespace OpenWifi {
     class LatestFirmwareCache *LatestFirmwareCache::instance_ = nullptr;
 
     int LatestFirmwareCache::Start() {
-        Storage()->PopulateLatestFirmwareCache();
+        StorageService()->PopulateLatestFirmwareCache();
         return 0;
     }
 

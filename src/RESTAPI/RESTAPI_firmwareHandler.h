@@ -5,7 +5,7 @@
 #ifndef UCENTRALFWS_RESTAPI_FIRMWAREHANDLER_H
 #define UCENTRALFWS_RESTAPI_FIRMWAREHANDLER_H
 
-#include "framework/RESTAPI_handler.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi {
     class RESTAPI_firmwareHandler : public RESTAPIHandler {

@@ -6,7 +6,7 @@
 #define UCENTRALFMS_RESTAPI_HISTORYHANDLER_H
 
 
-#include "framework/RESTAPI_handler.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi {
     class RESTAPI_historyHandler : public RESTAPIHandler {

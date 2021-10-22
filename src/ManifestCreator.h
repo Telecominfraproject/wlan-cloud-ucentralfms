@@ -9,7 +9,7 @@
 #include <aws/s3/S3Client.h>
 #include <aws/core/auth/AWSCredentials.h>
 
-#include "framework/SubSystemServer.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi {
 

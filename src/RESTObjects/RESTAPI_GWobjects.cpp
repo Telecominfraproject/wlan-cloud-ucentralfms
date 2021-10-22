@@ -15,9 +15,7 @@
 #endif
 
 #include "RESTAPI_GWobjects.h"
-#include "framework/RESTAPI_handler.h"
-#include "framework/RESTAPI_utils.h"
-#include "framework/Utils.h"
+#include "framework/MicroService.h"
 
 using OpenWifi::RESTAPI_utils::field_to_json;
 using OpenWifi::RESTAPI_utils::field_from_json;
@@ -255,5 +253,11 @@ namespace OpenWifi::GWObjects {
 		numberOfDevices = 0 ;
 		snapshot = std::time(nullptr);
 	}
+
+	void CapabilitiesModel::to_json(Poco::JSON::Object &Obj) const{
+		field_to_json(Obj,"deviceType", deviceType);
+		field_to_json(Obj,"capabilities", capabilities);
+	};
+
 }
 

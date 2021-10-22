@@ -3,12 +3,6 @@
 //
 
 #include "RESTAPI_historyHandler.h"
-
-//
-// Created by stephane bourque on 2021-05-09.
-//
-
-#include "RESTAPI_historyHandler.h"
 #include "StorageService.h"
 #include "framework/RESTAPI_protocol.h"
 #include "framework/RESTAPI_errors.h"
@@ -23,7 +17,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::RevisionHistoryEntryVec H;
-        if (Storage()->GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
+        if (StorageService()->GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
             Poco::JSON::Array A;
             for (auto const &i:H) {
                 Poco::JSON::Object O;
@@ -44,7 +38,7 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::IdOrSerialEmpty);
         }
 
-        if (!Storage()->DeleteHistory(SerialNumber, Id)) {
+        if (!StorageService()->DeleteHistory(SerialNumber, Id)) {
             return OK();
         }
         NotFound();

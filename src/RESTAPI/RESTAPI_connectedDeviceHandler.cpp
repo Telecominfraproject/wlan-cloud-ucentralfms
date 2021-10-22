@@ -3,7 +3,7 @@
 //
 
 #include "RESTAPI_connectedDeviceHandler.h"
-#include "RESTAPI_FMSObjects.h"
+#include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "StorageService.h"
 #include "framework/RESTAPI_protocol.h"
 #include "framework/RESTAPI_errors.h"
@@ -18,7 +18,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::DeviceConnectionInformation DevInfo;
-        if(Storage()->GetDevice(SerialNumber, DevInfo)) {
+        if(StorageService()->GetDevice(SerialNumber, DevInfo)) {
             Poco::JSON::Object  Answer;
             DevInfo.to_json(Answer);
             return ReturnObject(Answer);

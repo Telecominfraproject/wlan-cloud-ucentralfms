@@ -2,9 +2,7 @@
 // Created by stephane bourque on 2021-10-04.
 //
 
-#include "Prov_SDK.h"
-#include "Daemon.h"
-#include "Poco/Net/HTTPResponse.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi::SDK::Prov {
     bool GetFirmwareOptions( const std::string & serialNumber, std::string &firmwareUpgrade,

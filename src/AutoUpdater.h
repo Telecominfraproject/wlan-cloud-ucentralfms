@@ -5,7 +5,7 @@
 #ifndef OWFMS_AUTOUPDATER_H
 #define OWFMS_AUTOUPDATER_H
 
-#include "framework/SubSystemServer.h"
+#include "framework/MicroService.h"
 #include <deque>
 #include "Poco/Util/Application.h"
 

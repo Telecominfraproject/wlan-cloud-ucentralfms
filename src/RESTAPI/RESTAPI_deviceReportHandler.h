@@ -5,7 +5,7 @@
 #ifndef UCENTRALFMS_RESTAPI_DEVICEREPORTHANDLER_H
 #define UCENTRALFMS_RESTAPI_DEVICEREPORTHANDLER_H
 
-#include "framework/RESTAPI_handler.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi {
     class RESTAPI_deviceReportHandler : public RESTAPIHandler {

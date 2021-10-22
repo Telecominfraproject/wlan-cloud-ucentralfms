@@ -3,15 +3,13 @@
 //
 
 #include "NewConnectionHandler.h"
-#include "framework/Kafka_topics.h"
-#include "framework/KafkaManager.h"
+#include "framework/KafkaTopics.h"
 #include "framework/OpenWifiTypes.h"
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
-#include "framework/Utils.h"
-#include "framework/uCentralProtocol.h"
+#include "framework/uCentral_Protocol.h"
 #include "DeviceCache.h"
 #include "AutoUpdater.h"
 
@@ -67,8 +65,8 @@ namespace OpenWifi {
                                 auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
                                 // std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                                 FMSObjects::FirmwareAgeDetails  FA;
-                                if(Storage()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
-                                    Storage()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
+                                if(StorageService()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
+                                    StorageService()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                     if(FA.age)
                                         Logger_.information(Poco::format("Device %s connection. Firmware is %s older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                     else
@@ -89,7 +87,7 @@ namespace OpenWifi {
                             if(DisconnectMessage->has(uCentralProtocol::SERIALNUMBER) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
                                 auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
                                 auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
-                                Storage()->SetDeviceDisconnected(SNum,EndPoint);
+                                StorageService()->SetDeviceDisconnected(SNum,EndPoint);
                                 // std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
                             }
                         } else if(PayloadObj->has(uCentralProtocol::PING)) {
@@ -101,7 +99,7 @@ namespace OpenWifi {
                                 auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
                                 auto Serial = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
                                 auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
-                                Storage()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
+                                StorageService()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
                                 DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
                                     // std::cout << "Device(ping): " << SerialNumber << " to be upgraded ... " << std::endl;

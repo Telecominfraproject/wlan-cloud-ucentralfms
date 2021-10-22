@@ -5,7 +5,7 @@
 #ifndef OWFMS_PROV_SDK_H
 #define OWFMS_PROV_SDK_H
 
-#include "framework/OpenAPIRequest.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi::SDK::Prov {
 

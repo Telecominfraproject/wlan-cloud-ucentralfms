@@ -10,8 +10,8 @@
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/JWT/Signer.h"
 #include "Poco/SHA2Engine.h"
-#include "RESTAPI/RESTAPI_SecurityObjects.h"
-#include "framework/SubSystemServer.h"
+#include "RESTObjects/RESTAPI_SecurityObjects.h"
+#include "framework/MicroService.h"
 
 namespace OpenWifi {
 

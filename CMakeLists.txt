@@ -54,26 +54,16 @@ add_executable( owfms
                 src/Daemon.cpp src/Daemon.h
                 src/StorageService.cpp src/StorageService.h
         src/storage/storage_tables.cpp
-        src/framework/storage_setup.cpp
-        src/framework/SubSystemServer.cpp src/framework/SubSystemServer.h
-        src/framework/RESTAPI_handler.cpp src/framework/RESTAPI_handler.h
         src/storage/storage_firmwares.cpp
-        src/framework/Utils.cpp src/framework/Utils.h
         src/RESTAPI/RESTAPI_server.cpp src/RESTAPI/RESTAPI_server.h
         src/RESTAPI/RESTAPI_firmwaresHandler.cpp src/RESTAPI/RESTAPI_firmwaresHandler.h
         src/RESTAPI/RESTAPI_firmwareHandler.cpp src/RESTAPI/RESTAPI_firmwareHandler.h
-        src/RESTAPI/RESTAPI_GWobjects.cpp src/RESTAPI/RESTAPI_GWobjects.h
-        src/framework/ALBHealthCheckServer.h
+        src/RESTObjects/RESTAPI_GWobjects.cpp src/RESTObjects/RESTAPI_GWobjects.h
                 src/ManifestCreator.cpp src/ManifestCreator.h
-        src/framework/KafkaManager.cpp src/framework/KafkaManager.h
-        src/framework/MicroService.h src/framework/MicroService.cpp
-        src/framework/AuthClient.h src/framework/AuthClient.cpp
-        src/RESTAPI/RESTAPI_SecurityObjects.cpp src/RESTAPI/RESTAPI_SecurityObjects.h
-        src/framework/RESTAPI_system_command.cpp src/framework/RESTAPI_system_command.h
-        src/framework/OpenAPIRequest.h src/framework/OpenAPIRequest.cpp
+        src/framework/MicroService.h
+        src/RESTObjects/RESTAPI_SecurityObjects.cpp src/RESTObjects/RESTAPI_SecurityObjects.h
         src/RESTAPI/RESTAPI_InternalServer.cpp src/RESTAPI/RESTAPI_InternalServer.h
-        src/framework/RESTAPI_utils.cpp src/framework/RESTAPI_utils.h
-        src/RESTAPI/RESTAPI_FMSObjects.cpp src/RESTAPI/RESTAPI_FMSObjects.h
+        src/RESTObjects/RESTAPI_FMSObjects.cpp src/RESTObjects/RESTAPI_FMSObjects.h
         src/storage/storage_firmwares.h src/storage/storage_history.cpp
         src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
         src/RESTAPI/RESTAPI_historyHandler.cpp src/RESTAPI/RESTAPI_historyHandler.h
@@ -86,9 +76,10 @@ add_executable( owfms
                 src/FirmwareCache.cpp src/FirmwareCache.h
         src/RESTAPI/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI/RESTAPI_connectedDeviceHandler.h
         src/RESTAPI/RESTAPI_deviceReportHandler.cpp src/RESTAPI/RESTAPI_deviceReportHandler.h
-        src/framework/RESTAPI_GenericServer.cpp src/framework/RESTAPI_GenericServer.h
-        src/framework/OpenWifiTypes.h src/framework/Storage.h
-        src/framework/RESTAPI_errors.h src/Prov_SDK.cpp src/Prov_SDK.h src/AutoUpdater.cpp src/AutoUpdater.h src/GW_SDK.cpp src/GW_SDK.h)
+        src/framework/OpenWifiTypes.h
+        src/framework/RESTAPI_errors.h
+        src/SDK/Prov_SDK.cpp src/SDK/Prov_SDK.h
+        src/AutoUpdater.cpp src/AutoUpdater.h src/SDK/GW_SDK.cpp src/SDK/GW_SDK.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

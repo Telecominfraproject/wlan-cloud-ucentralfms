@@ -2,8 +2,6 @@
 // Created by Stephane Bourque on 2021-05-07.
 //
 
-#include <boost/algorithm/string.hpp>
-
 #include <aws/core/Aws.h>
 #include <aws/s3/model/CreateBucketRequest.h>
 #include <aws/s3/model/PutObjectRequest.h>
@@ -11,21 +9,17 @@
 #include <aws/s3/model/PutBucketAclRequest.h>
 #include <aws/s3/model/GetBucketAclRequest.h>
 
-
-#include "Poco/Util/Application.h"
-#include "Poco/Net/SSLManager.h"
-
 #include "Daemon.h"
 #include "StorageService.h"
-#include "RESTAPI/RESTAPI_server.h"
-#include "RESTAPI/RESTAPI_InternalServer.h"
 #include "ManifestCreator.h"
-#include "framework/KafkaManager.h"
 #include "NewConnectionHandler.h"
 #include "LatestFirmwareCache.h"
 #include "DeviceCache.h"
 #include "FirmwareCache.h"
 #include "AutoUpdater.h"
+
+#include "RESTAPI/RESTAPI_server.h"
+#include "RESTAPI/RESTAPI_InternalServer.h"
 
 namespace OpenWifi {
     class Daemon *Daemon::instance_ = nullptr;
@@ -37,15 +31,16 @@ namespace OpenWifi {
                                    vDAEMON_CONFIG_ENV_VAR,
                                    vDAEMON_APP_NAME,
                                    vDAEMON_BUS_TIMER,
-                                   Types::SubSystemVec{Storage(),
-                                                       FirmwareCache(),
-                                                       LatestFirmwareCache(),
-                                                       DeviceCache(),
-                                                       NewConnectionHandler(),
-                                                       RESTAPI_server(),
-                                                       RESTAPI_InternalServer(),
-                                                       ManifestCreator(),
-                                                       AutoUpdater()
+                                   SubSystemVec{
+                                            StorageService(),
+                                            FirmwareCache(),
+                                            LatestFirmwareCache(),
+                                            DeviceCache(),
+                                            NewConnectionHandler(),
+                                            RESTAPI_server(),
+                                            RESTAPI_InternalServer(),
+                                            ManifestCreator(),
+                                            AutoUpdater()
                                    });
         }
         return instance_;

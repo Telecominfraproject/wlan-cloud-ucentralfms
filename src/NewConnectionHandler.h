@@ -6,7 +6,7 @@
 #define UCENTRALFMS_NEWCONNECTIONHANDLER_H
 
 
-#include "framework/SubSystemServer.h"
+#include "framework/MicroService.h"
 #include "framework/OpenWifiTypes.h"
 
 namespace OpenWifi {

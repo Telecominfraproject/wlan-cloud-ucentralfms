@@ -47,7 +47,7 @@ namespace OpenWifi {
                 }
 
                 FMSObjects::Firmware    F;
-                if(Storage()->GetFirmware(Entry.Id,F)) {
+                if(StorageService()->GetFirmware(Entry.Id,F)) {
                     Poco::JSON::Object  Answer;
                     F.to_json(Answer);
                     return ReturnObject(Answer);
@@ -55,7 +55,7 @@ namespace OpenWifi {
                 return NotFound();
             } else {
                 std::vector<FMSObjects::Firmware> List;
-                if (Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
+                if (StorageService()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
                     Poco::JSON::Array ObjectArray;
                     for (const auto &i:List) {
                         if(IdOnly) {
@@ -78,7 +78,7 @@ namespace OpenWifi {
         std::vector<FMSObjects::Firmware> List;
         Poco::JSON::Array ObjectArray;
         Poco::JSON::Object Answer;
-        if (Storage()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
+        if (StorageService()->GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
             for (const auto &i:List) {
                 if(IdOnly) {
                     ObjectArray.add(i.id);
