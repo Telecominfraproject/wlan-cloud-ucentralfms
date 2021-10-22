@@ -59,7 +59,7 @@ RUN addgroup -S "$OWFMS_USER" && \
 RUN mkdir /openwifi
 RUN mkdir -p "$OWFMS_ROOT" "$OWFMS_CONFIG" && \
     chown "$OWFMS_USER": "$OWFMS_ROOT" "$OWFMS_CONFIG"
-RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates bash jq curl
 
 COPY --from=builder /owfms/cmake-build/owfms /openwifi/owfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
@@ -71,6 +71,8 @@ COPY owfms.properties.tmpl /
 COPY docker-entrypoint.sh /
 RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
     -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.pem
+
+COPY readiness_check /readiness_check
 
 EXPOSE 16004 17004 16104
 
