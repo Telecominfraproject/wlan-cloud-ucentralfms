@@ -59,8 +59,6 @@ namespace OpenWifi {
         int 	Start() override;
         void 	Stop() override;
 
-        [[nodiscard]] std::string ConvertParams(const std::string &S) const;
-
         bool SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
         bool AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion);
         bool DeleteHistory( std::string & SerialNumber, std::string &Id);

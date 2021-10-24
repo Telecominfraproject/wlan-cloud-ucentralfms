@@ -12,28 +12,6 @@ namespace OpenWifi {
 
     class Storage *Storage::instance_ = nullptr;
 
-	std::string Storage::ConvertParams(const std::string & S) const {
-		std::string R;
-
-		R.reserve(S.size()*2+1);
-
-		if(false) {
-			auto Idx=1;
-			for(auto const & i:S)
-			{
-				if(i=='?') {
-					R += '$';
-					R.append(std::to_string(Idx++));
-				} else {
-					R += i;
-				}
-			}
-		} else {
-			R = S;
-		}
-		return R;
-	}
-
     int Storage::Start() {
         std::lock_guard		Guard(Mutex_);
 
