@@ -9,25 +9,14 @@
 #ifndef UCENTRAL_USTORAGESERVICE_H
 #define UCENTRAL_USTORAGESERVICE_H
 
-#include "Poco/Data/Session.h"
-#include "Poco/Data/SessionPool.h"
-#include "Poco/Data/SQLite/Connector.h"
-#include "Poco/JSON/Object.h"
+#include "framework/MicroService.h"
+#include "framework/StorageClass.h"
 
 #include "RESTObjects/RESTAPI_FMSObjects.h"
-#include "framework/MicroService.h"
-
 #include "storage/storage_firmwares.h"
 #include "storage/storage_history.h"
 #include "storage/storage_deviceTypes.h"
 #include "storage/storage_deviceInfo.h"
-
-#ifndef SMALL_BUILD
-#include "Poco/Data/PostgreSQL/Connector.h"
-#include "Poco/Data/MySQL/Connector.h"
-#endif
-
-#include "framework/StorageClass.h"
 
 namespace OpenWifi {
 

@@ -49,36 +49,45 @@ endif()
 include_directories(/usr/local/include  /usr/local/opt/openssl/include src include/kafka /usr/local/opt/mysql-client/include)
 
 add_executable( owfms
-                build
-                src/Dashboard.cpp src/Dashboard.h
-                src/Daemon.cpp src/Daemon.h
-                src/StorageService.cpp src/StorageService.h
-                src/storage/storage_tables.cpp
-                src/storage/storage_firmwares.cpp
-                src/RESTAPI/RESTAPI_firmwaresHandler.cpp src/RESTAPI/RESTAPI_firmwaresHandler.h
-                src/RESTAPI/RESTAPI_firmwareHandler.cpp src/RESTAPI/RESTAPI_firmwareHandler.h
-                src/RESTObjects/RESTAPI_GWobjects.cpp src/RESTObjects/RESTAPI_GWobjects.h
-                src/ManifestCreator.cpp src/ManifestCreator.h
-                src/framework/MicroService.h
-                src/RESTObjects/RESTAPI_SecurityObjects.cpp src/RESTObjects/RESTAPI_SecurityObjects.h
-                src/RESTObjects/RESTAPI_FMSObjects.cpp src/RESTObjects/RESTAPI_FMSObjects.h
-                src/storage/storage_firmwares.h src/storage/storage_history.cpp
-                src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
-                src/RESTAPI/RESTAPI_historyHandler.cpp src/RESTAPI/RESTAPI_historyHandler.h
-                src/NewConnectionHandler.cpp src/NewConnectionHandler.h
-                src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h
-                src/DeviceCache.cpp src/DeviceCache.h
-                src/RESTAPI/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI/RESTAPI_firmwareAgeHandler.h
-                src/storage/storage_deviceInfo.cpp src/storage/storage_deviceInfo.h
-                src/RESTAPI/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI/RESTAPI_connectedDevicesHandler.h
-                src/FirmwareCache.cpp src/FirmwareCache.h
-                src/RESTAPI/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI/RESTAPI_connectedDeviceHandler.h
-                src/RESTAPI/RESTAPI_deviceReportHandler.cpp src/RESTAPI/RESTAPI_deviceReportHandler.h
-                src/framework/OpenWifiTypes.h
-                src/framework/RESTAPI_errors.h
-                src/SDK/Prov_SDK.cpp src/SDK/Prov_SDK.h
-                src/AutoUpdater.cpp src/AutoUpdater.h src/SDK/GW_SDK.cpp src/SDK/GW_SDK.h
-                src/APIServers.cpp)
+        build
+        src/framework/CountryCodes.h
+        src/framework/KafkaTopics.h
+        src/framework/MicroService.h
+        src/framework/OpenWifiTypes.h
+        src/framework/orm.h
+        src/framework/RESTAPI_errors.h
+        src/framework/RESTAPI_protocol.h
+        src/framework/StorageClass.h
+        src/framework/uCentral_Protocol.h
+        src/RESTObjects/RESTAPI_SecurityObjects.h src/RESTObjects/RESTAPI_SecurityObjects.cpp
+        src/RESTObjects/RESTAPI_ProvObjects.cpp src/RESTObjects/RESTAPI_ProvObjects.h
+        src/RESTObjects/RESTAPI_GWobjects.h src/RESTObjects/RESTAPI_GWobjects.cpp
+        src/RESTObjects/RESTAPI_FMSObjects.h src/RESTObjects/RESTAPI_FMSObjects.cpp
+        src/RESTAPI/RESTAPI_firmwaresHandler.cpp src/RESTAPI/RESTAPI_firmwaresHandler.h
+        src/RESTAPI/RESTAPI_firmwareHandler.cpp src/RESTAPI/RESTAPI_firmwareHandler.h
+        src/RESTAPI/RESTAPI_historyHandler.cpp src/RESTAPI/RESTAPI_historyHandler.h
+        src/RESTAPI/RESTAPI_firmwareAgeHandler.cpp src/RESTAPI/RESTAPI_firmwareAgeHandler.h
+        src/RESTAPI/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI/RESTAPI_connectedDevicesHandler.h
+        src/RESTAPI/RESTAPI_deviceReportHandler.cpp src/RESTAPI/RESTAPI_deviceReportHandler.h
+        src/RESTAPI/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI/RESTAPI_connectedDeviceHandler.h
+        src/storage/storage_tables.cpp
+        src/storage/storage_firmwares.cpp
+        src/storage/storage_firmwares.h src/storage/storage_history.cpp
+        src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
+        src/storage/storage_deviceInfo.cpp src/storage/storage_deviceInfo.h
+        src/APIServers.cpp
+        src/Dashboard.cpp src/Dashboard.h
+        src/Daemon.cpp src/Daemon.h
+        src/StorageService.cpp src/StorageService.h
+        src/ManifestCreator.cpp src/ManifestCreator.h
+        src/framework/MicroService.h
+        src/NewConnectionHandler.cpp src/NewConnectionHandler.h
+        src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h
+        src/DeviceCache.cpp src/DeviceCache.h
+        src/FirmwareCache.cpp src/FirmwareCache.h
+        src/SDK/Prov_SDK.cpp src/SDK/Prov_SDK.h
+        src/AutoUpdater.cpp src/AutoUpdater.h src/SDK/GW_SDK.cpp src/SDK/GW_SDK.h
+        )
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
