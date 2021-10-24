@@ -45,6 +45,9 @@ namespace OpenWifi {
         MicroService::initialize(*this);
     }
 
+    void MicroServicePostInitialization() {
+
+    }
 }
 
 int main(int argc, char **argv) {
