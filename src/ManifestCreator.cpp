@@ -94,6 +94,11 @@ namespace OpenWifi {
         for(auto &[Release,BucketEntry]:BucketContent) {
             FMSObjects::Firmware    F;
             auto R = Release;
+
+            // skip staging releases.
+            if(BucketEntry.URI.find("-staging-")!=std::string::npos)
+                continue;
+
             if(BucketEntry.Valid && !StorageService()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
                 F.id = MicroService::instance().CreateUUID();
                 F.release = Release;
