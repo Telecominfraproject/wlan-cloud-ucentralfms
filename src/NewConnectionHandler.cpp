@@ -20,7 +20,6 @@
 
 
 namespace OpenWifi {
-    class NewConnectionHandler *NewConnectionHandler::instance_ = nullptr;
 
     void NewConnectionHandler::run() {
         Running_ = true ;

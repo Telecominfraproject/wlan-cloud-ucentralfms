@@ -25,10 +25,8 @@ namespace OpenWifi {
     class LatestFirmwareCache : public SubSystemServer {
     public:
         static LatestFirmwareCache *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new LatestFirmwareCache;
-            }
-            return instance_;
+            static LatestFirmwareCache instance;
+            return &instance;
         }
 
         int Start() override;
@@ -42,7 +40,6 @@ namespace OpenWifi {
         bool IsLatest(const std::string &DeviceType, const std::string &Revision);
 
     private:
-        static LatestFirmwareCache 	*instance_;
         LatestFirmwareCacheMap      Cache_;
         Types::StringSet            RevisionSet_;
         Types::StringSet            DeviceSet_;

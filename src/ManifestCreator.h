@@ -31,10 +31,8 @@ namespace OpenWifi {
     class ManifestCreator : public SubSystemServer, Poco::Runnable {
     public:
         static ManifestCreator *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new ManifestCreator;
-            }
-            return instance_;
+            static ManifestCreator instance;
+            return &instance;
         }
 
         void run() override;

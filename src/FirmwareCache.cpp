@@ -5,7 +5,6 @@
 #include "FirmwareCache.h"
 
 namespace OpenWifi {
-    class FirmwareCache *FirmwareCache::instance_ = nullptr;
 
     int FirmwareCache::Start() {
         return 0;

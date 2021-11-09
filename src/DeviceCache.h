@@ -20,10 +20,8 @@ namespace OpenWifi {
     class DeviceCache : public SubSystemServer {
     public:
         static DeviceCache *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new DeviceCache;
-            }
-            return instance_;
+            static DeviceCache instance;
+            return &instance;
         }
 
         int Start() override;
@@ -34,7 +32,6 @@ namespace OpenWifi {
         bool GetDevice(const std::string &SerialNumber, DeviceCacheEntry & E);
 
     private:
-        static DeviceCache 	*instance_;
         std::atomic_bool    Running_=false;
         DeviceCacheMap      DeviceCache_;
         explicit DeviceCache() noexcept:

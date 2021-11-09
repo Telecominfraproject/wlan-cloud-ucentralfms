@@ -15,7 +15,6 @@
 #include "LatestFirmwareCache.h"
 
 namespace OpenWifi {
-    class ManifestCreator *ManifestCreator::instance_ = nullptr;
 
     void ManifestCreator::run() {
         Running_ = true;

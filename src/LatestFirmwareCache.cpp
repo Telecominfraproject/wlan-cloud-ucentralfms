@@ -6,7 +6,6 @@
 #include "StorageService.h"
 
 namespace OpenWifi {
-    class LatestFirmwareCache *LatestFirmwareCache::instance_ = nullptr;
 
     int LatestFirmwareCache::Start() {
         StorageService()->PopulateLatestFirmwareCache();

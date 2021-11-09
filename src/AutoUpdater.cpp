@@ -9,7 +9,6 @@
 #include "StorageService.h"
 
 namespace OpenWifi {
-    class AutoUpdater * AutoUpdater::instance_ = nullptr;
 
     int AutoUpdater::Start() {
         Running_ = true;

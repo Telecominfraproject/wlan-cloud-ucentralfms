@@ -20,10 +20,8 @@ class AutoUpdater : public SubSystemServer, Poco::Runnable {
         };
 
         static AutoUpdater *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new AutoUpdater;
-            }
-            return instance_;
+            static AutoUpdater instance;
+            return &instance;
         }
 
         int Start() override;
@@ -38,7 +36,6 @@ class AutoUpdater : public SubSystemServer, Poco::Runnable {
         void reinitialize(Poco::Util::Application &self) final;
 
     private:
-        static AutoUpdater 					            *instance_;
         std::atomic_bool                                Running_=false;
         Poco::Thread                                    Thr_;
         std::map<std::string,SerialCache>               Cache_;

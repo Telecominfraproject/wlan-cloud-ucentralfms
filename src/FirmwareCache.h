@@ -18,10 +18,8 @@ namespace OpenWifi {
     class FirmwareCache: public SubSystemServer {
     public:
         static FirmwareCache *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new FirmwareCache;
-            }
-            return instance_;
+            static FirmwareCache instance;
+            return &instance;
         }
 
         int Start() override;
@@ -32,7 +30,6 @@ namespace OpenWifi {
 
 
     private:
-        static FirmwareCache 	*instance_;
         std::atomic_bool        Running_=false;
         FirmwareCacheMap        Cache_;
         explicit FirmwareCache() noexcept:

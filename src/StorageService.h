@@ -59,14 +59,12 @@ namespace OpenWifi {
         bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
         static std::string TrimRevision(const std::string &R);
         static Storage *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new Storage;
-            }
-            return instance_;
+            static Storage instance;
+            return &instance;
         }
 
 	  private:
-		static Storage      							    *instance_;
+
     };
 
     inline class Storage * StorageService() { return Storage::instance(); };

@@ -5,7 +5,6 @@
 #include "DeviceCache.h"
 
 namespace OpenWifi {
-    class DeviceCache *DeviceCache::instance_ = nullptr;
 
     int DeviceCache::Start() {
         return 0;

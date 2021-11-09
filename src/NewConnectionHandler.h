@@ -15,10 +15,8 @@ namespace OpenWifi {
     public:
 
         static NewConnectionHandler *instance() {
-            if (instance_ == nullptr) {
-                instance_ = new NewConnectionHandler;
-            }
-            return instance_;
+            static NewConnectionHandler instance;
+            return &instance;
         }
 
         void run() override;
@@ -29,7 +27,6 @@ namespace OpenWifi {
         void ConnectionReceived( const std::string & Key, const std::string & Message);
 
     private:
-        static NewConnectionHandler      *instance_;
         Poco::Thread                Worker_;
         std::atomic_bool            Running_ = false;
         int                         ConnectionWatcherId_=0;
