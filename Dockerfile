@@ -11,6 +11,7 @@ RUN apk add --update --no-cache \
 
 RUN git clone https://github.com/stephb9959/poco /poco
 RUN git clone https://github.com/stephb9959/cppkafka /cppkafka
+RUN git clone https://https://github.com/nlohmann/json /json
 RUN git clone https://github.com/pboettch/json-schema-validator /json-schema-validator
 RUN git clone --recurse-submodules https://github.com/aws/aws-sdk-cpp /aws-sdk-cpp
 
@@ -39,6 +40,13 @@ RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
 
 WORKDIR /json-schema-validator
+RUN mkdir cmake-build
+WORKDIR cmake-build
+RUN cmake ..
+RUN make
+RUN make install
+
+WORKDIR /json
 RUN mkdir cmake-build
 WORKDIR cmake-build
 RUN cmake ..
