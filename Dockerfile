@@ -39,14 +39,14 @@ RUN cmake ..
 RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
 
-WORKDIR /json-schema-validator
+WORKDIR /json
 RUN mkdir cmake-build
 WORKDIR cmake-build
 RUN cmake ..
 RUN make
 RUN make install
 
-WORKDIR /json
+WORKDIR /json-schema-validator
 RUN mkdir cmake-build
 WORKDIR cmake-build
 RUN cmake ..
