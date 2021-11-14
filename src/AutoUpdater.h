@@ -20,8 +20,8 @@ class AutoUpdater : public SubSystemServer, Poco::Runnable {
         };
 
         static AutoUpdater *instance() {
-            static AutoUpdater instance;
-            return &instance;
+            static AutoUpdater *instance_ = new AutoUpdater;
+            return instance_;
         }
 
         int Start() override;

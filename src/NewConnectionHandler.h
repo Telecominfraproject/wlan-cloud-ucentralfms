@@ -15,8 +15,8 @@ namespace OpenWifi {
     public:
 
         static NewConnectionHandler *instance() {
-            static NewConnectionHandler instance;
-            return &instance;
+            static NewConnectionHandler *instance_ = new NewConnectionHandler;
+            return instance_;
         }
 
         void run() override;

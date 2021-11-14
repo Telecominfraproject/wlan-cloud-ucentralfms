@@ -20,8 +20,8 @@ namespace OpenWifi {
     class DeviceCache : public SubSystemServer {
     public:
         static DeviceCache *instance() {
-            static DeviceCache instance;
-            return &instance;
+            static DeviceCache *instance_ = new DeviceCache;
+            return instance_;
         }
 
         int Start() override;

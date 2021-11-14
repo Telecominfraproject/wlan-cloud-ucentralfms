@@ -18,8 +18,8 @@ namespace OpenWifi {
     class FirmwareCache: public SubSystemServer {
     public:
         static FirmwareCache *instance() {
-            static FirmwareCache instance;
-            return &instance;
+            static FirmwareCache *instance_= new FirmwareCache;
+            return instance_;
         }
 
         int Start() override;

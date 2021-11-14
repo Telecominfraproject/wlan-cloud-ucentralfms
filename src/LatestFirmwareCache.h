@@ -25,8 +25,8 @@ namespace OpenWifi {
     class LatestFirmwareCache : public SubSystemServer {
     public:
         static LatestFirmwareCache *instance() {
-            static LatestFirmwareCache instance;
-            return &instance;
+            static LatestFirmwareCache *instance_ = new LatestFirmwareCache;
+            return instance_;
         }
 
         int Start() override;

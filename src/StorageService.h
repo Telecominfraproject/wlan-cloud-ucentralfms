@@ -59,8 +59,8 @@ namespace OpenWifi {
         bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
         static std::string TrimRevision(const std::string &R);
         static Storage *instance() {
-            static Storage instance;
-            return &instance;
+            static Storage *instance_ = new Storage;
+            return instance_;
         }
 
 	  private:
