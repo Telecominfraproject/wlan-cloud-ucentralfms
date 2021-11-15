@@ -92,7 +92,7 @@ namespace OpenWifi {
 
     bool Storage::AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion) {
             FMSObjects::RevisionHistoryEntry    History{
-                .id = Daemon()->CreateUUID(),
+                .id = MicroService::CreateUUID(),
                 .serialNumber = SerialNumber,
                 .fromRelease = PreviousRevision,
                 .toRelease = NewVersion,

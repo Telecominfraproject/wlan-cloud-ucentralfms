@@ -61,7 +61,7 @@ namespace OpenWifi {
             Poco::Data::Statement   Insert(Sess);
 
             // find the older software and change to latest = 0
-            F.id = MicroService::instance().CreateUUID();
+            F.id = MicroService::CreateUUID();
             if(LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate)) {
                 F.latest = true ;
                 Poco::Data::Statement   Update(Sess);
