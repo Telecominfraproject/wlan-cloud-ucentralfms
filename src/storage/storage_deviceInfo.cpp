@@ -208,19 +208,19 @@ namespace OpenWifi {
                 auto Status = RSet[5].convert<std::string>();
 
                 // find the real revision for this device...
-                Types::UpdateCountedMap(Report.DeviceTypes_, DeviceType);
-                Types::UpdateCountedMap(Report.Revisions_, Revision);
-                Types::UpdateCountedMap(Report.Status_, Status);
-                Types::UpdateCountedMap(Report.EndPoints_, EndPoint);
-                Types::UpdateCountedMap(Report.OUI_, SerialNumber.substr(0, 6));
+                UpdateCountedMap(Report.DeviceTypes_, DeviceType);
+                UpdateCountedMap(Report.Revisions_, Revision);
+                UpdateCountedMap(Report.Status_, Status);
+                UpdateCountedMap(Report.EndPoints_, EndPoint);
+                UpdateCountedMap(Report.OUI_, SerialNumber.substr(0, 6));
                 FMSObjects::FirmwareAgeDetails Age;
                 if (ComputeFirmwareAge(DeviceType, Revision, Age)) {
                     if (Age.latest) {
-                        Types::UpdateCountedMap(Report.UsingLatest_, Revision);
+                        UpdateCountedMap(Report.UsingLatest_, Revision);
                     } else if (Age.age == 0) {
-                        Types::UpdateCountedMap(Report.UnknownFirmwares_, Revision);
+                        UpdateCountedMap(Report.UnknownFirmwares_, Revision);
                     } else {
-                        Types::UpdateCountedMap(Report.totalSecondsOld_,"total_seconds", Age.age);
+                        UpdateCountedMap(Report.totalSecondsOld_,"total_seconds", Age.age);
                     }
                 }
                 More = RSet.moveNext();
