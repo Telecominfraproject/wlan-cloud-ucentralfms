@@ -51,10 +51,12 @@ namespace OpenWifi {
         bool SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
         bool AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion);
         bool DeleteHistory( std::string & SerialNumber, std::string &Id);
+        bool DeleteHistory( std::string & SerialNumber);
 
         bool GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices);
         bool GetDevice(std::string &SerialNumber, FMSObjects::DeviceConnectionInformation & Device);
         bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
+        bool DeleteDevice( std::string & SerialNumber);
 
         bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
         static std::string TrimRevision(const std::string &R);

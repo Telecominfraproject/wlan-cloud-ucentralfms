@@ -87,7 +87,7 @@ add_executable( owfms
         src/FirmwareCache.cpp src/FirmwareCache.h
         src/SDK/Prov_SDK.cpp src/SDK/Prov_SDK.h
         src/AutoUpdater.cpp src/AutoUpdater.h src/SDK/GW_SDK.cpp src/SDK/GW_SDK.h
-        )
+        src/NewCommandHandler.cpp src/NewCommandHandler.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

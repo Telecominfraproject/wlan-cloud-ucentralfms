@@ -107,6 +107,22 @@ namespace OpenWifi {
 
     }
 
+    bool Storage::DeleteDevice( std::string & SerialNumber) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Delete(Sess);
+
+            std::string st{"DELETE FROM " + DBNAME_DEVICES + " where serialNumber=?"};
+            Delete <<   ConvertParams(st) ,
+                Poco::Data::Keywords::use(SerialNumber);
+            Delete.execute();
+            return true;
+        } catch (const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
     bool Storage::SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint) {
         try {
             Poco::Data::Session     Sess = Pool_->get();

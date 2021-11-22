@@ -17,6 +17,7 @@
 #include "DeviceCache.h"
 #include "FirmwareCache.h"
 #include "AutoUpdater.h"
+#include "NewCommandHandler.h"
 
 namespace OpenWifi {
     class Daemon *Daemon::instance_ = nullptr;
@@ -35,7 +36,8 @@ namespace OpenWifi {
                                             DeviceCache(),
                                             NewConnectionHandler(),
                                             ManifestCreator(),
-                                            AutoUpdater()
+                                            AutoUpdater(),
+                                            NewCommandHandler()
                                    });
         }
         return instance_;

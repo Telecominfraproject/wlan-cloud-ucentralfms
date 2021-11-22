@@ -126,5 +126,22 @@ namespace OpenWifi {
         return false;
     }
 
+    bool Storage::DeleteHistory( std::string & SerialNumber) {
+        try {
+            Poco::Data::Session     Sess = Pool_->get();
+            Poco::Data::Statement   Delete(Sess);
+
+            std::string st{"DELETE FROM " + DBNAME_HISTORY + " where serialnumber=?"};
+
+            Delete <<   ConvertParams(st),
+            Poco::Data::Keywords::use(SerialNumber);
+            Delete.execute();
+            return true;
+        } catch(const Poco::Exception &E) {
+            Logger_.log(E);
+        }
+        return false;
+    }
+
 
 }
