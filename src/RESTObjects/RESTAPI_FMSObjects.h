@@ -29,7 +29,7 @@ namespace OpenWifi::FMSObjects {
         std::string     location;
         std::string     uploader;
         std::string     digest;
-        int             latest=0;
+        bool            latest=false;
         SecurityObjects::NoteInfoVec    notes;
         uint64_t        created=0;
 

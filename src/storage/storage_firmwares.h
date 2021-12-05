@@ -25,7 +25,7 @@ namespace OpenWifi {
             "location           varchar, "
             "uploader           varchar, "
             "digest             varchar, "
-            "latest             int,  "
+            "latest             boolean,  "
             "notes              text, "
             "created            bigint"
     };
@@ -88,7 +88,7 @@ namespace OpenWifi {
             std::string,
             std::string,
             std::string,
-            uint64_t,
+            bool,
             std::string,
             uint64_t> FirmwaresRecord;
     typedef std::vector<FirmwaresRecord> FirmwaresRecordList;
