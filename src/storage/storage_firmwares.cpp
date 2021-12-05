@@ -65,7 +65,7 @@ namespace OpenWifi {
             if(LatestFirmwareCache()->AddToCache(F.deviceType,F.revision,F.id,F.imageDate)) {
                 F.latest = true ;
                 Poco::Data::Statement   Update(Sess);
-                std::string st{"UPDATE " + DBNAME_FIRMWARES + " SET latest=0 WHERE deviceType=? AND Latest=1"};
+                std::string st{"UPDATE " + DBNAME_FIRMWARES + " SET latest=false WHERE deviceType=? AND Latest=true"};
                 Update <<   ConvertParams(st),
                             Poco::Data::Keywords::use(F.deviceType);
                 Update.execute();
