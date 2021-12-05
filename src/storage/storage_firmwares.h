@@ -88,7 +88,7 @@ namespace OpenWifi {
             std::string,
             std::string,
             std::string,
-            uint64_t,
+            bool,
             std::string,
             uint64_t> FirmwaresRecord;
     typedef std::vector<FirmwaresRecord> FirmwaresRecordList;
