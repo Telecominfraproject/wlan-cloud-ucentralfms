@@ -25,7 +25,7 @@ namespace OpenWifi {
             "location           varchar, "
             "uploader           varchar, "
             "digest             varchar, "
-            "latest             int,  "
+            "latest             boolean,  "
             "notes              text, "
             "created            bigint"
     };
