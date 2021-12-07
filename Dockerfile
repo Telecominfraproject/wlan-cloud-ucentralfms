@@ -56,6 +56,7 @@ RUN make install
 ADD CMakeLists.txt build /owfms/
 ADD cmake /owfms/cmake
 ADD src /owfms/src
+ADD .git /owgw/.git
 
 WORKDIR /owfms
 RUN mkdir cmake-build
