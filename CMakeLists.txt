@@ -92,7 +92,7 @@ add_executable( owfms
         src/storage/storage_firmwares.h src/storage/storage_history.cpp
         src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
         src/storage/storage_deviceInfo.cpp src/storage/storage_deviceInfo.h
-        src/APIServers.cpp
+        src/RESTAPI/RESTAPI_Routers.cpp
         src/Dashboard.cpp src/Dashboard.h
         src/Daemon.cpp src/Daemon.h
         src/StorageService.cpp src/StorageService.h
