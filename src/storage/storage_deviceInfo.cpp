@@ -66,7 +66,7 @@ namespace OpenWifi {
                 std::string st{"INSERT INTO " + DBNAME_DEVICES + " (" +
                                DBFIELDS_DEVICES_SELECT +
                                ") VALUES(?,?,?,?,?,?)"};
-                Logger_.information(Poco::format("New device '%s' connected", SerialNumber));
+                Logger().information(Poco::format("New device '%s' connected", SerialNumber));
                 FMSObjects::DeviceConnectionInformation   DI{
                         .serialNumber = SerialNumber,
                         .revision = Revision,
@@ -101,7 +101,7 @@ namespace OpenWifi {
             }
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
 
@@ -118,7 +118,7 @@ namespace OpenWifi {
             Delete.execute();
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -140,7 +140,7 @@ namespace OpenWifi {
                     Poco::Data::Keywords::use(SerialNumber);
             Update.execute();
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -166,7 +166,7 @@ namespace OpenWifi {
 
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -188,7 +188,7 @@ namespace OpenWifi {
                 return true;
             }
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -243,7 +243,7 @@ namespace OpenWifi {
             }
             return true;
         } catch( const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
 
         return false;

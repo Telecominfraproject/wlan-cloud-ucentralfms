@@ -44,7 +44,7 @@ namespace OpenWifi {
                 auto Entry = Queue_.front();
                 Queue_.pop_front();
                 try {
-                    Logger_.debug(Poco::format("Preparing to upgrade %s",Entry.first));
+                    Logger().debug(Poco::format("Preparing to upgrade %s",Entry.first));
                     auto CacheEntry = Cache_.find(Entry.first);
                     uint64_t Now = std::time(nullptr);
                     std::string firmwareUpgrade;
@@ -54,11 +54,11 @@ namespace OpenWifi {
                         SerialCache     C;
                         C.LastCheck = Now;
                         if(OpenWifi::SDK::Prov::GetFirmwareOptions(Entry.first, firmwareUpgrade, firmwareRCOnly)) {
-                            Logger_.debug(Poco::format("Found firmware options for %s",Entry.first));
+                            Logger().debug(Poco::format("Found firmware options for %s",Entry.first));
                             C.firmwareRCOnly = firmwareRCOnly;
                             C.firmwareUpgrade = firmwareUpgrade;
                         } else {
-                            Logger_.debug(Poco::format("Found no firmware options for %s",Entry.first));
+                            Logger().debug(Poco::format("Found no firmware options for %s",Entry.first));
                             C.firmwareRCOnly = firmwareRCOnly;
                             C.firmwareUpgrade = firmwareUpgrade;
                         }
@@ -68,7 +68,7 @@ namespace OpenWifi {
                     }
 
                     if(firmwareUpgrade=="no") {
-                        Logger_.information(Poco::format("Device %s not upgradable. Provisioning service settings.",Entry.first));
+                        Logger().information(Poco::format("Device %s not upgradable. Provisioning service settings.",Entry.first));
                         continue;
                     }
 
@@ -78,27 +78,27 @@ namespace OpenWifi {
                     if(LF) {
                         if(StorageService()->GetFirmware(fwEntry.Id,fwDetails)) {
                             //  send the command to upgrade this device...
-                            Logger_.information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
+                            Logger().information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
                             if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {
-                                Logger_.information(Poco::format("Upgrade command sent for %s",Entry.first));
+                                Logger().information(Poco::format("Upgrade command sent for %s",Entry.first));
                             } else {
-                                Logger_.information(Poco::format("Upgrade command not sent for %s",Entry.first));
+                                Logger().information(Poco::format("Upgrade command not sent for %s",Entry.first));
                             }
                         } else {
-                            Logger_.information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
+                            Logger().information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
                         }
                     } else {
-                        Logger_.information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
+                        Logger().information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
                     }
                 } catch (...) {
-                    Logger_.information(Poco::format("Exception during auto update for device %s.", Entry.first ));
+                    Logger().information(Poco::format("Exception during auto update for device %s.", Entry.first ));
                 }
             }
         }
     }
 
     void AutoUpdater::reinitialize(Poco::Util::Application &self) {
-        Logger_.information("Reinitializing.");
+        Logger().information("Reinitializing.");
         Reset();
     }
 }

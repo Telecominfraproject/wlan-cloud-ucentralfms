@@ -35,7 +35,7 @@ namespace OpenWifi {
 			}
 			return 0;
 		} catch(const Poco::Exception &E) {
-			Logger_.log(E);
+			Logger().log(E);
 		}
 		return -1;
 	}
@@ -58,7 +58,7 @@ namespace OpenWifi {
             }
             return 0;
         } catch(const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return -1;
     }
@@ -80,7 +80,7 @@ namespace OpenWifi {
             }
             return 0;
         } catch(const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return -1;
 	}
@@ -95,7 +95,7 @@ namespace OpenWifi {
                     Poco::Data::Keywords::now;
             return 0;
         } catch(const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
 
 	    return -1;

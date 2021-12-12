@@ -25,13 +25,13 @@ namespace OpenWifi {
             if(!Running_)
                 break;
             FirstRun = false;
-            Logger_.information("Performing DB refresh");
+            Logger().information("Performing DB refresh");
             S3BucketContent BucketList;
             StorageService()->RemoveOldFirmware();
             ReadBucket(BucketList);
             if(!Running_)
                 break;
-            Logger_.information(Poco::format("Found %Lu firmware entries in S3 repository.",(uint64_t)BucketList.size()));
+            Logger().information(Poco::format("Found %Lu firmware entries in S3 repository.",(uint64_t)BucketList.size()));
             ComputeManifest(BucketList);
             AddManifestToDB(BucketList);
         }
@@ -59,7 +59,7 @@ namespace OpenWifi {
                         Entry.Image = ParsedContent->get("image").toString();
                         auto FullNme = Name + "-upgrade.bin";
                         if(FullNme!=Entry.Image) {
-                            Logger_.error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
+                            Logger().error(Poco::format("MANIFEST(%s): Image name does not match manifest name (%s).",Name,Entry.Image));
                             Entry.Valid = false;
                             BadFormat++;
                             continue;
@@ -71,19 +71,19 @@ namespace OpenWifi {
                         Entry.Valid = false;
                     }
                 } else {
-                    Logger_.error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
+                    Logger().error(Poco::format("MANIFEST(%s): Entry does not have a valid JSON manifest.",Name));
                     MissingJson++;
                     Entry.Valid = false;
                 }
             } catch (const Poco::Exception  &E ) {
-                Logger_.log(E);
+                Logger().log(E);
             }
         }
 
-        Logger_.information(Poco::format("Accepted %Lu firmwares.", Accepted));
-        Logger_.information(Poco::format("Rejected %Lu too old firmwares.", Rejected));
-        Logger_.information(Poco::format("Rejected %Lu bad JSON.", BadFormat));
-        Logger_.information(Poco::format("Rejected %Lu missing JSON.", MissingJson));
+        Logger().information(Poco::format("Accepted %Lu firmwares.", Accepted));
+        Logger().information(Poco::format("Rejected %Lu too old firmwares.", Rejected));
+        Logger().information(Poco::format("Rejected %Lu bad JSON.", BadFormat));
+        Logger().information(Poco::format("Rejected %Lu missing JSON.", MissingJson));
 
         return true;
     }
@@ -109,7 +109,7 @@ namespace OpenWifi {
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
                 if(StorageService()->AddFirmware(F)) {
-                    Logger_.information(Poco::format("Adding firmware '%s'",Release));
+                    Logger().information(Poco::format("Adding firmware '%s'",Release));
                 } else {
                 }
             }
@@ -196,7 +196,7 @@ namespace OpenWifi {
         while(!isDone) {
             Outcome = S3Client.ListObjectsV2(Request);
             if(!Outcome.IsSuccess()) {
-                Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
+                Logger().error(Poco::format("Error while doing ListObjectsV2: %s, %s",
                                            std::string{Outcome.GetError().GetExceptionName()},
                                            std::string{Outcome.GetError().GetMessage()}));
                 return false;
@@ -280,7 +280,7 @@ namespace OpenWifi {
 
         // std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
         if(!Outcome.IsSuccess()) {
-            Logger_.error(Poco::format("Error while doing ListObjectsV2: %s, %s",
+            Logger().error(Poco::format("Error while doing ListObjectsV2: %s, %s",
                                        std::string{Outcome.GetError().GetExceptionName()},
                                        std::string{Outcome.GetError().GetMessage()}));
             return false;

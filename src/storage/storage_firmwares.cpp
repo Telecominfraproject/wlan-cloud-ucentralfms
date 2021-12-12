@@ -100,7 +100,7 @@ namespace OpenWifi {
             return true;
 
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -138,7 +138,7 @@ namespace OpenWifi {
             return true;
 
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -155,7 +155,7 @@ namespace OpenWifi {
             return true;
 
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -173,7 +173,7 @@ namespace OpenWifi {
                 Poco::Data::Keywords::use(Limit);
             Delete.execute();
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
     }
 
@@ -198,7 +198,7 @@ namespace OpenWifi {
             return true;
 
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -223,7 +223,7 @@ namespace OpenWifi {
             Convert(Records[0],Firmware);
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -248,7 +248,7 @@ namespace OpenWifi {
             Convert(Records[0], Firmware);
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -280,7 +280,7 @@ namespace OpenWifi {
             }
             return true;
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }
@@ -307,7 +307,7 @@ namespace OpenWifi {
                 LatestFirmwareCache()->AddToCache(R.get<1>(), R.get<3>(), R.get<0>(), R.get<2>());
             }
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
     }
 
@@ -346,7 +346,7 @@ namespace OpenWifi {
                 }
             }
         } catch (const Poco::Exception &E) {
-            Logger_.log(E);
+            Logger().log(E);
         }
         return false;
     }

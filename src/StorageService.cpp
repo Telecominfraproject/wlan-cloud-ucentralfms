@@ -13,7 +13,7 @@ namespace OpenWifi {
     int Storage::Start() {
         std::lock_guard		Guard(Mutex_);
 
-        Logger_.setLevel(Poco::Message::PRIO_NOTICE);
+        Logger().setLevel(Poco::Message::PRIO_NOTICE);
 
         StorageClass::Start();
 
@@ -24,7 +24,7 @@ namespace OpenWifi {
 
     void Storage::Stop() {
         std::lock_guard		Guard(Mutex_);
-        Logger_.notice("Stopping.");
+        Logger().notice("Stopping.");
         StorageClass::Stop();
     }
 

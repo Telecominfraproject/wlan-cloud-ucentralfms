@@ -45,16 +45,16 @@ namespace OpenWifi {
                             if(Command=="delete_device") {
                                 auto pSerialNumber = PayloadSection["payload"]["serialNumber"];
                                 if(pSerialNumber==SerialNumber) {
-                                    Logger_.debug(Poco::format("Removing device '%s' from upgrade history.",SerialNumber));
+                                    Logger().debug(Poco::format("Removing device '%s' from upgrade history.",SerialNumber));
                                     StorageService()->DeleteHistory(SerialNumber);
-                                    Logger_.debug(Poco::format("Removing device '%s' from device table.",SerialNumber));
+                                    Logger().debug(Poco::format("Removing device '%s' from device table.",SerialNumber));
                                     StorageService()->DeleteDevice(SerialNumber);
                                 }
                             }
                         }
                     }
                 } catch (const Poco::Exception &E) {
-                    Logger_.log(E);
+                    Logger().log(E);
                 }
             }
         }
