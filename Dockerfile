@@ -76,7 +76,7 @@ RUN addgroup -S "$OWFMS_USER" && \
 RUN mkdir /openwifi
 RUN mkdir -p "$OWFMS_ROOT" "$OWFMS_CONFIG" && \
     chown "$OWFMS_USER": "$OWFMS_ROOT" "$OWFMS_CONFIG"
-RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates bash jq curl
+RUN apk add --update --no-cache librdkafka curl-dev mariadb-connector-c libpq unixodbc su-exec gettext ca-certificates bash jq curl postgresql-client
 
 COPY --from=builder /owfms/cmake-build/owfms /openwifi/owfms
 COPY --from=builder /cppkafka/cmake-build/src/lib/* /lib/
