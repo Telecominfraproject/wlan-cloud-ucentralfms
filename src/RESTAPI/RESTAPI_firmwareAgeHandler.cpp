@@ -11,12 +11,12 @@
 #include "framework/RESTAPI_protocol.h"
 #include "framework/RESTAPI_errors.h"
 
+
 namespace OpenWifi {
     void RESTAPI_firmwareAgeHandler::DoGet() {
         if (!QB_.Select.empty()) {
             Poco::JSON::Array Objects;
-            std::vector<std::string> Numbers = Utils::Split(QB_.Select);
-            for (auto &i : Numbers) {
+            for (auto &i : SelectedRecords()) {
                 DeviceCacheEntry E;
                 if (DeviceCache()->GetDevice(i, E)) {
                     FMSObjects::FirmwareAgeDetails FA;
