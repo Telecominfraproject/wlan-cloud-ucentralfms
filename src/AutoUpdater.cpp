@@ -76,7 +76,7 @@ namespace OpenWifi {
                     FMSObjects::Firmware        fwDetails;
                     auto LF = LatestFirmwareCache()->FindLatestFirmware(Entry.second, fwEntry );
                     if(LF) {
-                        if(StorageService()->GetFirmware(fwEntry.Id,fwDetails)) {
+                        if(StorageService()->FirmwaresDB().GetFirmware(fwEntry.Id,fwDetails)) {
                             //  send the command to upgrade this device...
                             Logger().information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
                             if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {

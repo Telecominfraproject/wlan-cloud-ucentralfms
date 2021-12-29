@@ -64,8 +64,8 @@ namespace OpenWifi {
                                 auto Revision = Storage::TrimRevision(PayloadObj->get(uCentralProtocol::FIRMWARE).toString());
                                 // std::cout << "ConnectionEvent: SerialNumber: " << SerialNumber << " DeviceType: " << DeviceType << " Revision:" << Revision << std::endl;
                                 FMSObjects::FirmwareAgeDetails  FA;
-                                if(StorageService()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
-                                    StorageService()->SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
+                                if(StorageService()->FirmwaresDB().ComputeFirmwareAge(DeviceType, Revision, FA)) {
+                                    StorageService()->DevicesDB().SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                     if(FA.age)
                                         Logger().information(Poco::format("Device %s connection. Firmware is %s older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                     else
@@ -86,7 +86,7 @@ namespace OpenWifi {
                             if(DisconnectMessage->has(uCentralProtocol::SERIALNUMBER) && DisconnectMessage->has(uCentralProtocol::TIMESTAMP)) {
                                 auto SNum = DisconnectMessage->get(uCentralProtocol::SERIALNUMBER).toString();
                                 auto Timestamp = DisconnectMessage->get(uCentralProtocol::TIMESTAMP);
-                                StorageService()->SetDeviceDisconnected(SNum,EndPoint);
+                                StorageService()->DevicesDB().SetDeviceDisconnected(SNum,EndPoint);
                                 // std::cout << "DISCONNECTION:" << SerialNumber << std::endl;
                             }
                         } else if(PayloadObj->has(uCentralProtocol::PING)) {
@@ -98,7 +98,7 @@ namespace OpenWifi {
                                 auto Revision = Storage::TrimRevision(PingMessage->get(uCentralProtocol::FIRMWARE).toString());
                                 auto Serial = PingMessage->get( uCentralProtocol::SERIALNUMBER).toString();
                                 auto DeviceType = PingMessage->get( uCentralProtocol::COMPATIBLE).toString();
-                                StorageService()->SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
+                                StorageService()->DevicesDB().SetDeviceRevision(Serial, Revision, DeviceType, EndPoint);
                                 DeviceCache()->AddToCache(Serial, DeviceType, EndPoint, Revision);
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
                                     // std::cout << "Device(ping): " << SerialNumber << " to be upgraded ... " << std::endl;

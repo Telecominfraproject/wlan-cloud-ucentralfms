@@ -8,7 +8,7 @@
 namespace OpenWifi {
 
     int LatestFirmwareCache::Start() {
-        StorageService()->PopulateLatestFirmwareCache();
+        StorageService()->FirmwaresDB().PopulateLatestFirmwareCache();
         return 0;
     }
 

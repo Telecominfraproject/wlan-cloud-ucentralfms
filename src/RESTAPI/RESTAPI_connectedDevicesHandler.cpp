@@ -15,7 +15,7 @@ namespace OpenWifi {
         std::vector<FMSObjects::DeviceConnectionInformation> Devices;
         Poco::JSON::Object AnswerObj;
         Poco::JSON::Array AnswerArr;
-        if (StorageService()->GetDevices(QB_.Offset, QB_.Limit, Devices)) {
+        if (StorageService()->DevicesDB().GetDevices(QB_.Offset, QB_.Limit, Devices)) {
             for (const auto &i:Devices) {
                 Poco::JSON::Object Obj;
                 i.to_json(Obj);

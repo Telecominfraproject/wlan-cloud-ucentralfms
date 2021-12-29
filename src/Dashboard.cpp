@@ -11,7 +11,7 @@ namespace OpenWifi {
 
 		if(LastRun_==0 || (Now-LastRun_)>120) {
 			DB_.reset();
-			StorageService()->GenerateDeviceReport(DB_);
+			StorageService()->DevicesDB().GenerateDeviceReport(DB_);
 			LastRun_ = Now;
 		}
 	}

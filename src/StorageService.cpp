@@ -13,11 +13,15 @@ namespace OpenWifi {
     int Storage::Start() {
         std::lock_guard		Guard(Mutex_);
 
-        Logger().setLevel(Poco::Message::PRIO_NOTICE);
-
         StorageClass::Start();
 
-        Create_Tables();
+        HistoryDB_ = std::make_unique<OpenWifi::HistoryDB>(dbType_,*Pool_, Logger());
+        FirmwaresDB_ = std::make_unique<OpenWifi::FirmwaresDB>(dbType_,*Pool_, Logger());
+        DevicesDB_ = std::make_unique<OpenWifi::DevicesDB>(dbType_,*Pool_, Logger());
+
+        HistoryDB_->Create();
+        FirmwaresDB_->Create();
+        DevicesDB_->Create();
 
         return 0;
     }

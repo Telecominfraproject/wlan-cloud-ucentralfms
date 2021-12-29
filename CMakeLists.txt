@@ -87,11 +87,6 @@ add_executable( owfms
         src/RESTAPI/RESTAPI_connectedDevicesHandler.cpp src/RESTAPI/RESTAPI_connectedDevicesHandler.h
         src/RESTAPI/RESTAPI_deviceReportHandler.cpp src/RESTAPI/RESTAPI_deviceReportHandler.h
         src/RESTAPI/RESTAPI_connectedDeviceHandler.cpp src/RESTAPI/RESTAPI_connectedDeviceHandler.h
-        src/storage/storage_tables.cpp
-        src/storage/storage_firmwares.cpp
-        src/storage/storage_firmwares.h src/storage/storage_history.cpp
-        src/storage/storage_history.h src/storage/storage_deviceTypes.cpp
-        src/storage/storage_deviceInfo.cpp src/storage/storage_deviceInfo.h
         src/RESTAPI/RESTAPI_Routers.cpp
         src/Dashboard.cpp src/Dashboard.h
         src/Daemon.cpp src/Daemon.h
@@ -104,7 +99,10 @@ add_executable( owfms
         src/FirmwareCache.cpp src/FirmwareCache.h
         src/SDK/Prov_SDK.cpp src/SDK/Prov_SDK.h
         src/AutoUpdater.cpp src/AutoUpdater.h src/SDK/GW_SDK.cpp src/SDK/GW_SDK.h
-        src/NewCommandHandler.cpp src/NewCommandHandler.h)
+        src/NewCommandHandler.cpp src/NewCommandHandler.h
+        src/storage/orm_history.cpp src/storage/orm_history.h
+        src/storage/orm_firmwares.cpp src/storage/orm_firmwares.h
+        src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

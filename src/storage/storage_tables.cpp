@@ -11,78 +11,8 @@
 namespace OpenWifi {
 
 	int Storage::Create_Tables() {
-	    Create_Firmwares();
-	    Create_History();
-	    Create_DeviceTypes();
         Create_DeviceInfo();
 		return 0;
-	}
-
-	int Storage::Create_Firmwares() {
-		try {
-			Poco::Data::Session Sess = Pool_->get();
-
-			if(dbType_==mysql) {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_FIRMWARES + " (" +
-                        DBFIELDS_FIRMWARES_CREATION +
-                        ")",
-                        Poco::Data::Keywords::now;
-            } else {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_FIRMWARES + " (" +
-                        DBFIELDS_FIRMWARES_CREATION +
-                        ")",
-                        Poco::Data::Keywords::now;
-			}
-			return 0;
-		} catch(const Poco::Exception &E) {
-			Logger().log(E);
-		}
-		return -1;
-	}
-
-    int Storage::Create_History() {
-        try {
-            Poco::Data::Session Sess = Pool_->get();
-
-            if(dbType_==mysql) {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_HISTORY + " (" +
-                        DBFIELDS_HISTORY_CREATION +
-                        ",INDEX Serial (SerialNumber ASC, upgraded ASC))"
-                        , Poco::Data::Keywords::now;
-            } else {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_HISTORY + " (" +
-                        DBFIELDS_HISTORY_CREATION +
-                        ")",
-                        Poco::Data::Keywords::now;
-                Sess << "CREATE INDEX IF NOT EXISTS Serial ON " + DBNAME_HISTORY + " (SerialNumber ASC, upgraded ASC)", Poco::Data::Keywords::now;
-            }
-            return 0;
-        } catch(const Poco::Exception &E) {
-            Logger().log(E);
-        }
-        return -1;
-    }
-
-    int Storage::Create_DeviceTypes() {
-        try {
-            Poco::Data::Session Sess = Pool_->get();
-
-            if(dbType_==mysql) {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_DEVICETYPES + " (" +
-                        DBFIELDS_DEVICETYPES_CREATION +
-                        ")",
-                        Poco::Data::Keywords::now;
-            } else {
-                Sess << "CREATE TABLE IF NOT EXISTS " + DBNAME_DEVICETYPES + " (" +
-                        DBFIELDS_DEVICETYPES_CREATION +
-                        ")",
-                        Poco::Data::Keywords::now;
-            }
-            return 0;
-        } catch(const Poco::Exception &E) {
-            Logger().log(E);
-        }
-        return -1;
 	}
 
 	int Storage::Create_DeviceInfo() {

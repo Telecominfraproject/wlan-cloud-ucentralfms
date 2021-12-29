@@ -27,7 +27,7 @@ namespace OpenWifi {
             FirstRun = false;
             Logger().information("Performing DB refresh");
             S3BucketContent BucketList;
-            StorageService()->RemoveOldFirmware();
+            StorageService()->FirmwaresDB().RemoveOldFirmware();
             ReadBucket(BucketList);
             if(!Running_)
                 break;
@@ -98,7 +98,7 @@ namespace OpenWifi {
             if(BucketEntry.URI.find("-staging-")!=std::string::npos)
                 continue;
 
-            if(BucketEntry.Valid && !StorageService()->GetFirmwareByName(R,BucketEntry.Compatible,F)) {
+            if(BucketEntry.Valid && !StorageService()->FirmwaresDB().GetFirmwareByName(R,BucketEntry.Compatible,F)) {
                 F.id = MicroService::instance().CreateUUID();
                 F.release = Release;
                 F.size = BucketEntry.S3Size;
@@ -108,7 +108,7 @@ namespace OpenWifi {
                 F.uri = BucketEntry.URI;
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
-                if(StorageService()->AddFirmware(F)) {
+                if(StorageService()->FirmwaresDB().AddFirmware(F)) {
                     Logger().information(Poco::format("Adding firmware '%s'",Release));
                 } else {
                 }

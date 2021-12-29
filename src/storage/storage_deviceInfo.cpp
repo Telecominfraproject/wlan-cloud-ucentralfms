@@ -96,7 +96,7 @@ namespace OpenWifi {
                             Poco::Data::Keywords::use(SerialNumber);
                 Update.execute();
                 if(PreviousVersion!=Revision) {
-                    AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
+                    StorageService()->HistoryDB().AddHistory(SerialNumber, DeviceType, PreviousVersion, Revision);
                 }
             }
             return true;
@@ -230,7 +230,7 @@ namespace OpenWifi {
                 UpdateCountedMap(Report.EndPoints_, EndPoint);
                 UpdateCountedMap(Report.OUI_, SerialNumber.substr(0, 6));
                 FMSObjects::FirmwareAgeDetails Age;
-                if (ComputeFirmwareAge(DeviceType, Revision, Age)) {
+                if (StorageService()->FirmwaresDB().ComputeFirmwareAge(DeviceType, Revision, Age)) {
                     if (Age.latest) {
                         UpdateCountedMap(Report.UsingLatest_, Revision);
                     } else if (Age.age == 0) {

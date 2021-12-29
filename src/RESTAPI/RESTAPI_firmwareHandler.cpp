@@ -19,7 +19,7 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::InvalidJSONDocument);
         }
         F.id = MicroService::instance().CreateUUID();
-        if(StorageService()->AddFirmware(F)) {
+        if(StorageService()->FirmwaresDB().AddFirmware(F)) {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);
             return ReturnObject(Answer);
@@ -36,7 +36,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::Firmware F;
-        if (StorageService()->GetFirmware(UUID, F)) {
+        if (StorageService()->FirmwaresDB().GetFirmware(UUID, F)) {
             Poco::JSON::Object Object;
             F.to_json(Object);
             return ReturnObject(Object);
@@ -51,7 +51,7 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::MissingUUID);
         }
 
-        if (StorageService()->DeleteFirmware(UUID)) {
+        if (StorageService()->FirmwaresDB().DeleteFirmware(UUID)) {
             return OK();
         }
         BadRequest(RESTAPI::Errors::CouldNotBeDeleted);
@@ -64,7 +64,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::Firmware    F;
-        if(!StorageService()->GetFirmware(UUID, F)) {
+        if(!StorageService()->FirmwaresDB().GetFirmware(UUID, F)) {
             return NotFound();
         }
 
@@ -85,7 +85,7 @@ namespace OpenWifi {
             }
         }
 
-        if(StorageService()->UpdateFirmware(UUID, F)) {
+        if(StorageService()->FirmwaresDB().UpdateFirmware(UUID, F)) {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);
             return ReturnObject(Answer);

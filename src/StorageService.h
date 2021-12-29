@@ -13,63 +13,43 @@
 #include "framework/StorageClass.h"
 
 #include "RESTObjects/RESTAPI_FMSObjects.h"
-#include "storage/storage_firmwares.h"
-#include "storage/storage_history.h"
-#include "storage/storage_deviceTypes.h"
-#include "storage/storage_deviceInfo.h"
+
+#include "storage/orm_history.h"
+#include "storage/orm_firmwares.h"
+#include "storage/orm_deviceInfo.h"
 
 namespace OpenWifi {
 
     class Storage : public StorageClass {
     public:
 
-        int Create_Tables();
-        int Create_Firmwares();
-        int Create_History();
-        int Create_DeviceTypes();
-        int Create_DeviceInfo();
-
-        bool AddFirmware(FMSObjects::Firmware & F);
-        bool UpdateFirmware(std::string & UUID, FMSObjects::Firmware & C);
-        bool DeleteFirmware(std::string & UUID);
-        bool GetFirmware(std::string & UUID, FMSObjects::Firmware & C);
-        bool GetFirmwares(uint64_t From, uint64_t HowMany, std::string & Compatible, FMSObjects::FirmwareVec & Firmwares);
-        bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
-        bool GetFirmwareByName(std::string & Release, std::string &DeviceType,FMSObjects::Firmware & C );
-        bool GetFirmwareByRevision(std::string & Revision, std::string &DeviceType,FMSObjects::Firmware & C );
-        bool ComputeFirmwareAge(std::string & DeviceType, std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails);
-
-        bool GetHistory(std::string &SerialNumber,uint64_t From, uint64_t HowMany,FMSObjects::RevisionHistoryEntryVec &History);
-        bool AddHistory(FMSObjects::RevisionHistoryEntry &History);
-
-        void PopulateLatestFirmwareCache();
-        void RemoveOldFirmware();
-
         int 	Start() override;
         void 	Stop() override;
 
-        bool SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
-        bool AddHistory( std::string & SerialNumber, std::string &DeviceType, std::string & PreviousRevision, std::string & NewVersion);
-        bool DeleteHistory( std::string & SerialNumber, std::string &Id);
-        bool DeleteHistory( std::string & SerialNumber);
+        int Create_Tables();
+        int Create_DeviceTypes();
+        int Create_DeviceInfo();
 
-        bool GetDevices(uint64_t From, uint64_t HowMany, std::vector<FMSObjects::DeviceConnectionInformation> & Devices);
-        bool GetDevice(std::string &SerialNumber, FMSObjects::DeviceConnectionInformation & Device);
-        bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);
-        bool DeleteDevice( std::string & SerialNumber);
+        bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
 
-        bool GenerateDeviceReport(FMSObjects::DeviceReport &Report);
         static std::string TrimRevision(const std::string &R);
-        static Storage *instance() {
-            static Storage *instance_ = new Storage;
+        static auto instance() {
+            static auto instance_ = new Storage;
             return instance_;
         }
 
+        OpenWifi::HistoryDB & HistoryDB() { return * HistoryDB_; }
+        OpenWifi::FirmwaresDB & FirmwaresDB() { return * FirmwaresDB_; }
+        OpenWifi::DevicesDB & DevicesDB() { return * DevicesDB_; }
+
 	  private:
 
+        std::unique_ptr<OpenWifi::HistoryDB>        HistoryDB_;
+        std::unique_ptr<OpenWifi::FirmwaresDB>      FirmwaresDB_;
+        std::unique_ptr<OpenWifi::DevicesDB>        DevicesDB_;
     };
 
-    inline class Storage * StorageService() { return Storage::instance(); };
+    inline auto StorageService() { return Storage::instance(); };
 
 }  // namespace
 

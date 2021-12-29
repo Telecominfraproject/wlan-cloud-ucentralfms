@@ -18,7 +18,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::DeviceConnectionInformation DevInfo;
-        if(StorageService()->GetDevice(SerialNumber, DevInfo)) {
+        if(StorageService()->DevicesDB().GetDevice(SerialNumber, DevInfo)) {
             Poco::JSON::Object  Answer;
             DevInfo.to_json(Answer);
             return ReturnObject(Answer);

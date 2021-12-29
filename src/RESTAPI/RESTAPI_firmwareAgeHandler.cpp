@@ -20,7 +20,7 @@ namespace OpenWifi {
                 DeviceCacheEntry E;
                 if (DeviceCache()->GetDevice(i, E)) {
                     FMSObjects::FirmwareAgeDetails FA;
-                    if(StorageService()->ComputeFirmwareAge(E.deviceType,E.revision,FA)) {
+                    if(StorageService()->FirmwaresDB().ComputeFirmwareAge(E.deviceType,E.revision,FA)) {
                         Poco::JSON::Object  O;
                         FA.to_json(O);
                         O.set(uCentralProtocol::SERIALNUMBER,i);
@@ -50,7 +50,7 @@ namespace OpenWifi {
             Revision = Storage::TrimRevision(Revision);
 
             FMSObjects::FirmwareAgeDetails FA;
-            if (StorageService()->ComputeFirmwareAge(DeviceType, Revision, FA)) {
+            if (StorageService()->FirmwaresDB().ComputeFirmwareAge(DeviceType, Revision, FA)) {
                 Poco::JSON::Object Answer;
 
                 FA.to_json(Answer);

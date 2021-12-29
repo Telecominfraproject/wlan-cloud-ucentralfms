@@ -17,7 +17,7 @@ namespace OpenWifi {
         }
 
         FMSObjects::RevisionHistoryEntryVec H;
-        if (StorageService()->GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
+        if (StorageService()->HistoryDB().GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
             Poco::JSON::Array A;
             for (auto const &i:H) {
                 Poco::JSON::Object O;
@@ -38,7 +38,7 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::IdOrSerialEmpty);
         }
 
-        if (!StorageService()->DeleteHistory(SerialNumber, Id)) {
+        if (!StorageService()->HistoryDB().DeleteHistory(SerialNumber, Id)) {
             return OK();
         }
         NotFound();
