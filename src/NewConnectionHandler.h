@@ -14,8 +14,8 @@ namespace OpenWifi {
     class NewConnectionHandler : public SubSystemServer, Poco::Runnable {
     public:
 
-        static NewConnectionHandler *instance() {
-            static NewConnectionHandler *instance_ = new NewConnectionHandler;
+        static auto instance() {
+            static auto instance_ = new NewConnectionHandler;
             return instance_;
         }
 
@@ -38,7 +38,7 @@ namespace OpenWifi {
         }
 
     };
-    inline NewConnectionHandler * NewConnectionHandler() { return NewConnectionHandler::instance(); };
+    inline auto NewConnectionHandler() { return NewConnectionHandler::instance(); };
 }
 
 #endif //UCENTRALFMS_NEWCONNECTIONHANDLER_H

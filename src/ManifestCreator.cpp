@@ -16,25 +16,14 @@
 
 namespace OpenWifi {
 
-    void ManifestCreator::run() {
-        Running_ = true;
-        bool FirstRun = true;
-
-        while(Running_) {
-            Poco::Thread::trySleep(FirstRun ? 10000 : DBRefresh_*1000);
-            if(!Running_)
-                break;
-            FirstRun = false;
-            Logger().information("Performing DB refresh");
-            S3BucketContent BucketList;
-            StorageService()->FirmwaresDB().RemoveOldFirmware();
-            ReadBucket(BucketList);
-            if(!Running_)
-                break;
-            Logger().information(Poco::format("Found %Lu firmware entries in S3 repository.",(uint64_t)BucketList.size()));
-            ComputeManifest(BucketList);
-            AddManifestToDB(BucketList);
-        }
+    void ManifestCreator::onTimer(Poco::Timer &timer) {
+        Logger().information("Performing DB refresh");
+        S3BucketContent BucketList;
+        StorageService()->FirmwaresDB().RemoveOldFirmware();
+        ReadBucket(BucketList);
+        Logger().information(Poco::format("Found %Lu firmware entries in S3 repository.",(uint64_t)BucketList.size()));
+        ComputeManifest(BucketList);
+        AddManifestToDB(BucketList);
     }
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
@@ -118,6 +107,7 @@ namespace OpenWifi {
     }
 
     int ManifestCreator::Start() {
+        Running_ = true;
         S3BucketName_ = MicroService::instance().ConfigGetString("s3.bucketname");
         S3Region_ = MicroService::instance().ConfigGetString("s3.region");
         S3Secret_ = MicroService::instance().ConfigGetString("s3.secret");
@@ -135,21 +125,19 @@ namespace OpenWifi {
         AwsCreds_.SetAWSAccessKeyId(S3Key_);
         AwsCreds_.SetAWSSecretKey(S3Secret_);
 
-        Worker_.start(*this);
+        ManifestCreatorCallBack_ = std::make_unique<Poco::TimerCallback<ManifestCreator>>(*this, &ManifestCreator::onTimer);
+        Timer_.setStartInterval(5 * 60 * 1000);  // first run in 5 minutes
+        Timer_.setPeriodicInterval(DBRefresh_ * 1000);
+        Timer_.start(*ManifestCreatorCallBack_);
+
         return 0;
     }
 
     void ManifestCreator::Stop() {
         if(Running_) {
             Running_ = false;
-            Worker_.wakeUp();
-            Worker_.join();
+            Timer_.stop();
         }
-    }
-
-    bool ManifestCreator::Update() {
-        Worker_.wakeUp();
-        return true;
     }
 
     void ManifestCreator::CloseBucket() {

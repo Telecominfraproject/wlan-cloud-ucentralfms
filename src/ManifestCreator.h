@@ -10,6 +10,7 @@
 #include <aws/core/auth/AWSCredentials.h>
 
 #include "framework/MicroService.h"
+#include "Poco/Timer.h"
 
 namespace OpenWifi {
 
@@ -28,17 +29,15 @@ namespace OpenWifi {
     };
     typedef std::map<const std::string, S3BucketEntry>    S3BucketContent;
 
-    class ManifestCreator : public SubSystemServer, Poco::Runnable {
+    class ManifestCreator : public SubSystemServer {
     public:
-        static ManifestCreator *instance() {
-            static ManifestCreator *instance_ = new ManifestCreator;
+        static auto instance() {
+            static auto instance_ = new ManifestCreator;
             return instance_;
         }
 
-        void run() override;
         int Start() override;
         void Stop() override;
-        bool Update();
 
         bool ComputeManifest(S3BucketContent & BucketContent);
         bool AddManifestToDB(S3BucketContent & BucketContent);
@@ -48,10 +47,9 @@ namespace OpenWifi {
         void CloseBucket();
         void Print(const S3BucketContent &B);
         uint64_t MaxAge() const { return MaxAge_; }
+        void onTimer(Poco::Timer & timer);
 
     private:
-        static ManifestCreator      *instance_;
-        Poco::Thread                Worker_;
         std::atomic_bool            Running_ = false;
         Aws::String                 S3BucketName_;
         Aws::String                 S3Region_;
@@ -62,13 +60,15 @@ namespace OpenWifi {
         Aws::Auth::AWSCredentials           AwsCreds_;
         uint64_t                     DBRefresh_ = 30 * 60;
         uint64_t                    MaxAge_ = 0 ;
+        Poco::Timer                                             Timer_;
+        std::unique_ptr<Poco::TimerCallback<ManifestCreator>>   ManifestCreatorCallBack_;
 
         ManifestCreator() noexcept:
                 SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {
         }
     };
 
-    inline ManifestCreator * ManifestCreator() { return ManifestCreator::instance(); };
+    inline auto ManifestCreator() { return ManifestCreator::instance(); };
 
 }
 

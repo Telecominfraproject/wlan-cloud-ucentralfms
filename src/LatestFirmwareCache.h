@@ -24,8 +24,8 @@ namespace OpenWifi {
 
     class LatestFirmwareCache : public SubSystemServer {
     public:
-        static LatestFirmwareCache *instance() {
-            static LatestFirmwareCache *instance_ = new LatestFirmwareCache;
+        static auto instance() {
+            static auto instance_ = new LatestFirmwareCache;
             return instance_;
         }
 
@@ -49,7 +49,7 @@ namespace OpenWifi {
         }
     };
 
-    inline LatestFirmwareCache * LatestFirmwareCache() { return LatestFirmwareCache::instance(); }
+    inline auto LatestFirmwareCache() { return LatestFirmwareCache::instance(); }
 }
 
 

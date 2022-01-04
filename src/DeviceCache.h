@@ -19,8 +19,8 @@ namespace OpenWifi {
 
     class DeviceCache : public SubSystemServer {
     public:
-        static DeviceCache *instance() {
-            static DeviceCache *instance_ = new DeviceCache;
+        static auto instance() {
+            static auto instance_ = new DeviceCache;
             return instance_;
         }
 
@@ -40,7 +40,7 @@ namespace OpenWifi {
         }
     };
 
-    inline DeviceCache * DeviceCache() { return DeviceCache::instance(); }
+    inline auto DeviceCache() { return DeviceCache::instance(); }
 }
 
 

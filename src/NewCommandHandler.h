@@ -12,8 +12,8 @@ namespace OpenWifi {
 
     class NewCommandHandler : public SubSystemServer, Poco::Runnable {
     public:
-        static NewCommandHandler *instance() {
-            static NewCommandHandler *instance_ = new NewCommandHandler;
+        static auto instance() {
+            static auto instance_ = new NewCommandHandler;
             return instance_;
         }
 
@@ -34,7 +34,7 @@ namespace OpenWifi {
         }
 
     };
-    inline NewCommandHandler * NewCommandHandler() { return NewCommandHandler::instance(); };
+    inline auto NewCommandHandler() { return NewCommandHandler::instance(); };
 
 }
 

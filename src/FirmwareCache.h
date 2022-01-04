@@ -17,8 +17,8 @@ namespace OpenWifi {
 
     class FirmwareCache: public SubSystemServer {
     public:
-        static FirmwareCache *instance() {
-            static FirmwareCache *instance_= new FirmwareCache;
+        static auto instance() {
+            static auto instance_= new FirmwareCache;
             return instance_;
         }
 
@@ -38,7 +38,7 @@ namespace OpenWifi {
         }
     };
 
-    inline FirmwareCache * FirmwareCache() { return FirmwareCache::instance(); }
+    inline auto FirmwareCache() { return FirmwareCache::instance(); }
 
 }
 
