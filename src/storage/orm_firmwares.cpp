@@ -115,10 +115,12 @@ namespace OpenWifi {
 
     bool FirmwaresDB::GetFirmwares(uint64_t From, uint64_t HowMany, const std::string & Compatible, FMSObjects::FirmwareVec & Firmwares) {
         if(Compatible.empty()) {
-            return GetRecords(From, HowMany, Firmwares);
+            GetRecords(From, HowMany, Firmwares);
+            return true;
         } else {
             std::string WhereClause{ " DeviceType='" + Compatible + "' "};
-            return GetRecords(From, HowMany, Firmwares, WhereClause);
+            GetRecords(From, HowMany, Firmwares, WhereClause);
+            return true;
         }
     }
 
