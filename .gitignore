@@ -20,5 +20,4 @@ _deps
 *.zip
 result.json
 pidfile
-
-
+test_scripts/curl/result.json
