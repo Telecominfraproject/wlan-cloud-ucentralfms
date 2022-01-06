@@ -99,7 +99,7 @@ namespace OpenWifi {
     }
 
 }
-template<> void ORM::DB<OpenWifi::DevicesRecordTuple, OpenWifi::FMSObjects::DeviceConnectionInformation>::Convert(OpenWifi::DevicesRecordTuple &T, OpenWifi::FMSObjects::DeviceConnectionInformation &F ) {
+template<> void ORM::DB<OpenWifi::DevicesRecordTuple, OpenWifi::FMSObjects::DeviceConnectionInformation>::Convert(const OpenWifi::DevicesRecordTuple &T, OpenWifi::FMSObjects::DeviceConnectionInformation &F ) {
     F.serialNumber = T.get<0>();
     F.revision = T.get<1>();
     F.deviceType = T.get<2>();
@@ -108,7 +108,7 @@ template<> void ORM::DB<OpenWifi::DevicesRecordTuple, OpenWifi::FMSObjects::Devi
     F.status = T.get<5>();
 }
 
-template<> void ORM::DB<OpenWifi::DevicesRecordTuple, OpenWifi::FMSObjects::DeviceConnectionInformation>::Convert(OpenWifi::FMSObjects::DeviceConnectionInformation &F, OpenWifi::DevicesRecordTuple &T ) {
+template<> void ORM::DB<OpenWifi::DevicesRecordTuple, OpenWifi::FMSObjects::DeviceConnectionInformation>::Convert(const OpenWifi::FMSObjects::DeviceConnectionInformation &F, OpenWifi::DevicesRecordTuple &T ) {
     T.set<0>(F.serialNumber);
     T.set<1>(F.revision);
     T.set<2>(F.deviceType);

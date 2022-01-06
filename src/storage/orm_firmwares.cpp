@@ -173,7 +173,7 @@ namespace OpenWifi {
 
 }
 
-template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Firmware>::Convert(OpenWifi::FirmwaresRecordTuple &T, OpenWifi::FMSObjects::Firmware &F ) {
+template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Firmware>::Convert(const OpenWifi::FirmwaresRecordTuple &T, OpenWifi::FMSObjects::Firmware &F ) {
     F.id = T.get<0>();
     F.release = T.get<1>();
     F.deviceType = T.get<2>();
@@ -194,7 +194,7 @@ template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Fi
     F.created = T.get<17>();
 }
 
-template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Firmware>::Convert(OpenWifi::FMSObjects::Firmware &F, OpenWifi::FirmwaresRecordTuple &T ) {
+template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Firmware>::Convert(const OpenWifi::FMSObjects::Firmware &F, OpenWifi::FirmwaresRecordTuple &T ) {
     T.set<0>(F.id);
     T.set<1>(F.release);
     T.set<2>(F.deviceType);

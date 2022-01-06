@@ -75,7 +75,7 @@ namespace OpenWifi {
 
 }
 
-template<> void ORM::DB<OpenWifi::HistoryRecordTuple, OpenWifi::FMSObjects::RevisionHistoryEntry>::Convert(OpenWifi::HistoryRecordTuple &T, OpenWifi::FMSObjects::RevisionHistoryEntry &F ) {
+template<> void ORM::DB<OpenWifi::HistoryRecordTuple, OpenWifi::FMSObjects::RevisionHistoryEntry>::Convert(const OpenWifi::HistoryRecordTuple &T, OpenWifi::FMSObjects::RevisionHistoryEntry &F ) {
     F.id = T.get<0>();
     F.serialNumber = T.get<1>();
     F.fromRelease = T.get<2>();
@@ -85,7 +85,7 @@ template<> void ORM::DB<OpenWifi::HistoryRecordTuple, OpenWifi::FMSObjects::Revi
     F.upgraded = T.get<6>();
 }
 
-template<> void ORM::DB<OpenWifi::HistoryRecordTuple, OpenWifi::FMSObjects::RevisionHistoryEntry>::Convert(OpenWifi::FMSObjects::RevisionHistoryEntry &F, OpenWifi::HistoryRecordTuple &T ) {
+template<> void ORM::DB<OpenWifi::HistoryRecordTuple, OpenWifi::FMSObjects::RevisionHistoryEntry>::Convert(const OpenWifi::FMSObjects::RevisionHistoryEntry &F, OpenWifi::HistoryRecordTuple &T ) {
     T.set<0>(F.id);
     T.set<1>(F.serialNumber);
     T.set<2>(F.fromRelease);
