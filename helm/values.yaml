@@ -22,7 +22,7 @@ images:
 
 services:
   owfms:
-    type: LoadBalancer
+    type: ClusterIP
     ports:
       restapi:
         servicePort: 16004
