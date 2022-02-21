@@ -3,7 +3,6 @@
 //
 
 #include "RESTAPI_deviceReportHandler.h"
-#include "StorageService.h"
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "Poco/JSON/Object.h"
 #include "Daemon.h"

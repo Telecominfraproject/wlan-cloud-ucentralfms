@@ -4,8 +4,7 @@
 
 #include "RESTAPI_historyHandler.h"
 #include "StorageService.h"
-#include "framework/RESTAPI_protocol.h"
-#include "framework/RESTAPI_errors.h"
+#include "framework/ow_constants.h"
 
 namespace OpenWifi {
     void

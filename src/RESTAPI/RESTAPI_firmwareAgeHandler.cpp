@@ -7,10 +7,7 @@
 #include "StorageService.h"
 #include "Poco/JSON/Parser.h"
 #include "DeviceCache.h"
-#include "framework/uCentral_Protocol.h"
-#include "framework/RESTAPI_protocol.h"
-#include "framework/RESTAPI_errors.h"
-
+#include "framework/ow_constants.h"
 
 namespace OpenWifi {
     void RESTAPI_firmwareAgeHandler::DoGet() {

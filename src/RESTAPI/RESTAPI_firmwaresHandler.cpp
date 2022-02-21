@@ -5,7 +5,7 @@
 #include "RESTAPI_firmwaresHandler.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
-#include "framework/RESTAPI_protocol.h"
+#include "framework/ow_constants.h"
 
 namespace OpenWifi {
     void

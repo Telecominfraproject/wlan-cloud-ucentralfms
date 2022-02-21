@@ -5,11 +5,11 @@
 #include "NewConnectionHandler.h"
 #include "framework/KafkaTopics.h"
 #include "framework/OpenWifiTypes.h"
+#include "framework/ow_constants.h"
 #include "Poco/JSON/Object.h"
 #include "Poco/JSON/Parser.h"
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
-#include "framework/uCentral_Protocol.h"
 #include "DeviceCache.h"
 #include "AutoUpdater.h"
 

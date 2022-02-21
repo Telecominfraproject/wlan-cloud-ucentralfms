@@ -8,7 +8,7 @@
 #include "RESTAPI_connectedDevicesHandler.h"
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "StorageService.h"
-#include "framework/RESTAPI_protocol.h"
+#include "framework/ow_constants.h"
 
 namespace OpenWifi {
     void RESTAPI_connectedDevicesHandler::DoGet() {

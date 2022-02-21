@@ -5,8 +5,7 @@
 #include "RESTAPI_connectedDeviceHandler.h"
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "StorageService.h"
-#include "framework/RESTAPI_protocol.h"
-#include "framework/RESTAPI_errors.h"
+#include "framework/ow_constants.h"
 
 namespace OpenWifi {
 
