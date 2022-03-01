@@ -2,7 +2,7 @@
 {{- range $ingress, $ingressValue := .Values.ingresses }}
 {{- if $ingressValue.enabled }}
 ---
-apiVersion: {{ include "owfms.ingress.apiVersion" $root }
+apiVersion: {{ include "owfms.ingress.apiVersion" $root }}
 kind: Ingress
 metadata:
   name: {{ include "owfms.fullname" $root }}-{{ $ingress }}
