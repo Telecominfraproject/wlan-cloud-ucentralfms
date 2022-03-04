@@ -274,8 +274,6 @@ components:
         latestFirmwareDate:
           type: integer
           format: int64
-        latestFirmwareURI:
-          type: string
         latestFirmwareAvailable:
           type: boolean
 
