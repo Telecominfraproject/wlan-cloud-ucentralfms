@@ -25,11 +25,14 @@ namespace OpenWifi {
 
         LatestFirmwareCacheEntry    LFE;
         LatestFirmwareCache()->FindLatestFirmware(DCI.deviceType,LFE);
+        FMSObjects::Firmware        Latest;
+        StorageService()->FirmwaresDB().GetFirmware(LFE.Id,Latest);
 
         DI.serialNumber = SerialNumber;
         DI.currentFirmware = DCI.revision;
         DI.latestFirmware = LFE.Revision;
         DI.latestFirmwareDate = LFE.TimeStamp;
+        DI.latestFirmwareURI = Latest.uri;
 
         FirmwaresDB::RecordName FI;
         StorageService()->FirmwaresDB().GetFirmwareByRevision(DCI.revision,DCI.deviceType,FI);
