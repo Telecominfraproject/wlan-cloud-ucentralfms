@@ -100,7 +100,7 @@ add_executable( owfms
         src/NewCommandHandler.cpp src/NewCommandHandler.h
         src/storage/orm_history.cpp src/storage/orm_history.h
         src/storage/orm_firmwares.cpp src/storage/orm_firmwares.h
-        src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h)
+        src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h src/RESTAPI/RESTAPI_deviceInformation_handler.cpp src/RESTAPI/RESTAPI_deviceInformation_handler.h)
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}

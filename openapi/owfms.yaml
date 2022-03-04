@@ -257,6 +257,28 @@ components:
         totalSecondsOld:
           $ref: '#/components/schemas/TagIntPairList'
 
+    DeviceInformation:
+      type: object
+      properties:
+        serialNumber:
+          type: string
+        history:
+          $ref: '#/components/schemas/RevisionHistoryEntryList'
+        currentFirmware:
+          type: string
+        currentFirmwareDate:
+          type: integer
+          format: int64
+        latestFirmware:
+          type: string
+        latestFirmwareDate:
+          type: integer
+          format: int64
+        latestFirmwareURI:
+          type: string
+        latestFirmwareAvailable:
+          type: boolean
+
     #########################################################################################
     ##
     ## These are endpoints that all services in the uCentral stack must provide
@@ -787,6 +809,28 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         404:
           $ref: '#/components/responses/NotFound'
+
+  /deviceInformation/{serialNumber}:
+    get:
+      tags:
+        - Device Information
+      summary: receive a repor on a single decide
+      parameters:
+        - in: path
+          name: serialNumber
+          schema:
+            type: string
+            example:
+              aabbccdd1234
+          required: true
+      responses:
+        200:
+          $ref: '#/components/schemas/DeviceInformation'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
 
   #########################################################################################
   ##

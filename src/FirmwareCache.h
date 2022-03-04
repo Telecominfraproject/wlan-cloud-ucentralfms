@@ -28,7 +28,6 @@ namespace OpenWifi {
         std::shared_ptr<FMSObjects::Firmware> GetFirmware(const std::string & DeviceType, const std::string & Revision);
         std::shared_ptr<FMSObjects::Firmware> AddFirmware(const FMSObjects::Firmware &F);
 
-
     private:
         std::atomic_bool        Running_=false;
         FirmwareCacheMap        Cache_;

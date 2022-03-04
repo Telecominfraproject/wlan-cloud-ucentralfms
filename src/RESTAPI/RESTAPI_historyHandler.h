@@ -2,9 +2,7 @@
 // Created by stephane bourque on 2021-07-13.
 //
 
-#ifndef UCENTRALFMS_RESTAPI_HISTORYHANDLER_H
-#define UCENTRALFMS_RESTAPI_HISTORYHANDLER_H
-
+#pragma once
 
 #include "framework/MicroService.h"
 
@@ -27,6 +25,3 @@ namespace OpenWifi {
         void DoPut() final {};
     };
 }
-
-
-#endif //UCENTRALFMS_RESTAPI_HISTORYHANDLER_H
