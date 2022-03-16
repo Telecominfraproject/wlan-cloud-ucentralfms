@@ -355,6 +355,7 @@ case "$1" in
     "reloadsubsystem") login; reloadsubsystem "$2"; logout ;;
     "systeminfo") login; systeminfo ; logout;;
     "test_service") login; test_service $2; logout;;
+    "getdeviceinfo") login; getdeviceinfo $2; logout;;
     *) help ;;
 esac
 

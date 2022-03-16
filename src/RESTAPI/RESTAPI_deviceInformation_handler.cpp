@@ -25,6 +25,7 @@ namespace OpenWifi {
 
         LatestFirmwareCacheEntry    LFE;
         LatestFirmwareCache()->FindLatestFirmware(DCI.deviceType,LFE);
+
         FMSObjects::Firmware        Latest;
         StorageService()->FirmwaresDB().GetFirmware(LFE.Id,Latest);
 
@@ -33,10 +34,11 @@ namespace OpenWifi {
         DI.latestFirmware = LFE.Revision;
         DI.latestFirmwareDate = LFE.TimeStamp;
         DI.latestFirmwareURI = Latest.uri;
-
         FirmwaresDB::RecordName FI;
         StorageService()->FirmwaresDB().GetFirmwareByRevision(DCI.revision,DCI.deviceType,FI);
         DI.currentFirmwareDate = FI.imageDate;
+
+        DI.latestFirmwareAvailable = (LFE.Revision != DCI.revision);
 
         Poco::JSON::Object  Answer;
         DI.to_json(Answer);
