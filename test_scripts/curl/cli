@@ -218,6 +218,13 @@ systeminfo() {
     jq < ${result_file}
 }
 
+getdeviceinfo() {
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/deviceInformation/$1" \
+    -H "accept: application/json" \
+    -H "Authorization: Bearer ${token}" > ${result_file}
+    jq < ${result_file}
+}
+
 reloadsubsystem() {
     payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"$1\" ] }"
             curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
