@@ -48,6 +48,7 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 
 find_package(Boost      REQUIRED system)
 find_package(OpenSSL    REQUIRED)
+find_package(fmt        REQUIRED)
 find_package(AWSSDK     REQUIRED COMPONENTS s3)
 find_package(Poco       REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 
@@ -105,6 +106,7 @@ add_executable( owfms
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
         ${Boost_LIBRARIES}
+        fmt::fmt
         ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES}
         CppKafka::cppkafka )
 

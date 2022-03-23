@@ -67,12 +67,12 @@ namespace OpenWifi {
                                 if(StorageService()->FirmwaresDB().ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                     StorageService()->DevicesDB().SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                     if(FA.age)
-                                        Logger().information(Poco::format("Device %s connection. Firmware is %s older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
+                                        Logger().information(fmt::format("Device {} connection. Firmware is {} older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                     else
-                                        Logger().information(Poco::format("Device %s connection. Device firmware is up to date.",SerialNumber));
+                                        Logger().information(fmt::format("Device {} connection. Device firmware is up to date.",SerialNumber));
                                 }
                                 else {
-                                    Logger().information(Poco::format("Device %s connection. Firmware age cannot be determined",SerialNumber));
+                                    Logger().information(fmt::format("Device {} connection. Firmware age cannot be determined.",SerialNumber));
                                 }
 
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {

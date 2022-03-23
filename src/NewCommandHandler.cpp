@@ -45,9 +45,9 @@ namespace OpenWifi {
                             if(Command=="delete_device") {
                                 auto pSerialNumber = PayloadSection["payload"]["serialNumber"];
                                 if(pSerialNumber==SerialNumber) {
-                                    Logger().debug(Poco::format("Removing device '%s' from upgrade history.",SerialNumber));
+                                    Logger().debug(fmt::format("Removing device '{}' from upgrade history.",SerialNumber));
                                     StorageService()->HistoryDB().DeleteHistory(SerialNumber);
-                                    Logger().debug(Poco::format("Removing device '%s' from device table.",SerialNumber));
+                                    Logger().debug(fmt::format("Removing device '{}' from device table.",SerialNumber));
                                     StorageService()->DevicesDB().DeleteDevice(SerialNumber);
                                 }
                             }

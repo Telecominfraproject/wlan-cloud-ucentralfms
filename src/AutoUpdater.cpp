@@ -44,21 +44,21 @@ namespace OpenWifi {
             auto Entry = Queue_.front();
             Queue_.pop_front();
             try {
-                Logger().debug(Poco::format("Preparing to upgrade %s",Entry.first));
+                Logger().debug(fmt::format("Preparing to upgrade {}",Entry.first));
                 auto CacheEntry = Cache_.find(Entry.first);
-                uint64_t Now = std::time(nullptr);
+                uint64_t now = OpenWifi::Now();
                 std::string firmwareUpgrade;
-                if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-Now)>300) {
+                if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-now)>300) {
                     //  get the firmware settings for that device.
                     SerialCache     C;
-                    C.LastCheck = Now;
+                    C.LastCheck = now;
                     bool        firmwareRCOnly;
                     if(OpenWifi::SDK::Prov::GetFirmwareOptions(Entry.first, firmwareUpgrade, firmwareRCOnly)) {
-                        Logger().debug(Poco::format("Found firmware options for %s",Entry.first));
+                        Logger().debug(fmt::format("Found firmware options for {}",Entry.first));
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     } else {
-                        Logger().debug(Poco::format("Found no firmware options for %s",Entry.first));
+                        Logger().debug(fmt::format("Found no firmware options for {}",Entry.first));
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     }
@@ -68,7 +68,7 @@ namespace OpenWifi {
                 }
 
                 if(firmwareUpgrade=="no") {
-                    Logger().information(Poco::format("Device %s not upgradable. Provisioning service settings.",Entry.first));
+                    Logger().information(fmt::format("Device {} not upgradable. Provisioning service settings.",Entry.first));
                     continue;
                 }
 
@@ -78,20 +78,20 @@ namespace OpenWifi {
                 if(LF) {
                     if(StorageService()->FirmwaresDB().GetFirmware(fwEntry.Id,fwDetails)) {
                         //  send the command to upgrade this device...
-                        Logger().information(Poco::format("Upgrading %s to version %s", Entry.first, fwEntry.Revision));
+                        Logger().information(fmt::format("Upgrading {} to version {}", Entry.first, fwEntry.Revision));
                         if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {
-                            Logger().information(Poco::format("Upgrade command sent for %s",Entry.first));
+                            Logger().information(fmt::format("Upgrade command sent for {}",Entry.first));
                         } else {
-                            Logger().information(Poco::format("Upgrade command not sent for %s",Entry.first));
+                            Logger().information(fmt::format("Upgrade command not sent for {}",Entry.first));
                         }
                     } else {
-                        Logger().information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
+                        Logger().information(fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
                     }
                 } else {
-                    Logger().information(Poco::format("Firmware for device %s (%s) cannot be found.", Entry.first, Entry.second ));
+                    Logger().information(fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
                 }
             } catch (...) {
-                Logger().information(Poco::format("Exception during auto update for device %s.", Entry.first ));
+                Logger().information(fmt::format("Exception during auto update for device {}.", Entry.first ));
             }
         }
     }
