@@ -37,7 +37,7 @@ namespace OpenWifi {
         Queue_.emplace_back(std::make_pair(std::move(serialNumber),std::move(DeviceType)));
     }
 
-    void AutoUpdater::onTimer(Poco::Timer & timer) {
+    void AutoUpdater::onTimer([[maybe_unused]] Poco::Timer & timer) {
         Running_ = true;
         std::unique_lock    L(Mutex_);
         while(!Queue_.empty() && Running_) {
@@ -96,7 +96,7 @@ namespace OpenWifi {
         }
     }
 
-    void AutoUpdater::reinitialize(Poco::Util::Application &self) {
+    void AutoUpdater::reinitialize([[maybe_unused]] Poco::Util::Application &self) {
         Logger().information("Reinitializing.");
         Reset();
     }

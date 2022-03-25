@@ -32,6 +32,7 @@ namespace OpenWifi {
     class FirmwaresDB : public ORM::DB<FirmwaresRecordTuple, FMSObjects::Firmware> {
     public:
         FirmwaresDB(OpenWifi::DBType T, Poco::Data::SessionPool & P, Poco::Logger &L);
+        virtual ~FirmwaresDB() {};
 
         bool AddFirmware(FMSObjects::Firmware & F);
         bool UpdateFirmware(std::string & ID, FMSObjects::Firmware & F);

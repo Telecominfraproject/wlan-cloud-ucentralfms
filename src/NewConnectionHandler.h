@@ -29,8 +29,7 @@ namespace OpenWifi {
     private:
         Poco::Thread                Worker_;
         std::atomic_bool            Running_ = false;
-        int                         ConnectionWatcherId_=0;
-        int                         HealthcheckWatcherId_=0;
+        uint64_t                    ConnectionWatcherId_=0;
         Types::StringPairQueue      NewConnections_;
 
         NewConnectionHandler() noexcept:

@@ -16,7 +16,7 @@
 
 namespace OpenWifi {
 
-    void ManifestCreator::onTimer(Poco::Timer &timer) {
+    void ManifestCreator::onTimer([[maybe_unused]] Poco::Timer &timer) {
         Logger().information("Performing DB refresh");
         S3BucketContent BucketList;
         StorageService()->FirmwaresDB().RemoveOldFirmware();

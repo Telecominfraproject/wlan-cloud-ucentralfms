@@ -43,12 +43,7 @@ namespace OpenWifi {
         return instance_;
     }
 
-    void Daemon::initialize(Poco::Util::Application &self) {
-        MicroService::initialize(*this);
-    }
-
-    void MicroServicePostInitialization() {
-
+    void Daemon::PostInitialization([[maybe_unused]] Poco::Util::Application &self) {
     }
 }
 

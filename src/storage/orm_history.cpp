@@ -64,7 +64,7 @@ namespace OpenWifi {
         return AddHistory(History);
     }
 
-    bool HistoryDB::DeleteHistory(std::string &SerialNumber, std::string &Id) {
+    bool HistoryDB::DeleteHistory([[maybe_unused]] std::string &SerialNumber, std::string &Id) {
         return DeleteRecord("id", Id);
     }
 

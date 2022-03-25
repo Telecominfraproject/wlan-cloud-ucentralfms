@@ -14,11 +14,11 @@ namespace OpenWifi {
 
     }
 
-    std::shared_ptr<FMSObjects::Firmware> GetFirmware(const std::string & DeviceType, const std::string & Revision) {
+    std::shared_ptr<FMSObjects::Firmware> GetFirmware([[maybe_unused]] const std::string & DeviceType, [[maybe_unused]] const std::string & Revision) {
         return nullptr;
     }
 
-    std::shared_ptr<FMSObjects::Firmware> AddFirmware(const FMSObjects::Firmware &F) {
+    std::shared_ptr<FMSObjects::Firmware> AddFirmware([[maybe_unused]] const FMSObjects::Firmware &F) {
         return nullptr;
     }
 

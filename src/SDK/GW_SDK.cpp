@@ -8,7 +8,7 @@
 
 namespace OpenWifi::SDK::GW {
 
-    bool SendFirmwareUpgradeCommand( const std::string & serialNumber, const std::string & URI, uint64_t When  ) {
+    bool SendFirmwareUpgradeCommand( const std::string & serialNumber, const std::string & URI, [[maybe_unused]] uint64_t When  ) {
         Types::StringPairVec    QueryData;
         Poco::JSON::Object      Body;
 

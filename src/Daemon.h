@@ -28,7 +28,7 @@ namespace OpenWifi {
                         const SubSystemVec & SubSystems) :
                 MicroService( PropFile, RootEnv, ConfigEnv, AppName, BusTimer, SubSystems) {};
 
-        void initialize(Poco::Util::Application &self);
+        void PostInitialization(Poco::Util::Application &self);
         static Daemon *instance();
         inline void ResetDashboard() { DB_.Reset(); }
         inline void CreateDashboard() { DB_.Create(); }
@@ -40,6 +40,9 @@ namespace OpenWifi {
     };
 
     inline Daemon * Daemon() { return Daemon::instance(); }
+    inline void DaemonPostInitialization(Poco::Util::Application &self) {
+        Daemon()->PostInitialization(self);
+    }
 }
 
 #endif //UCENTRALFWS_DAEMON_H

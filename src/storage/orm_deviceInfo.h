@@ -20,7 +20,7 @@ namespace OpenWifi {
     class DevicesDB : public ORM::DB<DevicesRecordTuple, FMSObjects::DeviceConnectionInformation> {
     public:
         DevicesDB(OpenWifi::DBType T, Poco::Data::SessionPool & P, Poco::Logger &L);
-
+        virtual ~DevicesDB() {};
         bool SetDeviceRevision(std::string &SerialNumber, std::string & Revision, std::string & DeviceType, std::string &EndPoint);
         bool DeleteDevice( std::string & SerialNumber);
         bool SetDeviceDisconnected(std::string &SerialNumber, std::string &EndPoint);

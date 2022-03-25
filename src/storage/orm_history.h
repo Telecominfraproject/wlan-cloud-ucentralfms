@@ -22,6 +22,7 @@ namespace OpenWifi {
     class HistoryDB : public ORM::DB<HistoryRecordTuple, FMSObjects::RevisionHistoryEntry> {
     public:
         HistoryDB(OpenWifi::DBType T, Poco::Data::SessionPool & P, Poco::Logger &L);
+        virtual ~HistoryDB() {};
 
         bool GetHistory(const std::string &SerialNumber, uint64_t From, uint64_t HowMany,
                                    FMSObjects::RevisionHistoryEntryVec &History);
