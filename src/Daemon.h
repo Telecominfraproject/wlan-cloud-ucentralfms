@@ -12,11 +12,11 @@
 
 namespace OpenWifi {
 
-    static const char * vDAEMON_PROPERTIES_FILENAME = "owfms.properties";
-    static const char * vDAEMON_ROOT_ENV_VAR = "OWFMS_ROOT";
-    static const char * vDAEMON_CONFIG_ENV_VAR = "OWFMS_CONFIG";
-    static const char * vDAEMON_APP_NAME = uSERVICE_FIRMWARE.c_str();
-    static const uint64_t vDAEMON_BUS_TIMER = 10000;
+    [[maybe_unused]] static const char * vDAEMON_PROPERTIES_FILENAME = "owfms.properties";
+    [[maybe_unused]] static const char * vDAEMON_ROOT_ENV_VAR = "OWFMS_ROOT";
+    [[maybe_unused]] static const char * vDAEMON_CONFIG_ENV_VAR = "OWFMS_CONFIG";
+    [[maybe_unused]] static const char * vDAEMON_APP_NAME = uSERVICE_FIRMWARE.c_str();
+    [[maybe_unused]] static const uint64_t vDAEMON_BUS_TIMER = 10000;
 
     class Daemon : public MicroService {
     public:
