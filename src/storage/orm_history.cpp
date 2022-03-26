@@ -52,7 +52,9 @@ namespace OpenWifi {
                 .serialNumber = SerialNumber,
                 .fromRelease = PreviousRevision,
                 .toRelease = NewVersion,
-                .upgraded = (uint64_t) std::time(nullptr)};
+                .commandUUID = "",
+                .revisionId = "",
+                .upgraded = OpenWifi::Now()};
 
         FMSObjects::Firmware F;
         if (StorageService()->FirmwaresDB().GetFirmwareByRevision(NewVersion, DeviceType, F)) {
