@@ -250,9 +250,15 @@ namespace OpenWifi {
                         It->second.URI = URI;
                     } else {
                         Bucket.emplace(ReleaseName, S3BucketEntry{
-                                .S3Name = ReleaseName,
+                                .Valid = false,
+                                .S3Name = "",
+                                .S3ContentManifest = "",
                                 .S3TimeStamp = S3TimeStamp,
+                                .Revision = "",
+                                .Image = "",
+                                .Compatible = "",
                                 .S3Size = S3Size,
+                                .Timestamp = 0 ,
                                 .URI = URI});
                     }
                 } else {
