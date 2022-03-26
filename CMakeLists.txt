@@ -42,11 +42,6 @@ add_definitions(-DAWS_CUSTOM_MEMORY_MANAGEMENT)
 set(BUILD_SHARED_LIBS 1)
 add_definitions(-DAWS_CUSTOM_MEMORY_MANAGEMENT)
 
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-
-find_package(Boost      REQUIRED system)
 find_package(OpenSSL    REQUIRED)
 find_package(fmt        REQUIRED)
 find_package(AWSSDK     REQUIRED COMPONENTS s3)
@@ -109,7 +104,6 @@ add_executable( owfms
 
 target_link_libraries(owfms PUBLIC
         ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
-        ${Boost_LIBRARIES}
         fmt::fmt
         ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES}
         CppKafka::cppkafka )
