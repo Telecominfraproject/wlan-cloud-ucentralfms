@@ -223,11 +223,12 @@ namespace OpenWifi {
                                 It->second.Image = Image;
                                 It->second.S3ContentManifest = Content;
                             } else {
-                                Bucket.emplace(Release, S3BucketEntry{
+                                      Bucket.emplace(Release, S3BucketEntry{
                                         .Valid = false,
                                         .S3Name = "",
                                         .S3ContentManifest = Content,
                                         .S3TimeStamp = 0 ,
+                                        .S3Size = 0 ,
                                         .Revision = Revision,
                                         .Image = Image,
                                         .Compatible = Compatible,
@@ -249,15 +250,16 @@ namespace OpenWifi {
                         It->second.S3Name = ReleaseName;
                         It->second.URI = URI;
                     } else {
+
                         Bucket.emplace(ReleaseName, S3BucketEntry{
                                 .Valid = false,
                                 .S3Name = "",
                                 .S3ContentManifest = "",
                                 .S3TimeStamp = S3TimeStamp,
+                                .S3Size = 0 ,
                                 .Revision = "",
                                 .Image = "",
                                 .Compatible = "",
-                                .S3Size = S3Size,
                                 .Timestamp = 0 ,
                                 .URI = URI});
                     }
