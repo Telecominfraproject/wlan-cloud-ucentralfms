@@ -224,11 +224,15 @@ namespace OpenWifi {
                                 It->second.S3ContentManifest = Content;
                             } else {
                                 Bucket.emplace(Release, S3BucketEntry{
+                                        .Valid = false,
+                                        .S3Name = "",
                                         .S3ContentManifest = Content,
+                                        .S3TimeStamp = 0 ,
                                         .Revision = Revision,
                                         .Image = Image,
                                         .Compatible = Compatible,
-                                        .Timestamp = TimeStamp});
+                                        .Timestamp = TimeStamp,
+                                        .URI = ""});
                             }
                         }
                     }
