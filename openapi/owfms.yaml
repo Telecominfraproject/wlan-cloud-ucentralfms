@@ -140,6 +140,25 @@ components:
           items:
             $ref: '#/components/schemas/FirmwareDetails'
 
+    DeviceCurrentInfo:
+      type: object
+      properties:
+        serialNumber:
+          type: string
+        revision:
+          type: string
+        upgraded:
+          type: integer
+          format: int64
+
+    DeviceCurrentInfoList:
+      type: object
+      properties:
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceCurrentInfo'
+
     RevisionHistoryEntry:
       type: object
       properties:
@@ -647,13 +666,31 @@ paths:
           schema:
             type: string
           required: false
+        - in: query
+          description: Return current device list and current firmware
+          name: currentList
+          schema:
+            type: boolean
+            default: false
+          required: false
+          example: You must set {serialNumber} to 000000000000
+        - in: query
+          description: Return current device list and current firmware
+          name: unknownList
+          schema:
+            type: boolean
+            default: false
+          required: false
+          example: You must set {serialNumber} to 000000000000
       responses:
         200:
           description: List of device history upgrade.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RevisionHistoryEntryList'
+                oneOf:
+                  - $ref: '#/components/schemas/RevisionHistoryEntryList'
+                  - $ref: '#/components/schemas/DeviceCurrentInfoList'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:

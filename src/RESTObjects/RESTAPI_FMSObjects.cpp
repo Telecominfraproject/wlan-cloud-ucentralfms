@@ -273,4 +273,37 @@ namespace OpenWifi::FMSObjects {
         }
         return false;
     }
+
+    void DeviceCurrentInfo::to_json(Poco::JSON::Object &Obj) const {
+        field_to_json(Obj, "serialNumber",serialNumber);
+        field_to_json(Obj, "revision", revision);
+        field_to_json(Obj, "upgraded", upgraded);
+    }
+
+    bool DeviceCurrentInfo::from_json(const Poco::JSON::Object::Ptr &Obj) {
+        try {
+            field_from_json(Obj, "serialNumber",serialNumber);
+            field_from_json(Obj, "revision", revision);
+            field_from_json(Obj, "upgraded", upgraded);
+            return true;
+        } catch(...) {
+
+        }
+        return false;
+    }
+
+    void DeviceCurrentInfoList::to_json(Poco::JSON::Object &Obj) const {
+        field_to_json(Obj, "devices",devices);
+    }
+
+    bool DeviceCurrentInfoList::from_json(const Poco::JSON::Object::Ptr &Obj) {
+        try {
+            field_from_json(Obj, "devices",devices);
+            return true;
+        } catch(...) {
+
+        }
+        return false;
+    }
+
 }

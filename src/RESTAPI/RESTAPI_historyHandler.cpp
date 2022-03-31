@@ -15,6 +15,26 @@ namespace OpenWifi {
             return BadRequest(RESTAPI::Errors::MissingSerialNumber);
         }
 
+        auto unknownList = GetBoolParameter("unknownList");
+        if(SerialNumber=="000000000000" && unknownList) {
+            // so let's get all the devices, filter the latest record
+            FMSObjects::DeviceCurrentInfoList   L;
+            StorageService()->HistoryDB().GetUnknownDeviceFirmwares(QB_.Offset,QB_.Limit,L.devices);
+            Poco::JSON::Object  Answer;
+            L.to_json(Answer);
+            return ReturnObject(Answer);
+        }
+
+        auto currentList = GetBoolParameter("currentList");
+        if(SerialNumber=="000000000000" && currentList) {
+            // so let's get all the devices, filter the latest record
+            FMSObjects::DeviceCurrentInfoList   L;
+            StorageService()->HistoryDB().GetDeviceFirmwares(QB_.Offset,QB_.Limit,L.devices);
+            Poco::JSON::Object  Answer;
+            L.to_json(Answer);
+            return ReturnObject(Answer);
+        }
+
         FMSObjects::RevisionHistoryEntryVec H;
         if (StorageService()->HistoryDB().GetHistory(SerialNumber, QB_.Offset, QB_.Limit, H)) {
             Poco::JSON::Array A;

@@ -27,10 +27,13 @@ namespace OpenWifi {
         bool GetHistory(const std::string &SerialNumber, uint64_t From, uint64_t HowMany,
                                    FMSObjects::RevisionHistoryEntryVec &History);
         bool AddHistory(FMSObjects::RevisionHistoryEntry &History);
-        bool AddHistory(std::string &SerialNumber, std::string &DeviceType, std::string &PreviousRevision,
-                                   std::string &NewVersion);
-        bool DeleteHistory(std::string &SerialNumber, std::string &Id);
-        bool DeleteHistory(std::string &SerialNumber);
+        bool AddHistory(const std::string &SerialNumber, const std::string &DeviceType, const std::string &PreviousRevision,
+                                   const std::string &NewVersion);
+        bool DeleteHistory(const std::string &SerialNumber, const std::string &Id);
+        bool DeleteHistory(const std::string &SerialNumber);
+
+        bool GetUnknownDeviceFirmwares(uint64_t offset, uint64_t limit, std::vector<FMSObjects::DeviceCurrentInfo> & Devices);
+        bool GetDeviceFirmwares(uint64_t offset, uint64_t limit, std::vector<FMSObjects::DeviceCurrentInfo> & Devices);
 
     private:
     };
