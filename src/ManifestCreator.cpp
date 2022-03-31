@@ -126,8 +126,8 @@ namespace OpenWifi {
         AwsCreds_.SetAWSSecretKey(S3Secret_);
 
         ManifestCreatorCallBack_ = std::make_unique<Poco::TimerCallback<ManifestCreator>>(*this, &ManifestCreator::onTimer);
-        Timer_.setStartInterval(5 * 60 * 1000);  // first run in 5 minutes
-        Timer_.setPeriodicInterval(DBRefresh_ * 1000);
+        Timer_.setStartInterval(1 * 60 * 1000);  // first run in 1 minutes
+        Timer_.setPeriodicInterval((long)(DBRefresh_ * 1000));
         Timer_.start(*ManifestCreatorCallBack_);
 
         return 0;
@@ -256,7 +256,7 @@ namespace OpenWifi {
                                 .S3Name = "",
                                 .S3ContentManifest = "",
                                 .S3TimeStamp = S3TimeStamp,
-                                .S3Size = 0 ,
+                                .S3Size = S3Size ,
                                 .Revision = "",
                                 .Image = "",
                                 .Compatible = "",
