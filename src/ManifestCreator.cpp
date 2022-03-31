@@ -98,7 +98,7 @@ namespace OpenWifi {
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
                 if(StorageService()->FirmwaresDB().AddFirmware(F)) {
-                    Logger().information(fmt::format("Adding firmware '{}'",Release));
+                    Logger().information(fmt::format("Adding firmware '{}', size={}",Release,F.size));
                 } else {
                 }
             }
