@@ -37,10 +37,8 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     string(REGEX REPLACE "\n$" "" GIT_HASH "${GIT_HASH}")
 endif()
 
-add_definitions(-DAWS_CUSTOM_MEMORY_MANAGEMENT)
-
-set(BUILD_SHARED_LIBS 1)
-add_definitions(-DAWS_CUSTOM_MEMORY_MANAGEMENT)
+# set(BUILD_SHARED_LIBS 1)
+# add_definitions(-DAWS_CUSTOM_MEMORY_MANAGEMENT)
 
 find_package(OpenSSL    REQUIRED)
 find_package(fmt        REQUIRED)
