@@ -95,7 +95,9 @@ COPY --from=fmtlib-build /usr/local/lib /usr/local/lib
 WORKDIR /owfms
 RUN mkdir cmake-build
 WORKDIR /owfms/cmake-build
-RUN cmake -DLibCrypto_INCLUDE_DIR=/usr/include ..
+RUN cmake -DLibCrypto_INCLUDE_DIR=/usr/include \
+          -DLibCrypto_LIBRARY=/usr/lib64/libcrypto.so \
+          ..
 RUN cmake --build . --config Release -j8
 
 FROM alpine:3.15
