@@ -66,7 +66,6 @@ WORKDIR cmake-build
 RUN cmake .. -DBUILD_ONLY="sns;s3" \
              -DCMAKE_BUILD_TYPE=Release \
              -DCMAKE_CXX_FLAGS="-Wno-error=stringop-overflow -Wno-error=uninitialized" \
-             -DCMAKE_INSTALL_PREFIX=/usr \
              -DLibCrypto_INCLUDE_DIR=/usr/include \
              -DLibCrypto_LIBRARY=/usr/lib64/libcrypto.so \
              -DAUTORUN_UNIT_TESTS=OFF
