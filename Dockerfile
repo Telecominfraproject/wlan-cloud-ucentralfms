@@ -63,7 +63,7 @@ RUN git clone --recurse-submodules https://github.com/aws/aws-sdk-cpp /aws-sdk-c
 WORKDIR /aws-sdk-cpp
 RUN mkdir cmake-build
 WORKDIR cmake-build
-RUN cmake .. -DBUILD_ONLY="sns;s3" \
+RUN cmake .. -DBUILD_ONLY="sns;s3;crypto" \
              -DCMAKE_BUILD_TYPE=Release \
              -DCMAKE_CXX_FLAGS="-Wno-error=stringop-overflow -Wno-error=uninitialized" \
              -DLibCrypto_INCLUDE_DIR=/usr/include \
