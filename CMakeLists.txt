@@ -102,9 +102,12 @@ add_executable( owfms
         src/storage/orm_firmwares.cpp src/storage/orm_firmwares.h
         src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h src/RESTAPI/RESTAPI_deviceInformation_handler.cpp src/RESTAPI/RESTAPI_deviceInformation_handler.h)
 
-target_link_libraries(owfms PUBLIC
-        ${Poco_LIBRARIES} ${MySQL_LIBRARIES}
+target_link_libraries( owfms PUBLIC
+        ${Poco_LIBRARIES}
+        ${MySQL_LIBRARIES}
+        ${ZLIB_LIBRARIES}
+        ${AWSSDK_LINK_LIBRARIES}
         fmt::fmt
-        ${ZLIB_LIBRARIES} ${AWSSDK_LINK_LIBRARIES}
-        CppKafka::cppkafka )
+        CppKafka::cppkafka
+    )
 
