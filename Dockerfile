@@ -92,8 +92,8 @@ WORKDIR /owfms
 RUN mkdir cmake-build
 WORKDIR /owfms/cmake-build
 RUN cmake .. \
-          -Dcrypto_INCLUDE_DIR=/usr/local/include/openssl \
-          -Dcrypto_SHARED_LIBRARY=/usr/local/lib
+          -Dcrypto_INCLUDE_DIR=/usr/local/include \
+          -Dcrypto_SHARED_LIBRARY=/usr/lib
 RUN cmake --build . --config Release -j8
 
 FROM alpine:3.15
