@@ -65,7 +65,6 @@ RUN mkdir cmake-build
 WORKDIR cmake-build
 RUN cmake .. -DBUILD_ONLY="sns;s3" \
              -DCMAKE_BUILD_TYPE=Release \
-             -DBUILD_SHARED_LIBS=ON \
              -DCMAKE_CXX_FLAGS="-Wno-error=stringop-overflow -Wno-error=uninitialized" \
              -DAUTORUN_UNIT_TESTS=OFF
 RUN cmake --build . --config Release -j8
@@ -86,15 +85,14 @@ COPY --from=json-schema-validator-build /usr/local/include /usr/local/include
 COPY --from=json-schema-validator-build /usr/local/lib /usr/local/lib
 COPY --from=aws-sdk-cpp-build /usr/local/include /usr/local/include
 COPY --from=aws-sdk-cpp-build /usr/local/lib /usr/local/lib
-
-
 COPY --from=fmtlib-build /usr/local/include /usr/local/include
 COPY --from=fmtlib-build /usr/local/lib /usr/local/lib
 
 WORKDIR /owfms
 RUN mkdir cmake-build
 WORKDIR /owfms/cmake-build
-RUN cmake   .. -DBUILD_SHARED_LIBS=ON
+RUN cmake .. \
+            -DCMAKE_INSTALL_PREFIX=/usr/local
 RUN cmake --build . --config Release -j8
 
 FROM alpine:3.15
