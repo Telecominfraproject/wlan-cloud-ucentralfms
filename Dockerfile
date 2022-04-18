@@ -92,7 +92,7 @@ WORKDIR /owfms
 RUN mkdir cmake-build
 WORKDIR /owfms/cmake-build
 RUN cmake .. \
-            -DCMAKE_INSTALL_PREFIX=/usr/local
+            -DCMAKE_INSTALL_PREFIX=/usr/lib
 RUN cmake --build . --config Release -j8
 
 FROM alpine:3.15
