@@ -66,10 +66,6 @@ WORKDIR cmake-build
 RUN cmake .. -DBUILD_ONLY="sns;s3" \
              -DCMAKE_BUILD_TYPE=Release \
              -DCMAKE_CXX_FLAGS="-Wno-error=stringop-overflow -Wno-error=uninitialized" \
-             -DLibCrypto_INCLUDE_DIR=/usr/include \
-             -DLibCrypto_LIBRARY=/usr/lib64/libcrypto.so \
-             -Dcrypto_INCLUDE_DIR=/usr/include \
-             -Dcrypto_LIBRARY=/usr/lib64/libcrypto.so \
              -DAUTORUN_UNIT_TESTS=OFF
 RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
@@ -97,11 +93,7 @@ COPY --from=fmtlib-build /usr/local/lib /usr/local/lib
 WORKDIR /owfms
 RUN mkdir cmake-build
 WORKDIR /owfms/cmake-build
-RUN cmake   -DLibCrypto_INCLUDE_DIR=/usr/include \
-            -DLibCrypto_LIBRARY=/usr/lib64/libcrypto.so \
-            -Dcrypto_INCLUDE_DIR=/usr/include \
-            -Dcrypto_LIBRARY=/usr/lib64/libcrypto.so \
-            ..
+RUN cmake   .. -DBUILD_SHARED_LIBS=ON
 RUN cmake --build . --config Release -j8
 
 FROM alpine:3.15
