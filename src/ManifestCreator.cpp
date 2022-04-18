@@ -93,7 +93,7 @@ namespace OpenWifi {
                 F.size = BucketEntry.S3Size;
                 F.created = std::time(nullptr);
                 F.imageDate = BucketEntry.S3TimeStamp;
-                F.image = BucketEntry.S3Name;
+                F.image = BucketEntry.Image;
                 F.uri = BucketEntry.URI;
                 F.revision = BucketEntry.Revision;
                 F.deviceType = BucketEntry.Compatible;
