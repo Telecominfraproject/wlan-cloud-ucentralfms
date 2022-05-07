@@ -11,7 +11,7 @@
 namespace OpenWifi {
     void
     RESTAPI_firmwareHandler::DoPost() {
-        auto Obj = ParseStream();
+        const auto &Obj = ParsedBody_;
         FMSObjects::Firmware F;
         if (!F.from_json(Obj)) {
             return BadRequest(RESTAPI::Errors::InvalidJSONDocument);
@@ -66,7 +66,7 @@ namespace OpenWifi {
             return NotFound();
         }
 
-        auto Obj = ParseStream();
+        const auto & Obj = ParsedBody_;
         FMSObjects::Firmware    NewFirmware;
         if(!NewFirmware.from_json(Obj)) {
             return BadRequest(RESTAPI::Errors::InvalidJSONDocument);
