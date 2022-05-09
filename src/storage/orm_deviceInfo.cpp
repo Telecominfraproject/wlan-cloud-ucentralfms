@@ -47,7 +47,7 @@ namespace OpenWifi {
                     .revision = Revision,
                     .deviceType = DeviceType,
                     .endPoint = EndPoint,
-                    .lastUpdate = (uint64_t)std::time(nullptr),
+                    .lastUpdate = (uint64_t)OpenWifi::Now(),
                     .status = "connected"};
             return CreateRecord(DI);
         }

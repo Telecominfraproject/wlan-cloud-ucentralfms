@@ -84,7 +84,7 @@ namespace OpenWifi {
     }
 
     void FirmwaresDB::RemoveOldFirmware() {
-        uint64_t Limit = std::time(nullptr) - ManifestCreator()->MaxAge();
+        uint64_t Limit = OpenWifi::Now() - ManifestCreator()->MaxAge();
         std::string WhereClause{"imageDate < " + std::to_string(Limit)};
         DeleteRecords(WhereClause);
     }

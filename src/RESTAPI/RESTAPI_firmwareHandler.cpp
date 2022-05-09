@@ -78,7 +78,7 @@ namespace OpenWifi {
             SecurityObjects::NoteInfoVec NIV;
             NIV = RESTAPI_utils::to_object_array<SecurityObjects::NoteInfo>(Obj->get(RESTAPI::Protocol::NOTES).toString());
             for(auto const &i:NIV) {
-                SecurityObjects::NoteInfo   ii{.created=(uint64_t)std::time(nullptr), .createdBy=UserInfo_.userinfo.email, .note=i.note};
+                SecurityObjects::NoteInfo   ii{.created=(uint64_t)OpenWifi::Now(), .createdBy=UserInfo_.userinfo.email, .note=i.note};
                 F.notes.push_back(ii);
             }
         }

@@ -233,7 +233,7 @@ namespace OpenWifi::FMSObjects {
         UnknownFirmwares_.clear();
         totalSecondsOld_.clear();
         numberOfDevices = 0 ;
-        snapshot = std::time(nullptr);
+        snapshot = OpenWifi::Now();
     }
 
     bool DeviceReport::from_json([[maybe_unused]] const Poco::JSON::Object::Ptr &Obj) {
