@@ -49,16 +49,16 @@ else
 fi
 
 login() {
-  payload="{ \"userId\" : \"$username\" , \"password\" : \"$password\" }"
-  token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${OWSEC}/api/v1/oauth2" | jq -r '.access_token')
+    payload="{ \"userId\" : \"$username\" , \"password\" : \"$password\" }"
+    token=$(curl ${FLAGS} -X POST -H "Content-Type: application/json" -d "$payload" "https://${OWSEC}/api/v1/oauth2" | jq -r '.access_token')
 
-  if [[ "${token}" == "" ]]
-  then
-  	echo "Could not login. Please verify the host and username/password."
-    exit 13
-  fi
-  echo "${token}" > token.json
-  setfms
+    if [[ "${token}" == "" ]]
+    then
+        echo "Could not login. Please verify the host and username/password."
+        exit 13
+    fi
+    echo "${token}" > token.json
+    setfms
 }
 
 findbrowser() {
@@ -84,7 +84,7 @@ findbrowser() {
 setfms() {
 if [ -z ${OWFMS_OVERRIDE+x} ]; then
 	curl  ${FLAGS} -X GET "https://${OWSEC}/api/v1/systemEndpoints" \
-        -H "accept: application/json" \
+        -H "accept: Application/json" \
         -H "Authorization: Bearer ${token}"  > ${result_file}
 	rawurl="$(cat ${result_file} | jq -r '.endpoints[] | select( .type == "owfms" ) | .uri')"
 	if [[ ! -z "${rawurl}" ]]; then
@@ -110,37 +110,41 @@ fi
 }
 
 logout() {
-  curl  ${FLAGS} -X DELETE -H "Content-Type: application/json" \
-        -H "Authorization: Bearer ${token}" \
-        "https://${OWSEC}/api/v1/oauth2/${token}"
-  rm -rf token.json
+    curl  ${FLAGS} -X DELETE "https://${OWSEC}/api/v1/oauth2/${token}" \
+		-H "Content-Type: application/json" \
+		-H "Authorization: Bearer ${token}"
+    rm -rf token.json
 }
 
 getfirmwares() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/firmwares?deviceType=$1" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/firmwares?deviceType=$1" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
 	jq < ${result_file}
 }
 
 latestfirmware() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 revisions() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/firmwares?revisionSet=true" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/firmwares?revisionSet=true" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 devicetypes() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/firmwares?deviceSet=true" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/firmwares?deviceSet=true" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
@@ -152,9 +156,10 @@ firmwareage() {
 }
 
 gethistory() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/revisionHistory/$1" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/revisionHistory/$1" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
@@ -166,71 +171,80 @@ connecteddevice() {
 }
 
 connecteddevices() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/connectedDevices" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/connectedDevices" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 devicereport() {
-    curl  ${FLAGS} -X GET -H "Content-Type: application/json" \
+    curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/deviceReport" \
+        -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${token}" \
-        "https://${OWFMS}/api/v1/deviceReport" > ${result_file}
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 setloglevel() {
     payload="{ \"command\" : \"setloglevel\" , \"subsystems\" : [ { \"tag\" : \"$1\" , \"value\" : \"$2\" } ] }"
-            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
-            -H  "accept: application/json" \
-            -H "Authorization: Bearer ${token}" \
-            -d "$payload"
+    curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" \
+        -d "$payload"
 }
 
 getloglevels() {
     payload="{ \"command\" : \"getloglevels\" }"
-            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
-            -H  "accept: application/json" \
-            -H "Authorization: Bearer ${token}" \
-            -d "$payload"
+    curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" \
+        -d "$payload"
 }
 
 getloglevelnames() {
     payload="{ \"command\" : \"getloglevelnames\" }"
-            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
-            -H  "accept: application/json" \
-            -H "Authorization: Bearer ${token}" \
-            -d "$payload"
+    curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" \
+        -d "$payload"
 }
 
 getsubsystemnames() {
     payload="{ \"command\" : \"getsubsystemnames\" }"
-            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
-            -H  "accept: application/json" \
-            -H "Authorization: Bearer ${token}" \
-            -d "$payload"
+    curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" \
+        -d "$payload"
 }
 
 systeminfo() {
     curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/system?command=info" \
-    -H "accept: application/json" \
-    -H "Authorization: Bearer ${token}" > ${result_file}
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 getdeviceinfo() {
     curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/deviceInformation/$1" \
-    -H "accept: application/json" \
-    -H "Authorization: Bearer ${token}" > ${result_file}
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" > ${result_file}
     jq < ${result_file}
 }
 
 reloadsubsystem() {
     payload="{ \"command\" : \"reload\", \"subsystems\" : [ \"$1\" ] }"
-            curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
-            -H  "accept: application/json" \
-            -H "Authorization: Bearer ${token}" \
-            -d "$payload"
+    curl  ${FLAGS} -X POST "https://${OWFMS}/api/v1/system" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" \
+        -d "$payload"
 }
 
 check_response() {
