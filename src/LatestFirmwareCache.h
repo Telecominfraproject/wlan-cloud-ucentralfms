@@ -21,6 +21,7 @@ namespace OpenWifi {
         std::string     Revision;
     };
     typedef std::map<std::string, LatestFirmwareCacheEntry> LatestFirmwareCacheMap;
+    typedef std::map<std::string, LatestFirmwareCacheEntry> rcOnlyLatestFirmwareCacheMap;
 
     class LatestFirmwareCache : public SubSystemServer {
     public:
@@ -34,13 +35,25 @@ namespace OpenWifi {
         bool AddToCache(const std::string & DeviceType, const std::string & Revision, const std::string &Id, uint64_t TimeStamp);
         // void AddRevision(const std::string &Revision);
         bool FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry );
+        bool FindLatestRCOnlyFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry );
+
+        inline static bool IsRC(const std::string & Revision) {
+            // OpenWrt 21.02-SNAPSHOT r16399+120-c67509efd7 / TIP-v2.5.0-36b5478
+            auto Tokens = Poco::StringTokenizer(Revision,"/", Poco::StringTokenizer::TOK_TRIM);
+            if(Tokens.count()!=2)
+                return false;
+            return (Tokens[1].substr(0,5) == "IP-v");
+        }
+
         void DumpCache();
         inline Types::StringSet GetRevisions() { std::lock_guard G(Mutex_); return RevisionSet_; };
         inline Types::StringSet GetDevices() { std::lock_guard G(Mutex_); return DeviceSet_; };
         bool IsLatest(const std::string &DeviceType, const std::string &Revision);
+        bool IsLatestRCOnly(const std::string &DeviceType, const std::string &Revision);
 
     private:
-        LatestFirmwareCacheMap      Cache_;
+        LatestFirmwareCacheMap          Cache_;
+        rcOnlyLatestFirmwareCacheMap    rcCache_;
         Types::StringSet            RevisionSet_;
         Types::StringSet            DeviceSet_;
         explicit LatestFirmwareCache() noexcept:

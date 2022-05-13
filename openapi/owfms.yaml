@@ -494,9 +494,10 @@ paths:
           required: false
         - in: query
           name: latestOnly
-          description: Return only the latest firwares
+          description: Return only the latest firmware
           schema:
             type: boolean
+            default: false
           required: false
         - in: query
           name: deviceType
@@ -507,11 +508,18 @@ paths:
           name: revisionSet
           schema:
             type: boolean
+            default: false
           required: false
         - in: query
           name: deviceSet
           schema:
             type: boolean
+          required: false
+        - in: query
+          name: rcOnly
+          schema:
+            type: boolean
+            default: false
           required: false
       responses:
         200:
@@ -519,7 +527,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FirmwareDetailsList'
+                oneOf:
+                  - $ref: '#/components/schemas/FirmwareDetailsList'
+                  - $ref: '#/components/schemas/FirmwareDetails'
         403:
           $ref: '#/components/responses/Unauthorized'
         404:

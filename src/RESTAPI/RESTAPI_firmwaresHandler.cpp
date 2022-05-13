@@ -11,12 +11,11 @@ namespace OpenWifi {
     void
     RESTAPI_firmwaresHandler::DoGet() {
         std::string DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
-        bool IdOnly = GetBoolParameter(RESTAPI::Protocol::IDONLY, false);
-        bool RevisionSet = GetBoolParameter(RESTAPI::Protocol::REVISIONSET, false);
-        bool LatestOnly = GetBoolParameter(RESTAPI::Protocol::LATESTONLY, false);
-        bool DeviceSet = GetBoolParameter(RESTAPI::Protocol::DEVICESET, false);
+        bool IdOnly = GetBoolParameter(RESTAPI::Protocol::IDONLY);
+        bool LatestOnly = GetBoolParameter(RESTAPI::Protocol::LATESTONLY);
+        bool rcOnly = GetBoolParameter("rcOnly");
 
-        if(DeviceSet) {
+        if(GetBoolParameter(RESTAPI::Protocol::DEVICESET)) {
             auto Revisions = LatestFirmwareCache()->GetDevices();
             Poco::JSON::Array ObjectArray;
             for (const auto &i:Revisions) {
@@ -27,7 +26,7 @@ namespace OpenWifi {
             return ReturnObject(RetObj);
         }
 
-        if(RevisionSet) {
+        if(GetBoolParameter(RESTAPI::Protocol::REVISIONSET)) {
             auto Revisions = LatestFirmwareCache()->GetRevisions();
             Poco::JSON::Array ObjectArray;
             for (const auto &i:Revisions) {
@@ -42,8 +41,14 @@ namespace OpenWifi {
         if(!DeviceType.empty()) {
             if(LatestOnly) {
                 LatestFirmwareCacheEntry    Entry;
-                if(!LatestFirmwareCache()->FindLatestFirmware(DeviceType,Entry)) {
-                    return NotFound();
+                if(rcOnly) {
+                    if (!LatestFirmwareCache()->FindLatestRCOnlyFirmware(DeviceType, Entry)) {
+                        return NotFound();
+                    }
+                } else {
+                    if (!LatestFirmwareCache()->FindLatestFirmware(DeviceType, Entry)) {
+                        return NotFound();
+                    }
                 }
 
                 FMSObjects::Firmware    F;
@@ -58,6 +63,8 @@ namespace OpenWifi {
                 if (StorageService()->FirmwaresDB().GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
                     Poco::JSON::Array ObjectArray;
                     for (const auto &i:List) {
+                        if(rcOnly && !LatestFirmwareCache::IsRC(i.revision))
+                            continue;
                         if(IdOnly) {
                             ObjectArray.add(i.id);
                         } else {
@@ -80,6 +87,8 @@ namespace OpenWifi {
         Poco::JSON::Object Answer;
         if (StorageService()->FirmwaresDB().GetFirmwares(QB_.Offset, QB_.Limit, DeviceType, List)) {
             for (const auto &i:List) {
+                if(rcOnly && !LatestFirmwareCache::IsRC(i.revision))
+                    continue;
                 if(IdOnly) {
                     ObjectArray.add(i.id);
                 } else {

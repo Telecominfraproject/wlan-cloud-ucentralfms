@@ -20,14 +20,26 @@ namespace OpenWifi {
 
         RevisionSet_.insert(Revision);
         DeviceSet_.insert(DeviceType);
+
         auto E = Cache_.find(DeviceType);
         if((E==Cache_.end()) || (TimeStamp >= E->second.TimeStamp)) {
-            Cache_[DeviceType] = LatestFirmwareCacheEntry{  .Id=Id,
-                                                            .TimeStamp=TimeStamp,
-                                                            .Revision=Revision};
-            return true;
+            Cache_[DeviceType] = LatestFirmwareCacheEntry{
+                .Id=Id,
+                .TimeStamp=TimeStamp,
+                .Revision=Revision};
         }
-        return false;
+
+        if(!IsRC(Revision))
+            return true;
+
+        auto rcE = rcCache_.find(DeviceType);
+        if((rcE==rcCache_.end()) || (TimeStamp >= rcE->second.TimeStamp)) {
+            rcCache_[DeviceType] = LatestFirmwareCacheEntry{
+                .Id=Id,
+                .TimeStamp=TimeStamp,
+                .Revision=Revision};
+        }
+        return true;
     }
 
     bool LatestFirmwareCache::FindLatestFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry )  {
@@ -38,15 +50,36 @@ namespace OpenWifi {
             Entry = E->second;
             return true;
         }
-
         return false;
     }
+
+    bool LatestFirmwareCache::FindLatestRCOnlyFirmware(const std::string &DeviceType, LatestFirmwareCacheEntry &Entry ) {
+        std::lock_guard G(Mutex_);
+
+        auto E=rcCache_.find(DeviceType);
+        if(E!=rcCache_.end()) {
+            Entry = E->second;
+            return true;
+        }
+        return false;
+    }
+
 
     bool LatestFirmwareCache::IsLatest(const std::string &DeviceType, const std::string &Revision) {
         std::lock_guard G(Mutex_);
 
         auto E=Cache_.find(DeviceType);
         if(E!=Cache_.end()) {
+            return E->second.Revision==Revision;
+        }
+        return false;
+    }
+
+    bool LatestFirmwareCache::IsLatestRCOnly(const std::string &DeviceType, const std::string &Revision) {
+        std::lock_guard G(Mutex_);
+
+        auto E=rcCache_.find(DeviceType);
+        if(E!=rcCache_.end()) {
             return E->second.Revision==Revision;
         }
         return false;
