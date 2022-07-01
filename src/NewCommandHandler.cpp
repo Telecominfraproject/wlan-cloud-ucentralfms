@@ -9,6 +9,7 @@ namespace OpenWifi {
 
     void NewCommandHandler::run() {
         Running_ = true ;
+        Utils::SetThreadName("cmd-handler");
         while(Running_) {
             Poco::Thread::trySleep(2000);
 
