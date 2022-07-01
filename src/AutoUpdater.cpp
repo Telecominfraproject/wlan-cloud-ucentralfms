@@ -38,6 +38,7 @@ namespace OpenWifi {
     }
 
     void AutoUpdater::onTimer([[maybe_unused]] Poco::Timer & timer) {
+        Utils::SetThreadName("auto-updater");
         Running_ = true;
         std::unique_lock    L(Mutex_);
         while(!Queue_.empty() && Running_) {

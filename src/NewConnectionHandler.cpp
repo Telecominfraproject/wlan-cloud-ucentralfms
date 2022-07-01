@@ -22,6 +22,7 @@
 namespace OpenWifi {
 
     void NewConnectionHandler::run() {
+        Utils::SetThreadName("conn-handler");
         Running_ = true ;
         while(Running_) {
             Poco::Thread::trySleep(2000);
