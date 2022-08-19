@@ -135,7 +135,7 @@ COPY owfms.properties.tmpl /
 COPY docker-entrypoint.sh /
 COPY wait-for-postgres.sh /
 RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
-    -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.pem
+    -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.crt
 
 COPY --from=owfms-build /owfms/cmake-build/owfms /openwifi/owfms
 COPY --from=cppkafka-build /cppkafka/cmake-build/src/lib/* /usr/local/lib
