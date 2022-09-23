@@ -8,11 +8,14 @@
 namespace OpenWifi {
 
     int LatestFirmwareCache::Start() {
+        poco_information(Logger(),"Starting...");
         StorageService()->FirmwaresDB().PopulateLatestFirmwareCache();
         return 0;
     }
 
     void LatestFirmwareCache::Stop() {
+        poco_information(Logger(),"Stopping...");
+        poco_information(Logger(),"Stopped...");
     }
 
     bool LatestFirmwareCache::AddToCache(const std::string & DeviceType, const std::string &Revision, const std::string &Id, uint64_t TimeStamp) {

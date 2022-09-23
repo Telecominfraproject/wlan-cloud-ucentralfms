@@ -7,11 +7,13 @@
 namespace OpenWifi {
 
     int FirmwareCache::Start() {
+        poco_information(Logger(),"Starting...");
         return 0;
     }
 
     void FirmwareCache::Stop() {
-
+        poco_information(Logger(),"Stopping...");
+        poco_information(Logger(),"Stopped...");
     }
 
     std::shared_ptr<FMSObjects::Firmware> GetFirmware([[maybe_unused]] const std::string & DeviceType, [[maybe_unused]] const std::string & Revision) {
