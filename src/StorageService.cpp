@@ -11,6 +11,7 @@
 namespace OpenWifi {
 
     int Storage::Start() {
+        poco_information(Logger(),"Starting...");
         std::lock_guard		Guard(Mutex_);
 
         StorageClass::Start();
@@ -27,9 +28,10 @@ namespace OpenWifi {
     }
 
     void Storage::Stop() {
+        poco_information(Logger(),"Stopping...");
         std::lock_guard		Guard(Mutex_);
-        Logger().notice("Stopping.");
         StorageClass::Stop();
+        poco_information(Logger(),"Stopped...");
     }
 
     std::string Storage::TrimRevision(const std::string &R) {
