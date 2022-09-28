@@ -22,6 +22,7 @@ if [[ "$TEMPLATE_CONFIG" = 'true' ]]; then
   SYSTEM_URI_PRIVATE=${SYSTEM_URI_PRIVATE:-"https://localhost:17004"} \
   SYSTEM_URI_PUBLIC=${SYSTEM_URI_PUBLIC:-"https://localhost:16004"} \
   SYSTEM_URI_UI=${SYSTEM_URI_UI:-"http://localhost"} \
+  SECURITY_RESTAPI_DISABLE=${SECURITY_RESTAPI_DISABLE:-"false"} \
   S3_BUCKETNAME=${S3_BUCKETNAME:-"ucentral-ap-firmware"} \
   S3_REGION=${S3_REGION:-"us-east-1"} \
   S3_SECRET=${S3_SECRET:-"*******************************************"} \
