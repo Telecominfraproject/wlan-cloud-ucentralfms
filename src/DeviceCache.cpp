@@ -7,10 +7,13 @@
 namespace OpenWifi {
 
     int DeviceCache::Start() {
+        poco_information(Logger(),"Starting...");
         return 0;
     }
 
     void DeviceCache::Stop() {
+        poco_information(Logger(),"Stopping...");
+        poco_information(Logger(),"Stopped...");
     }
 
     void DeviceCache::AddToCache(

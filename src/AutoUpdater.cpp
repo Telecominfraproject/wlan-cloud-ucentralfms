@@ -11,6 +11,7 @@
 namespace OpenWifi {
 
     int AutoUpdater::Start() {
+        poco_information(Logger(),"Starting...");
         AutoUpdaterEnabled_ = MicroService::instance().ConfigGetBool("autoupdater.enabled", false);
         if(AutoUpdaterEnabled_) {
             Running_ = false;
@@ -24,10 +25,12 @@ namespace OpenWifi {
     }
 
     void AutoUpdater::Stop() {
+        poco_information(Logger(),"Stopping...");
         Running_ = false;
         if(AutoUpdaterEnabled_) {
             Timer_.stop();
         }
+        poco_information(Logger(),"Stopped...");
     }
 
     void AutoUpdater::ToBeUpgraded(std::string serialNumber, std::string DeviceType) {
@@ -45,7 +48,7 @@ namespace OpenWifi {
             auto Entry = Queue_.front();
             Queue_.pop_front();
             try {
-                Logger().debug(fmt::format("Preparing to upgrade {}",Entry.first));
+                poco_debug(Logger(),fmt::format("Preparing to upgrade {}",Entry.first));
                 auto CacheEntry = Cache_.find(Entry.first);
                 uint64_t now = OpenWifi::Now();
                 std::string firmwareUpgrade;
@@ -55,11 +58,11 @@ namespace OpenWifi {
                     C.LastCheck = now;
                     bool        firmwareRCOnly;
                     if(OpenWifi::SDK::Prov::GetFirmwareOptions(Entry.first, firmwareUpgrade, firmwareRCOnly)) {
-                        Logger().debug(fmt::format("Found firmware options for {}",Entry.first));
+                        poco_debug(Logger(),fmt::format("Found firmware options for {}",Entry.first));
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     } else {
-                        Logger().debug(fmt::format("Found no firmware options for {}",Entry.first));
+                        poco_debug(Logger(),fmt::format("Found no firmware options for {}",Entry.first));
                         C.firmwareRCOnly = firmwareRCOnly;
                         C.firmwareUpgrade = firmwareUpgrade;
                     }
@@ -69,7 +72,7 @@ namespace OpenWifi {
                 }
 
                 if(firmwareUpgrade=="no") {
-                    Logger().information(fmt::format("Device {} not upgradable. Provisioning service settings.",Entry.first));
+                    poco_information(Logger(),fmt::format("Device {} not upgradable. Provisioning service settings.",Entry.first));
                     continue;
                 }
 
@@ -79,26 +82,26 @@ namespace OpenWifi {
                 if(LF) {
                     if(StorageService()->FirmwaresDB().GetFirmware(fwEntry.Id,fwDetails)) {
                         //  send the command to upgrade this device...
-                        Logger().information(fmt::format("Upgrading {} to version {}", Entry.first, fwEntry.Revision));
+                        poco_information(Logger(),fmt::format("Upgrading {} to version {}", Entry.first, fwEntry.Revision));
                         if(OpenWifi::SDK::GW::SendFirmwareUpgradeCommand(Entry.first,fwDetails.uri)) {
-                            Logger().information(fmt::format("Upgrade command sent for {}",Entry.first));
+                            poco_information(Logger(),fmt::format("Upgrade command sent for {}",Entry.first));
                         } else {
-                            Logger().information(fmt::format("Upgrade command not sent for {}",Entry.first));
+                            poco_information(Logger(),fmt::format("Upgrade command not sent for {}",Entry.first));
                         }
                     } else {
-                        Logger().information(fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
+                        poco_information(Logger(),fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
                     }
                 } else {
-                    Logger().information(fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
+                    poco_information(Logger(),fmt::format("Firmware for device {} ({}) cannot be found.", Entry.first, Entry.second ));
                 }
             } catch (...) {
-                Logger().information(fmt::format("Exception during auto update for device {}.", Entry.first ));
+                poco_information(Logger(),fmt::format("Exception during auto update for device {}.", Entry.first ));
             }
         }
     }
 
     void AutoUpdater::reinitialize([[maybe_unused]] Poco::Util::Application &self) {
-        Logger().information("Reinitializing.");
+        poco_information(Logger(),"Reinitializing.");
         Reset();
     }
 }

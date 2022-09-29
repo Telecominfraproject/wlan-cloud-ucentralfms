@@ -57,7 +57,7 @@ namespace OpenWifi {
         Types::StringSet            RevisionSet_;
         Types::StringSet            DeviceSet_;
         explicit LatestFirmwareCache() noexcept:
-                SubSystemServer("FirmwareCache", "FIRMWARE-CACHE", "FirmwareCache")
+                SubSystemServer("LatestFirmwareCache", "LATEST-FIRMWARE-CACHE", "LatestFirmwareCache")
         {
         }
     };

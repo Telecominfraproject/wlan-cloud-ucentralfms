@@ -68,12 +68,12 @@ namespace OpenWifi {
                                 if(StorageService()->FirmwaresDB().ComputeFirmwareAge(DeviceType, Revision, FA)) {
                                     StorageService()->DevicesDB().SetDeviceRevision(SerialNumber, Revision, DeviceType, EndPoint);
                                     if(FA.age)
-                                        Logger().information(fmt::format("Device {} connection. Firmware is {} older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
+                                        poco_information(Logger(),fmt::format("Device {} connection. Firmware is {} older than latest.",SerialNumber, Utils::SecondsToNiceText(FA.age)));
                                     else
-                                        Logger().information(fmt::format("Device {} connection. Device firmware is up to date.",SerialNumber));
+                                    poco_information(Logger(),fmt::format("Device {} connection. Device firmware is up to date.",SerialNumber));
                                 }
                                 else {
-                                    Logger().information(fmt::format("Device {} connection. Firmware age cannot be determined.",SerialNumber));
+                                    poco_information(Logger(),fmt::format("Device {} connection. Firmware age cannot be determined.",SerialNumber));
                                 }
 
                                 if(!LatestFirmwareCache()->IsLatest(DeviceType, Revision)) {
@@ -116,6 +116,7 @@ namespace OpenWifi {
     };
 
     int NewConnectionHandler::Start() {
+        poco_information(Logger(),"Starting...");
         Types::TopicNotifyFunction F = [this](std::string s1,std::string s2) { this->ConnectionReceived(s1,s2); };
         ConnectionWatcherId_ = KafkaManager()->RegisterTopicWatcher(KafkaTopics::CONNECTION, F);
         Worker_.start(*this);
@@ -123,10 +124,12 @@ namespace OpenWifi {
     };
 
     void NewConnectionHandler::Stop() {
+        poco_information(Logger(),"Stopping...");
         KafkaManager()->UnregisterTopicWatcher(KafkaTopics::CONNECTION, ConnectionWatcherId_);
         Running_ = false;
         Worker_.wakeUp();
         Worker_.join();
+        poco_information(Logger(),"Stopped...");
     };
 
     bool NewConnectionHandler::Update() {
