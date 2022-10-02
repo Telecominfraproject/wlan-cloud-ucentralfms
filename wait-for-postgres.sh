@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # wait-for-postgres.sh
 
 set -e
@@ -20,7 +20,7 @@ if [ "$1" = '/openwifi/owfms' -a "$(id -u)" = '0' ]; then
     if [ "$RUN_CHOWN" = 'true' ]; then
       chown -R "$OWFMS_USER": "$OWFMS_ROOT" "$OWFMS_CONFIG"
     fi
-    exec su-exec "$OWFMS_USER" "$@"
+    exec gosu "$OWFMS_USER" "$@"
 fi
 
 exec "$@"
