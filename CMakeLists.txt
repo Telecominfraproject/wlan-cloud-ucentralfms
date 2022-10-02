@@ -76,6 +76,7 @@ add_executable( owfms
         src/framework/orm.h
         src/framework/StorageClass.h
         src/framework/ow_constants.h
+        src/framework/MicroServiceErrorHandler.h
         src/framework/WebSocketClientNotifications.h
         src/framework/MicroServiceErrorHandler.h
         src/RESTObjects/RESTAPI_SecurityObjects.h src/RESTObjects/RESTAPI_SecurityObjects.cpp
