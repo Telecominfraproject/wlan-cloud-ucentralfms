@@ -6,6 +6,9 @@
 #include "LatestFirmwareCache.h"
 #include "ManifestCreator.h"
 
+#include "framework/RESTAPI_utils.h"
+#include "framework/MicroServiceFuncs.h"
+
 /*
             "Id              varchar(36) UNIQUE PRIMARY KEY, "
             "release            varchar, "
@@ -57,7 +60,7 @@ namespace OpenWifi {
 
     bool FirmwaresDB::AddFirmware(FMSObjects::Firmware & F) {
         // find the older software and change to latest = 0
-        F.id = MicroService::CreateUUID();
+        F.id = MicroServiceCreateUUID();
         if (LatestFirmwareCache()->AddToCache(F.deviceType, F.revision, F.id, F.imageDate)) {
             F.latest = true;
             std::vector<FMSObjects::Firmware> Fs;

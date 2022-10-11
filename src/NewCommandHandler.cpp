@@ -5,6 +5,10 @@
 #include "NewCommandHandler.h"
 #include "StorageService.h"
 
+#include "framework/KafkaManager.h"
+#include "fmt/format.h"
+#include "nlohmann/json.hpp"
+
 namespace OpenWifi {
 
     void NewCommandHandler::run() {

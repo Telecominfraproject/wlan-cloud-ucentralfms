@@ -4,9 +4,10 @@
 
 #include "Poco/JSON/Parser.h"
 
-#include "RESTAPI_firmwareHandler.h"
+#include "RESTAPI/RESTAPI_firmwareHandler.h"
 #include "StorageService.h"
 #include "framework/ow_constants.h"
+#include "framework/MicroServiceFuncs.h"
 
 namespace OpenWifi {
     void
@@ -16,7 +17,7 @@ namespace OpenWifi {
         if (!F.from_json(Obj)) {
             return BadRequest(RESTAPI::Errors::InvalidJSONDocument);
         }
-        F.id = MicroService::instance().CreateUUID();
+        F.id = MicroServiceCreateUUID();
         if(StorageService()->FirmwaresDB().AddFirmware(F)) {
             Poco::JSON::Object  Answer;
             F.to_json(Answer);

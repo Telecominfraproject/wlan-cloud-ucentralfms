@@ -2,11 +2,9 @@
 // Created by stephane bourque on 2021-10-05.
 //
 
-#ifndef OWFMS_GW_SDK_H
-#define OWFMS_GW_SDK_H
+#pragma once
 
-
-#include "framework/MicroService.h"
+#include <string>
 
 namespace OpenWifi::SDK::GW {
 
@@ -14,4 +12,3 @@ namespace OpenWifi::SDK::GW {
 
 };
 
-#endif //OWFMS_GW_SDK_H

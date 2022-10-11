@@ -7,6 +7,8 @@
 
 #include "framework/MicroService.h"
 #include "framework/OpenWifiTypes.h"
+#include "framework/MicroServiceNames.h"
+
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "Dashboard.h"
 
@@ -40,9 +42,6 @@ namespace OpenWifi {
     };
 
     inline Daemon * Daemon() { return Daemon::instance(); }
-    inline void DaemonPostInitialization(Poco::Util::Application &self) {
-        Daemon()->PostInitialization(self);
-    }
 }
 
 #endif //UCENTRALFWS_DAEMON_H

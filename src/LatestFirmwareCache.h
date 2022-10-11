@@ -2,16 +2,17 @@
 // Created by stephane bourque on 2021-07-13.
 //
 
-#ifndef UCENTRALFMS_LATESTFIRMWARECACHE_H
-#define UCENTRALFMS_LATESTFIRMWARECACHE_H
+#pragma once
 
 #include "Poco/JSON/Object.h"
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/JWT/Signer.h"
 #include "Poco/SHA2Engine.h"
+#include "Poco/StringTokenizer.h"
+
 #include "RESTObjects/RESTAPI_SecurityObjects.h"
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 
 namespace OpenWifi {
 
@@ -64,6 +65,3 @@ namespace OpenWifi {
 
     inline auto LatestFirmwareCache() { return LatestFirmwareCache::instance(); }
 }
-
-
-#endif //UCENTRALFMS_LATESTFIRMWARECACHE_H

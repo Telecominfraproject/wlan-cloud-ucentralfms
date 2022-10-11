@@ -2,14 +2,13 @@
 // Created by stephane bourque on 2021-06-02.
 //
 
-#ifndef UCENTRALFWS_MANIFESTCREATOR_H
-#define UCENTRALFWS_MANIFESTCREATOR_H
+#pragma once
 
 #include <aws/core/Aws.h>
 #include <aws/s3/S3Client.h>
 #include <aws/core/auth/AWSCredentials.h>
 
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 #include "Poco/Timer.h"
 
 namespace OpenWifi {
@@ -71,5 +70,3 @@ namespace OpenWifi {
     inline auto ManifestCreator() { return ManifestCreator::instance(); };
 
 }
-
-#endif //UCENTRALFWS_MANIFESTCREATOR_H

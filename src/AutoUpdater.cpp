@@ -8,14 +8,19 @@
 #include "LatestFirmwareCache.h"
 #include "StorageService.h"
 
+#include "framework/MicroServiceFuncs.h"
+#include "framework/utils.h"
+
+#include "fmt/format.h"
+
 namespace OpenWifi {
 
     int AutoUpdater::Start() {
         poco_information(Logger(),"Starting...");
-        AutoUpdaterEnabled_ = MicroService::instance().ConfigGetBool("autoupdater.enabled", false);
+        AutoUpdaterEnabled_ = MicroServiceConfigGetBool("autoupdater.enabled", false);
         if(AutoUpdaterEnabled_) {
             Running_ = false;
-            AutoUpdaterFrequency_ = MicroService::instance().ConfigGetInt("autoupdater.frequency",600);
+            AutoUpdaterFrequency_ = MicroServiceConfigGetInt("autoupdater.frequency",600);
             AutoUpdaterCallBack_ = std::make_unique<Poco::TimerCallback<AutoUpdater>>(*this, &AutoUpdater::onTimer);
             Timer_.setStartInterval(5 * 60 * 1000);  // first run in 5 minutes
             Timer_.setPeriodicInterval(AutoUpdaterFrequency_ * 1000);

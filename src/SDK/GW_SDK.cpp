@@ -3,8 +3,10 @@
 //
 
 #include "GW_SDK.h"
-#include "Daemon.h"
 #include "Poco/Net/HTTPResponse.h"
+
+#include "framework/MicroServiceNames.h"
+#include "framework/OpenAPIRequests.h"
 
 namespace OpenWifi::SDK::GW {
 

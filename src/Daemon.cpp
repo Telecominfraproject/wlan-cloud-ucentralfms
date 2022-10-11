@@ -45,6 +45,11 @@ namespace OpenWifi {
 
     void Daemon::PostInitialization([[maybe_unused]] Poco::Util::Application &self) {
     }
+
+    void DaemonPostInitialization(Poco::Util::Application &self) {
+        Daemon()->PostInitialization(self);
+    }
+
 }
 
 int main(int argc, char **argv) {

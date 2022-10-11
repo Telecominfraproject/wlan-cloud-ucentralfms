@@ -2,11 +2,9 @@
 // Created by stephane bourque on 2021-07-13.
 //
 
-#ifndef UCENTRALFMS_NEWCONNECTIONHANDLER_H
-#define UCENTRALFMS_NEWCONNECTIONHANDLER_H
+#pragma once
 
-
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 #include "framework/OpenWifiTypes.h"
 
 namespace OpenWifi {
@@ -40,4 +38,3 @@ namespace OpenWifi {
     inline auto NewConnectionHandler() { return NewConnectionHandler::instance(); };
 }
 
-#endif //UCENTRALFMS_NEWCONNECTIONHANDLER_H

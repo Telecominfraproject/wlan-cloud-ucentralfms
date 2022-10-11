@@ -2,11 +2,11 @@
 // Created by stephane bourque on 2021-10-04.
 //
 
-#ifndef OWFMS_AUTOUPDATER_H
-#define OWFMS_AUTOUPDATER_H
+#pragma once
 
-#include "framework/MicroService.h"
 #include <deque>
+
+#include "framework/SubSystemServer.h"
 #include "Poco/Util/Application.h"
 #include "Poco/Timer.h"
 
@@ -55,4 +55,3 @@ namespace OpenWifi {
     inline auto AutoUpdater() { return AutoUpdater::instance(); }
 }
 
-#endif //OWFMS_AUTOUPDATER_H

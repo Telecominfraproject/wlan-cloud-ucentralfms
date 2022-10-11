@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(owfms VERSION 2.7.0)
+project(owfms VERSION 2.8.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -42,6 +42,7 @@ endif()
 
 find_package(OpenSSL    REQUIRED)
 find_package(fmt        REQUIRED)
+find_package(ZLIB       REQUIRED)
 find_package(Poco       REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 find_package(AWSSDK     REQUIRED COMPONENTS s3)
 
@@ -75,10 +76,44 @@ add_executable( owfms
         src/framework/OpenWifiTypes.h
         src/framework/orm.h
         src/framework/StorageClass.h
-        src/framework/ow_constants.h
         src/framework/MicroServiceErrorHandler.h
-        src/framework/WebSocketClientNotifications.h
-        src/framework/MicroServiceErrorHandler.h
+        src/framework/UI_WebSocketClientServer.cpp
+        src/framework/UI_WebSocketClientServer.h
+        src/framework/utils.h
+        src/framework/utils.cpp
+        src/framework/AppServiceRegistry.h
+        src/framework/SubSystemServer.cpp
+        src/framework/SubSystemServer.h
+        src/framework/RESTAPI_utils.h
+        src/framework/WebSocketClientNotification.cpp
+        src/framework/AuthClient.cpp
+        src/framework/AuthClient.h
+        src/framework/MicroServiceNames.h
+        src/framework/MicroServiceFuncs.h
+        src/framework/OpenAPIRequests.cpp
+        src/framework/OpenAPIRequests.h
+        src/framework/MicroServiceFuncs.cpp
+        src/framework/ALBserver.cpp
+        src/framework/ALBserver.h
+        src/framework/KafkaManager.cpp
+        src/framework/KafkaManager.h
+        src/framework/RESTAPI_RateLimiter.h
+        src/framework/WebSocketLogger.h
+        src/framework/RESTAPI_GenericServerAccounting.h
+        src/framework/CIDR.h
+        src/framework/RESTAPI_Handler.cpp
+        src/framework/RESTAPI_Handler.h
+        src/framework/RESTAPI_ExtServer.h
+        src/framework/RESTAPI_ExtServer.cpp
+        src/framework/RESTAPI_IntServer.cpp
+        src/framework/RESTAPI_IntServer.h
+        src/framework/RESTAPI_SystemCommand.h
+        src/framework/RESTAPI_WebSocketServer.h
+        src/framework/EventBusManager.cpp
+        src/framework/EventBusManager.h
+        src/framework/RESTAPI_PartHandler.h
+        src/framework/MicroService.cpp
+        src/framework/MicroServiceExtra.h
         src/RESTObjects/RESTAPI_SecurityObjects.h src/RESTObjects/RESTAPI_SecurityObjects.cpp
         src/RESTObjects/RESTAPI_ProvObjects.cpp src/RESTObjects/RESTAPI_ProvObjects.h
         src/RESTObjects/RESTAPI_GWobjects.h src/RESTObjects/RESTAPI_GWobjects.cpp
@@ -95,7 +130,6 @@ add_executable( owfms
         src/Daemon.cpp src/Daemon.h
         src/StorageService.cpp src/StorageService.h
         src/ManifestCreator.cpp src/ManifestCreator.h
-        src/framework/MicroService.h
         src/NewConnectionHandler.cpp src/NewConnectionHandler.h
         src/LatestFirmwareCache.cpp src/LatestFirmwareCache.h
         src/DeviceCache.cpp src/DeviceCache.h
@@ -105,7 +139,9 @@ add_executable( owfms
         src/NewCommandHandler.cpp src/NewCommandHandler.h
         src/storage/orm_history.cpp src/storage/orm_history.h
         src/storage/orm_firmwares.cpp src/storage/orm_firmwares.h
-        src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h src/RESTAPI/RESTAPI_deviceInformation_handler.cpp src/RESTAPI/RESTAPI_deviceInformation_handler.h)
+        src/storage/orm_deviceInfo.cpp src/storage/orm_deviceInfo.h
+        src/RESTAPI/RESTAPI_deviceInformation_handler.cpp
+        src/RESTAPI/RESTAPI_deviceInformation_handler.h)
 
 target_link_libraries( owfms PUBLIC
         ${Poco_LIBRARIES}

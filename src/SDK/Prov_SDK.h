@@ -2,10 +2,9 @@
 // Created by stephane bourque on 2021-10-04.
 //
 
-#ifndef OWFMS_PROV_SDK_H
-#define OWFMS_PROV_SDK_H
+#pragma once
 
-#include "framework/MicroService.h"
+#include <string>
 
 namespace OpenWifi::SDK::Prov {
 
@@ -14,5 +13,3 @@ namespace OpenWifi::SDK::Prov {
 
 };
 
-
-#endif //OWFMS_PROV_SDK_H

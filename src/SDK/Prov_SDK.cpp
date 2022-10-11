@@ -2,7 +2,8 @@
 // Created by stephane bourque on 2021-10-04.
 //
 
-#include "framework/MicroService.h"
+#include "framework/OpenAPIRequests.h"
+#include "framework/MicroServiceNames.h"
 
 namespace OpenWifi::SDK::Prov {
     bool GetFirmwareOptions( const std::string & serialNumber, std::string &firmwareUpgrade,

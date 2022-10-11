@@ -2,11 +2,10 @@
 // Created by stephane bourque on 2021-07-13.
 //
 
-#ifndef UCENTRALFMS_DEVICECACHE_H
-#define UCENTRALFMS_DEVICECACHE_H
+#pragma once
 
 #include <string>
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 
 namespace OpenWifi {
 
@@ -43,6 +42,3 @@ namespace OpenWifi {
     inline auto DeviceCache() { return DeviceCache::instance(); }
 }
 
-
-
-#endif //UCENTRALFMS_DEVICECACHE_H

@@ -5,6 +5,9 @@
 #include "orm_history.h"
 #include "StorageService.h"
 
+#include "framework/MicroServiceFuncs.h"
+#include "fmt/format.h"
+
 /*
         "id         varchar(36) UNIQUE PRIMARY KEY, "
         "serialNumber   varchar, "
@@ -48,7 +51,7 @@ namespace OpenWifi {
                              const std::string &NewVersion) {
 
         FMSObjects::RevisionHistoryEntry History{
-                .id = MicroService::CreateUUID(),
+                .id = MicroServiceCreateUUID(),
                 .serialNumber = SerialNumber,
                 .fromRelease = PreviousRevision,
                 .toRelease = NewVersion,

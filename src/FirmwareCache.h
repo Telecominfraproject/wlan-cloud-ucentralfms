@@ -2,14 +2,13 @@
 // Created by stephane bourque on 2021-07-26.
 //
 
-#ifndef UCENTRALFMS_FIRMWARECACHE_H
-#define UCENTRALFMS_FIRMWARECACHE_H
+#pragma once
 
 #include <map>
 #include <memory>
 
 #include "RESTObjects/RESTAPI_FMSObjects.h"
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 
 namespace OpenWifi {
 
@@ -40,6 +39,3 @@ namespace OpenWifi {
     inline auto FirmwareCache() { return FirmwareCache::instance(); }
 
 }
-
-
-#endif //UCENTRALFMS_FIRMWARECACHE_H

@@ -2,10 +2,9 @@
 // Created by stephane bourque on 2021-11-21.
 //
 
-#ifndef OWFMS_NEWCOMMANDHANDLER_H
-#define OWFMS_NEWCOMMANDHANDLER_H
+#pragma once
 
-#include "framework/MicroService.h"
+#include "framework/SubSystemServer.h"
 #include "framework/OpenWifiTypes.h"
 
 namespace OpenWifi {
@@ -37,5 +36,3 @@ namespace OpenWifi {
     inline auto NewCommandHandler() { return NewCommandHandler::instance(); };
 
 }
-
-#endif //OWFMS_NEWCOMMANDHANDLER_H

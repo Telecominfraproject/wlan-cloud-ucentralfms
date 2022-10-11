@@ -14,6 +14,9 @@
 #include "StorageService.h"
 #include "LatestFirmwareCache.h"
 
+#include "framework/utils.h"
+#include "fmt/format.h"
+
 namespace OpenWifi {
 
     void ManifestCreator::onTimer([[maybe_unused]] Poco::Timer &timer) {
@@ -89,7 +92,7 @@ namespace OpenWifi {
                 continue;
 
             if(BucketEntry.Valid && !StorageService()->FirmwaresDB().GetFirmwareByName(R,BucketEntry.Compatible,F)) {
-                F.id = MicroService::instance().CreateUUID();
+                F.id = MicroServiceCreateUUID();
                 F.release = Release;
                 F.size = BucketEntry.S3Size;
                 F.created = OpenWifi::Now();
@@ -109,14 +112,14 @@ namespace OpenWifi {
 
     int ManifestCreator::Start() {
         Running_ = true;
-        S3BucketName_ = MicroService::instance().ConfigGetString("s3.bucketname");
-        S3Region_ = MicroService::instance().ConfigGetString("s3.region");
-        S3Secret_ = MicroService::instance().ConfigGetString("s3.secret");
-        S3Key_ = MicroService::instance().ConfigGetString("s3.key");
-        S3Retry_ = MicroService::instance().ConfigGetInt("s3.retry",60);
+        S3BucketName_ = MicroServiceConfigGetString("s3.bucketname","");
+        S3Region_ = MicroServiceConfigGetString("s3.region","");
+        S3Secret_ = MicroServiceConfigGetString("s3.secret","");
+        S3Key_ = MicroServiceConfigGetString("s3.key","");
+        S3Retry_ = MicroServiceConfigGetInt("s3.retry",60);
 
-        DBRefresh_ = MicroService::instance().ConfigGetInt("firmwaredb.refresh",30*60);
-        MaxAge_ = MicroService::instance().ConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
+        DBRefresh_ = MicroServiceConfigGetInt("firmwaredb.refresh",30*60);
+        MaxAge_ = MicroServiceConfigGetInt("firmwaredb.maxage",90) * 24 * 60 * 60;
 
         AwsConfig_.enableTcpKeepAlive = true;
         AwsConfig_.enableEndpointDiscovery = true;
@@ -169,7 +172,7 @@ namespace OpenWifi {
         static const std::string UPGRADE("-upgrade.bin");
 
         std::string     URIBase = "https://";
-        URIBase += MicroService::instance().ConfigGetString("s3.bucket.uri");
+        URIBase += MicroServiceConfigGetString("s3.bucket.uri","");
 
         Bucket.clear();
 
