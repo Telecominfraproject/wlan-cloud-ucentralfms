@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     make cmake g++ git curl zip unzip pkg-config \
     libpq-dev libmariadb-dev libmariadbclient-dev-compat \
     librdkafka-dev libboost-all-dev libssl-dev \
-    zlib1g-dev nlohmann-json3-dev ca-certificates libcurl4-openssl-dev libfmt-dev
+    zlib1g-dev ca-certificates libcurl4-openssl-dev libfmt-dev
 
 FROM build-base AS poco-build
 
@@ -41,12 +41,16 @@ RUN cmake --build . --target install
 FROM build-base AS owfms-build
 
 ADD CMakeLists.txt build /owfms/
+ADD overlays /owfms/overlays
 ADD cmake /owfms/cmake
 ADD src /owfms/src
 ADD .git /owfms/.git
 RUN git clone https://github.com/microsoft/vcpkg && \
     ./vcpkg/bootstrap-vcpkg.sh && \
-    ./vcpkg/vcpkg install aws-sdk-cpp[s3] json-schema-validator
+    mkdir /vcpkg/custom-triplets && \
+    cp /vcpkg/triplets/x64-linux.cmake /vcpkg/custom-triplets/x64-linux.cmake && \
+    sed -i 's/set(VCPKG_LIBRARY.*/set(VCPKG_LIBRARY_LINKAGE dynamic)/g' /vcpkg/custom-triplets/x64-linux.cmake && \
+    ./vcpkg/vcpkg install aws-sdk-cpp[s3]:x64-linux json-schema-validator:x64-linux --overlay-triplets=/vcpkg/custom-triplets --overlay-ports=/owfms/overlays
 
 COPY --from=poco-build /usr/local/include /usr/local/include
 COPY --from=poco-build /usr/local/lib /usr/local/lib
@@ -85,6 +89,7 @@ RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentr
     -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.crt
 
 COPY --from=owfms-build /owfms/cmake-build/owfms /openwifi/owfms
+COPY --from=owfms-build /vcpkg/installed/x64-linux/lib/ /usr/local/lib/
 COPY --from=cppkafka-build /cppkafka/cmake-build/src/lib/ /usr/local/lib/
 COPY --from=poco-build /poco/cmake-build/lib/ /usr/local/lib/
 
