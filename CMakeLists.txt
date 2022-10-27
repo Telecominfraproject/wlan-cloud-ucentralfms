@@ -115,9 +115,13 @@ add_executable( owfms
         src/framework/MicroService.cpp
         src/framework/MicroServiceExtra.h
         src/RESTObjects/RESTAPI_SecurityObjects.h src/RESTObjects/RESTAPI_SecurityObjects.cpp
-        src/RESTObjects/RESTAPI_ProvObjects.cpp src/RESTObjects/RESTAPI_ProvObjects.h
         src/RESTObjects/RESTAPI_GWobjects.h src/RESTObjects/RESTAPI_GWobjects.cpp
         src/RESTObjects/RESTAPI_FMSObjects.h src/RESTObjects/RESTAPI_FMSObjects.cpp
+        src/RESTObjects/RESTAPI_CertObjects.cpp src/RESTObjects/RESTAPI_CertObjects.h
+        src/RESTObjects/RESTAPI_OWLSobjects.cpp src/RESTObjects/RESTAPI_OWLSobjects.h
+        src/RESTObjects/RESTAPI_ProvObjects.cpp src/RESTObjects/RESTAPI_ProvObjects.h
+        src/RESTObjects/RESTAPI_AnalyticsObjects.cpp src/RESTObjects/RESTAPI_AnalyticsObjects.h
+        src/RESTObjects/RESTAPI_SubObjects.cpp src/RESTObjects/RESTAPI_SubObjects.h
         src/RESTAPI/RESTAPI_firmwaresHandler.cpp src/RESTAPI/RESTAPI_firmwaresHandler.h
         src/RESTAPI/RESTAPI_firmwareHandler.cpp src/RESTAPI/RESTAPI_firmwareHandler.h
         src/RESTAPI/RESTAPI_historyHandler.cpp src/RESTAPI/RESTAPI_historyHandler.h
