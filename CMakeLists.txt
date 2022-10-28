@@ -45,6 +45,7 @@ find_package(fmt        REQUIRED)
 find_package(ZLIB       REQUIRED)
 find_package(Poco       REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
 find_package(AWSSDK     REQUIRED COMPONENTS s3)
+find_package(ZLIB       REQUIRED)
 
 if(SMALL_BUILD)
     find_package(Poco REQUIRED COMPONENTS Crypto JWT Net Util NetSSL Data DataSQLite)
