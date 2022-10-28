@@ -4,6 +4,7 @@
 
 #include "orm_deviceInfo.h"
 #include "StorageService.h"
+#include "framework/utils.h"
 
 /*
             "serialNumber    varchar(36) UNIQUE PRIMARY KEY, "
@@ -47,7 +48,7 @@ namespace OpenWifi {
                     .revision = Revision,
                     .deviceType = DeviceType,
                     .endPoint = EndPoint,
-                    .lastUpdate = (uint64_t)OpenWifi::Now(),
+                    .lastUpdate = (uint64_t)Utils::Now(),
                     .status = "connected"};
             return CreateRecord(DI);
         }

@@ -8,6 +8,7 @@
 
 #include "framework/RESTAPI_utils.h"
 #include "framework/MicroServiceFuncs.h"
+#include "framework/utils.h"
 
 /*
             "Id              varchar(36) UNIQUE PRIMARY KEY, "
@@ -87,7 +88,7 @@ namespace OpenWifi {
     }
 
     void FirmwaresDB::RemoveOldFirmware() {
-        uint64_t Limit = OpenWifi::Now() - ManifestCreator()->MaxAge();
+        uint64_t Limit = Utils::Now() - ManifestCreator()->MaxAge();
         std::string WhereClause{"imageDate < " + std::to_string(Limit)};
         DeleteRecords(WhereClause);
     }

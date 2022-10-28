@@ -32,7 +32,7 @@ namespace OpenWifi {
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
 
-        uint64_t Limit = OpenWifi::Now() - MaxAge_, Rejected=0, Accepted=0, BadFormat=0, MissingJson=0;
+        uint64_t Limit = Utils::Now() - MaxAge_, Rejected=0, Accepted=0, BadFormat=0, MissingJson=0;
         for(auto &[Name,Entry]:BucketContent) {
             std::string C = Entry.S3ContentManifest;
 
@@ -95,7 +95,7 @@ namespace OpenWifi {
                 F.id = MicroServiceCreateUUID();
                 F.release = Release;
                 F.size = BucketEntry.S3Size;
-                F.created = OpenWifi::Now();
+                F.created = Utils::Now();
                 F.imageDate = BucketEntry.S3TimeStamp;
                 F.image = BucketEntry.Image;
                 F.uri = BucketEntry.URI;

@@ -6,6 +6,8 @@
 #include "StorageService.h"
 
 #include "framework/MicroServiceFuncs.h"
+#include "framework/utils.h"
+
 #include "fmt/format.h"
 
 /*
@@ -57,7 +59,7 @@ namespace OpenWifi {
                 .toRelease = NewVersion,
                 .commandUUID = "",
                 .revisionId = "",
-                .upgraded = OpenWifi::Now()};
+                .upgraded = Utils::Now()};
 
         FMSObjects::Firmware F;
         if (StorageService()->FirmwaresDB().GetFirmwareByRevision(NewVersion, DeviceType, F)) {

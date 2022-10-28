@@ -55,7 +55,7 @@ namespace OpenWifi {
             try {
                 poco_debug(Logger(),fmt::format("Preparing to upgrade {}",Entry.first));
                 auto CacheEntry = Cache_.find(Entry.first);
-                uint64_t now = OpenWifi::Now();
+                uint64_t now = Utils::Now();
                 std::string firmwareUpgrade;
                 if(CacheEntry == Cache_.end() || (CacheEntry->second.LastCheck-now)>300) {
                     //  get the firmware settings for that device.
