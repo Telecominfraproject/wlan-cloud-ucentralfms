@@ -12,6 +12,7 @@
 #include "RESTAPI/RESTAPI_deviceReportHandler.h"
 #include "RESTAPI/RESTAPI_deviceInformation_handler.h"
 #include "framework/RESTAPI_SystemCommand.h"
+#include "framework/RESTAPI_WebSocketServer.h"
 
 namespace OpenWifi {
 
@@ -26,7 +27,8 @@ namespace OpenWifi {
                 RESTAPI_connectedDeviceHandler,
                 RESTAPI_historyHandler,
                 RESTAPI_deviceReportHandler,
-                RESTAPI_deviceInformation_handler
+                RESTAPI_deviceInformation_handler,
+                RESTAPI_webSocketServer
             >(Path,Bindings,L, S, TransactionId);
     }
 
