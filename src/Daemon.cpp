@@ -19,6 +19,8 @@
 #include "AutoUpdater.h"
 #include "NewCommandHandler.h"
 
+#include "framework/UI_WebSocketClientServer.h"
+
 namespace OpenWifi {
     class Daemon *Daemon::instance_ = nullptr;
 
@@ -37,7 +39,8 @@ namespace OpenWifi {
                                             NewConnectionHandler(),
                                             ManifestCreator(),
                                             AutoUpdater(),
-                                            NewCommandHandler()
+                                            NewCommandHandler(),
+                                            UI_WebSocketClientServer()
                                    });
         }
         return instance_;
