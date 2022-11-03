@@ -102,6 +102,7 @@ add_executable( owfms
         src/framework/RESTAPI_RateLimiter.h
         src/framework/WebSocketLogger.h
         src/framework/RESTAPI_GenericServerAccounting.h
+        src/framework/RESTAPI_SystemConfiguration.h
         src/framework/CIDR.h
         src/framework/RESTAPI_Handler.cpp
         src/framework/RESTAPI_Handler.h
