@@ -1,6 +1,7 @@
 ARG DEBIAN_VERSION=11.5-slim
 ARG POCO_VERSION=poco-tip-v1
 ARG CPPKAFKA_VERSION=tip-v1
+ARG VCPKG_VERSION=2022.11.14
 
 FROM debian:$DEBIAN_VERSION AS build-base
 
@@ -45,7 +46,7 @@ ADD overlays /owfms/overlays
 ADD cmake /owfms/cmake
 ADD src /owfms/src
 ADD .git /owfms/.git
-RUN git clone https://github.com/microsoft/vcpkg && \
+RUN git clone --depth 1 --branch ${VCPKG_VERSION} https://github.com/microsoft/vcpkg && \
     ./vcpkg/bootstrap-vcpkg.sh && \
     mkdir /vcpkg/custom-triplets && \
     cp /vcpkg/triplets/x64-linux.cmake /vcpkg/custom-triplets/x64-linux.cmake && \
