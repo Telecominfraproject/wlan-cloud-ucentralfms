@@ -5,6 +5,11 @@ The uCentralFMS is a micro-service part of the OpenWiFi ecosystem. uCentralFMS i
 to facilitate the task of upgrade and maintaining the proper firmware for all the devices 
 used in your OpenWiFi solution. You may either [build it](#building) or use the [Docker version](#docker).
 
+## OpenAPI
+You may get static page with OpenAPI docs generated from the definition on [GitHub Page](https://telecominfraproject.github.io/wlan-cloud-ucentralfms/).
+
+Also you may use [Swagger UI](https://petstore.swagger.io/#/) with OpenAPI definition file raw link (i.e. [latest version file](https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentralfms/main/openapi/owfms.yaml)) to get interactive docs page.
+
 ## Building
 In order to build the uCentralFMS, you will need to install its dependencies, which includes the following:
 - cmake
