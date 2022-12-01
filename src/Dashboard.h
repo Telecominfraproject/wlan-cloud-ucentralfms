@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "framework/OpenWifiTypes.h"
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 #include "Poco/Logger.h"
