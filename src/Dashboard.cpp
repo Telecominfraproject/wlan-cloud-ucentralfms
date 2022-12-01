@@ -36,6 +36,7 @@ namespace OpenWifi {
                 FMSObjects::DeviceReport	NewData;
                 StorageService()->DevicesDB().GenerateDeviceReport(NewData);
                 LastRun_ = Utils::Now();
+                NewData.snapshot = LastRun_;
                 D = NewData;
                 std::lock_guard	G(DataMutex_);
                 DB_ = NewData;
