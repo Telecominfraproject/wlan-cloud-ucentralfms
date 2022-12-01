@@ -23,14 +23,5 @@ namespace OpenWifi {
         uint64_t LastRun_ = 0;
 
         void Generate(FMSObjects::DeviceReport &D, Poco::Logger &Logger);
-
-/*	  public:
-			void Create();
-			const FMSObjects::DeviceReport & Report() const { return DB_;}
-			inline void Reset() { LastRun_=0; DB_.reset(); }
-	  private:
-            FMSObjects::DeviceReport  	DB_;
-			uint64_t 				LastRun_=0;
-	};*/
     };
 }
