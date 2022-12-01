@@ -7,13 +7,44 @@
 #include "framework/utils.h"
 
 namespace OpenWifi {
-	void DeviceDashboard::Create() {
-		uint64_t Now = Utils::Now();
 
-		if(LastRun_==0 || (Now-LastRun_)>120) {
-			DB_.reset();
-			StorageService()->DevicesDB().GenerateDeviceReport(DB_);
-			LastRun_ = Now;
-		}
-	}
+    bool DeviceDashboard::Get(FMSObjects::DeviceReport &D, Poco::Logger & Logger) {
+        uint64_t Now = Utils::Now();
+        if(!ValidDashboard_ || LastRun_==0 || (Now-LastRun_)>120) {
+            Generate(D, Logger);
+        } else {
+            std::lock_guard	G(DataMutex_);
+            D = DB_;
+        }
+        return ValidDashboard_;
+    };
+
+    void DeviceDashboard::Generate(FMSObjects::DeviceReport &D, Poco::Logger & Logger ) {
+        if (GeneratingDashboard_.load()) {
+            // std::cout << "Trying to generate dashboard but already being generated" << std::endl;
+            while(GeneratingDashboard_.load()) {
+                Poco::Thread::trySleep(100);
+            }
+            std::lock_guard	G(DataMutex_);
+            D = DB_;
+        } else {
+            GeneratingDashboard_ = true;
+            ValidDashboard_ = false;
+            try {
+                // std::cout << "Generating dashboard." << std::endl;
+                poco_information(Logger, "DASHBOARD: Generating a new dashboard.");
+                FMSObjects::DeviceReport	NewData;
+                StorageService()->DevicesDB().GenerateDeviceReport(NewData);
+                LastRun_ = Utils::Now();
+                D = NewData;
+                std::lock_guard	G(DataMutex_);
+                DB_ = NewData;
+                ValidDashboard_=true;
+            } catch(...) {
+
+            }
+            GeneratingDashboard_ = false;
+        }
+    }
+
 }

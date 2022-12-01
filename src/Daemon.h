@@ -32,9 +32,7 @@ namespace OpenWifi {
 
         void PostInitialization(Poco::Util::Application &self);
         static Daemon *instance();
-        inline void ResetDashboard() { DB_.Reset(); }
-        inline void CreateDashboard() { DB_.Create(); }
-        inline const FMSObjects::DeviceReport & GetDashboard() { return DB_.Report(); }
+        inline DeviceDashboard & GetDashboard() { return DB_; }
 
     private:
         static Daemon 				*instance_;
