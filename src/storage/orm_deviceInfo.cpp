@@ -87,10 +87,13 @@ namespace OpenWifi {
             FMSObjects::FirmwareAgeDetails Age;
             if (StorageService()->FirmwaresDB().ComputeFirmwareAge(D.deviceType, D.revision, Age)) {
                 if (Age.latest) {
+                    std::cout << "Latest..." << std::endl;
                     UpdateCountedMap(Report.UsingLatest_, D.revision);
                 } else if (Age.age == 0) {
+                    std::cout << "Too old..." << std::endl;
                     UpdateCountedMap(Report.UnknownFirmwares_, D.revision);
                 } else {
+                    std::cout << "Age: " << Age.age << std::endl;
                     UpdateCountedMap(Report.totalSecondsOld_,"total_seconds", Age.age);
                 }
             }
