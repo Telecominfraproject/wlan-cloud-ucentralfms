@@ -147,7 +147,7 @@ configProperties:
   s3.region: us-east-1
   s3.retry: 60
   s3.bucket.uri: ucentral-ap-firmware.s3.amazonaws.com
-  firmwaredb.refresh: 1800
+  firmwaredb.refresh: 86400
   # ALB
   alb.enable: "true"
   alb.port: 16104
