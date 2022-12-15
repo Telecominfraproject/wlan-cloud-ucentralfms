@@ -43,7 +43,7 @@ namespace OpenWifi {
             auto Tokens = Poco::StringTokenizer(Revision,"/", Poco::StringTokenizer::TOK_TRIM);
             if(Tokens.count()!=2)
                 return false;
-            return (Tokens[1].substr(0,5) == "IP-v");
+            return (Tokens[1].substr(0,4) == "IP-v");
         }
 
         void DumpCache();
