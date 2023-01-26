@@ -10,7 +10,7 @@
 namespace OpenWifi {
     void
     RESTAPI_firmwaresHandler::DoGet() {
-        std::string DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
+        std::string DeviceType = ORM::Escape(GetParameter(RESTAPI::Protocol::DEVICETYPE, ""));
         bool IdOnly = GetBoolParameter(RESTAPI::Protocol::IDONLY);
         bool LatestOnly = GetBoolParameter(RESTAPI::Protocol::LATESTONLY);
         bool rcOnly = GetBoolParameter("rcOnly");

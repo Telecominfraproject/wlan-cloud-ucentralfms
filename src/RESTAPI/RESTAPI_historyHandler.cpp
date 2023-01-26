@@ -9,7 +9,7 @@
 namespace OpenWifi {
     void
     RESTAPI_historyHandler::DoGet() {
-        auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
+        auto SerialNumber = ORM::Escape(GetBinding(RESTAPI::Protocol::SERIALNUMBER, ""));
 
         if(SerialNumber.empty()) {
             return BadRequest(RESTAPI::Errors::MissingSerialNumber);

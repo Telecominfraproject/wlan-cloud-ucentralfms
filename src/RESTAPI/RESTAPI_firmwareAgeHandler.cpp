@@ -37,8 +37,8 @@ namespace OpenWifi {
             Answer.set(RESTAPI::Protocol::AGES, Objects);
             return ReturnObject(Answer);
         } else {
-            auto DeviceType = GetParameter(RESTAPI::Protocol::DEVICETYPE, "");
-            auto Revision = GetParameter(RESTAPI::Protocol::REVISION, "");
+            auto DeviceType = ORM::Escape(GetParameter(RESTAPI::Protocol::DEVICETYPE, ""));
+            auto Revision = ORM::Escape(GetParameter(RESTAPI::Protocol::REVISION, ""));
 
             if (DeviceType.empty() || Revision.empty()) {
                 return BadRequest(RESTAPI::Errors::BothDeviceTypeRevision);
