@@ -119,6 +119,14 @@ getfirmwares() {
 	jq < ${result_file}
 }
 
+updatefirmwares() {
+    curl  ${FLAGS} -X PUT "https://${OWFMS}/api/v1/firmwares?update=true" \
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${token}" \
+        -H "Accept: application/json" > ${result_file}
+    jq < ${result_file}
+}
+
 latestfirmware() {
     curl  ${FLAGS} -X GET "https://${OWFMS}/api/v1/firmwares?latestOnly=true&deviceType=$1" \
         -H "Content-Type: application/json" \
@@ -357,6 +365,7 @@ shopt -s nocasematch
 case "$1" in
     "login") login; help  ; logout ;;
     "getfirmwares") login; getfirmwares "$2"; logout ;;
+    "updatefirmwares") login; updatefirmwares "$2"; logout ;;
     "latestfirmware") login; latestfirmware "$2"; logout ;;
     "latestfirmwarerc") login; latestfirmwarerc "$2"; logout ;;
     "revisions") login; revisions; logout ;;
