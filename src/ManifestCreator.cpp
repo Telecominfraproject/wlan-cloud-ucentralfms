@@ -42,6 +42,7 @@ namespace OpenWifi {
         poco_information(Logger(), fmt::format("Found {} firmware entries in S3 repository.", BucketList.size()));
         ComputeManifest(BucketList);
         AddManifestToDB(BucketList);
+        LastUpdate_ = Utils::Now();
         UpdateRunning_.clear(std::memory_order_release);
     }
 

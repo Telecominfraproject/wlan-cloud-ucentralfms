@@ -49,6 +49,7 @@ class ManifestCreator : public SubSystemServer, Poco::Runnable {
         void onTimer(Poco::Timer & timer);
         bool RunUpdateTask();
         void run() override;
+        std::uint64_t LastUpdate() const { return LastUpdate_; }
 
     private:
         std::atomic_bool            Running_ = false;
@@ -65,6 +66,7 @@ class ManifestCreator : public SubSystemServer, Poco::Runnable {
         std::unique_ptr<Poco::TimerCallback<ManifestCreator>>   ManifestCreatorCallBack_;
         std::atomic_flag            UpdateRunning_ = ATOMIC_FLAG_INIT;
         Poco::Thread                RunnerThread_;
+        std::uint64_t               LastUpdate_=0;
 
         ManifestCreator() noexcept:
                 SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {

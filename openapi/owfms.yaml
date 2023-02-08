@@ -476,6 +476,11 @@ paths:
             type: boolean
             default: false
           required: false
+        - in: query
+          name: updateTimeOnly
+          schema:
+            type: boolean
+          required: false
       responses:
         200:
           description: List firmwares
@@ -483,6 +488,11 @@ paths:
             application/json:
               schema:
                 oneOf:
+                  - type: object
+                    properties:
+                      lastUpdateTime:
+                        type: integer
+                        format: int64
                   - $ref: '#/components/schemas/FirmwareDetailsList'
                   - $ref: '#/components/schemas/FirmwareDetails'
         403:

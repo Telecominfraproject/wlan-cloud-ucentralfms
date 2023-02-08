@@ -15,6 +15,12 @@ namespace OpenWifi {
         bool LatestOnly = GetBoolParameter(RESTAPI::Protocol::LATESTONLY);
         bool rcOnly = GetBoolParameter("rcOnly");
 
+        if(GetBoolParameter("updateTimeOnly")) {
+            Poco::JSON::Object  Answer;
+            Answer.set("lastUpdateTime", ManifestCreator()->LastUpdate());
+            return ReturnObject(Answer);
+        }
+
         if(GetBoolParameter(RESTAPI::Protocol::DEVICESET)) {
             auto Revisions = LatestFirmwareCache()->GetDevices();
             Poco::JSON::Array ObjectArray;
