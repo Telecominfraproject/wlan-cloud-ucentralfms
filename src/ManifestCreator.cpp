@@ -83,13 +83,21 @@ namespace OpenWifi {
 
     bool ManifestCreator::AddManifestToDB(S3BucketContent & BucketContent) {
 
+        //  remove all staging names
+        for(auto it = BucketContent.begin(); it!=end(BucketContent);) {
+            if(it->second.URI.find("-staging-")!=std::string::npos) {
+                it = BucketContent.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        //  Now remove all DB entries that do not appear in the Latest manifest
+        StorageService()->FirmwaresDB().RemoveOldDBEntriesNotInManifest(BucketContent);
+
         for(auto &[Release,BucketEntry]:BucketContent) {
             FMSObjects::Firmware    F;
             auto R = Release;
-
-            // skip staging releases.
-            if(BucketEntry.URI.find("-staging-")!=std::string::npos)
-                continue;
 
             if(BucketEntry.Valid && !StorageService()->FirmwaresDB().GetFirmwareByName(R,BucketEntry.Compatible,F)) {
                 F.id = MicroServiceCreateUUID();

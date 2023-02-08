@@ -175,6 +175,32 @@ namespace OpenWifi {
         return false;
     }
 
+    uint64_t FirmwaresDB::RemoveOldDBEntriesNotInManifest(const OpenWifi::S3BucketContent &Bucket) {
+        Poco::Data::Session     Sess = Pool_.get();
+        Poco::Data::Statement   Select(Sess);
+
+        Select << "SELECT Id, Release FROM " + TableName_ ;
+        Select.execute();
+
+        Poco::Data::RecordSet   RSet(Select);
+        std::vector<std::string>    IdsToBeRemoved;
+
+        bool More = RSet.moveFirst();
+        while(More) {
+            auto Id = RSet[0].convert<std::string>();
+            auto Release  = RSet[1].convert<std::string>();
+            if(Bucket.find(Release)==end(Bucket)) {
+                IdsToBeRemoved.emplace_back(Id);
+            }
+            More = RSet.moveNext();
+        }
+
+        for(const auto &id:IdsToBeRemoved) {
+            DeleteRecord("id",id);
+        }
+
+        return IdsToBeRemoved.size();
+    }
 }
 
 template<> void ORM::DB<OpenWifi::FirmwaresRecordTuple, OpenWifi::FMSObjects::Firmware>::Convert(const OpenWifi::FirmwaresRecordTuple &T, OpenWifi::FMSObjects::Firmware &F ) {

@@ -6,6 +6,7 @@
 
 #include "framework/orm.h"
 #include "RESTObjects/RESTAPI_FMSObjects.h"
+#include "ManifestCreator.h"
 
 namespace OpenWifi {
     typedef Poco::Tuple<
@@ -44,6 +45,7 @@ namespace OpenWifi {
         bool GetFirmwares(uint64_t From, uint64_t HowMany, const std::string & Compatible, FMSObjects::FirmwareVec & Firmwares);
         void PopulateLatestFirmwareCache();
         bool ComputeFirmwareAge(const std::string & DeviceType, const std::string & Revision, FMSObjects::FirmwareAgeDetails &AgeDetails);
+        uint64_t RemoveOldDBEntriesNotInManifest(const S3BucketContent &Bucket);
 
     private:
     };
