@@ -93,7 +93,8 @@ namespace OpenWifi {
         }
 
         //  Now remove all DB entries that do not appear in the Latest manifest
-        StorageService()->FirmwaresDB().RemoveOldDBEntriesNotInManifest(BucketContent);
+        auto RemovedEntries = StorageService()->FirmwaresDB().RemoveOldDBEntriesNotInManifest(BucketContent);
+        poco_information(Logger(),fmt::format("Removed {} DB entries that no longer are relevant.", RemovedEntries));
 
         for(auto &[Release,BucketEntry]:BucketContent) {
             FMSObjects::Firmware    F;
