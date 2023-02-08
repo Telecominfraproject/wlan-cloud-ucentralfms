@@ -490,6 +490,29 @@ paths:
         404:
           $ref: '#/components/responses/NotFound'
 
+    put:
+      tags:
+        - Firmware
+      summary: Force a DB refresh.
+      description: Force a DB refresh.
+      operationId: updateFirmwareList
+      parameters:
+        - in: query
+          description: Force the firmware DB update
+          name: update
+          schema:
+            type: boolean
+          required: false
+      responses:
+        200:
+          $ref: '#/components/responses/Success'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        403:
+          $ref: '#/components/responses/Unauthorized'
+        404:
+          $ref: '#/components/responses/NotFound'
+
   /firmware/{id}:
     get:
       tags:

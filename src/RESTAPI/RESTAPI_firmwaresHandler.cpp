@@ -101,4 +101,20 @@ namespace OpenWifi {
         Answer.set(RESTAPI::Protocol::FIRMWARES, ObjectArray);
         ReturnObject(Answer);
     }
+
+    void RESTAPI_firmwaresHandler::DoPut() {
+        if(UserInfo_.userinfo.userRole!=SecurityObjects::ROOT &&
+        UserInfo_.userinfo.userRole!=SecurityObjects::ADMIN) {
+            return UnAuthorized(RESTAPI::Errors::ACCESS_DENIED);
+        }
+
+        if(GetBoolParameter("update")) {
+            if(ManifestCreator()->RunUpdateTask()) {
+                return OK();
+            }
+            return BadRequest(RESTAPI::Errors::FirmwareBDInProgress);
+        }
+
+        return BadRequest(RESTAPI::Errors::MissingOrInvalidParameters);
+    }
 }

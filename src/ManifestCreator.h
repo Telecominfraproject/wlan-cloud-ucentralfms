@@ -28,7 +28,7 @@ namespace OpenWifi {
     };
     typedef std::map<const std::string, S3BucketEntry>    S3BucketContent;
 
-    class ManifestCreator : public SubSystemServer {
+class ManifestCreator : public SubSystemServer, Poco::Runnable {
     public:
         static auto instance() {
             static auto instance_ = new ManifestCreator;
@@ -47,6 +47,8 @@ namespace OpenWifi {
         void Print(const S3BucketContent &B);
         uint64_t MaxAge() const { return MaxAge_; }
         void onTimer(Poco::Timer & timer);
+        bool RunUpdateTask();
+        void run() override;
 
     private:
         std::atomic_bool            Running_ = false;
@@ -61,6 +63,8 @@ namespace OpenWifi {
         uint64_t                    MaxAge_ = 0 ;
         Poco::Timer                                             Timer_;
         std::unique_ptr<Poco::TimerCallback<ManifestCreator>>   ManifestCreatorCallBack_;
+        std::atomic_flag            UpdateRunning_ = ATOMIC_FLAG_INIT;
+        Poco::Thread                RunnerThread_;
 
         ManifestCreator() noexcept:
                 SubSystemServer("ManifestCreator", "MANIFEST-MGR", "manifestcreator") {

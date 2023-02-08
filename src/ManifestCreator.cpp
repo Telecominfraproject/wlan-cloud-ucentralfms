@@ -21,13 +21,28 @@ namespace OpenWifi {
 
     void ManifestCreator::onTimer([[maybe_unused]] Poco::Timer &timer) {
         Utils::SetThreadName("manifest");
-        poco_information(Logger(),"Performing DB refresh");
+        RunUpdateTask();
+    }
+
+    bool ManifestCreator::RunUpdateTask() {
+        if(!UpdateRunning_.test_and_set(std::memory_order_acquire)) {
+            poco_information(Logger(), "Performing DB refresh");
+            RunnerThread_.start(*this);
+            return true;
+        } else {
+            poco_information(Logger(), "DB refresh already in progress");
+            return false;
+        }
+    }
+
+    void ManifestCreator::run() {
         S3BucketContent BucketList;
         StorageService()->FirmwaresDB().RemoveOldFirmware();
         ReadBucket(BucketList);
-        poco_information(Logger(),fmt::format("Found {} firmware entries in S3 repository.", BucketList.size()));
+        poco_information(Logger(), fmt::format("Found {} firmware entries in S3 repository.", BucketList.size()));
         ComputeManifest(BucketList);
         AddManifestToDB(BucketList);
+        UpdateRunning_.clear(std::memory_order_release);
     }
 
     bool ManifestCreator::ComputeManifest(S3BucketContent &BucketContent) {
