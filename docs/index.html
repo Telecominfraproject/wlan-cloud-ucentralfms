@@ -1109,10 +1109,21 @@ ul.nav-tabs {
 };
     defs["getFirmwareList_200_response"] = {
   "oneOf" : [ {
+    "$ref" : "#/components/schemas/getFirmwareList_200_response_oneOf"
+  }, {
     "$ref" : "#/components/schemas/FirmwareDetailsList"
   }, {
     "$ref" : "#/components/schemas/FirmwareDetails"
   } ]
+};
+    defs["getFirmwareList_200_response_oneOf"] = {
+  "type" : "object",
+  "properties" : {
+    "lastUpdateTime" : {
+      "type" : "integer",
+      "format" : "int64"
+    }
+  }
 };
     defs["getRevisionHistory_200_response"] = {
   "oneOf" : [ {
@@ -5191,7 +5202,7 @@ Specify lits of serial  numbers to retrive age for
 -H "X-API-KEY: [[apiKey]]" \
  -H "Authorization: Bearer [[accessToken]]" \
  -H "Accept: application/json" \
- "https://localhost:16003/api/v1/firmwares?offset=56&limit=56&filter=filter_example&latestOnly=true&deviceType=deviceType_example&revisionSet=true&deviceSet=true&rcOnly=true"
+ "https://localhost:16003/api/v1/firmwares?offset=56&limit=56&filter=filter_example&latestOnly=true&deviceType=deviceType_example&revisionSet=true&deviceSet=true&rcOnly=true&updateTimeOnly=true"
 </code></pre>
                           </div>
                           <div class="tab-pane" id="examples-Firmware-getFirmwareList-0-java">
@@ -5227,9 +5238,10 @@ public class FirmwareApiExample {
         Boolean revisionSet = true; // Boolean | 
         Boolean deviceSet = true; // Boolean | 
         Boolean rcOnly = true; // Boolean | 
+        Boolean updateTimeOnly = true; // Boolean | 
 
         try {
-            getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly);
+            getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly, updateTimeOnly);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling FirmwareApi#getFirmwareList");
@@ -5254,9 +5266,10 @@ public class FirmwareApiExample {
         Boolean revisionSet = true; // Boolean | 
         Boolean deviceSet = true; // Boolean | 
         Boolean rcOnly = true; // Boolean | 
+        Boolean updateTimeOnly = true; // Boolean | 
 
         try {
-            getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly);
+            getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly, updateTimeOnly);
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling FirmwareApi#getFirmwareList");
@@ -5290,6 +5303,7 @@ String *deviceType = deviceType_example; //  (optional) (default to null)
 Boolean *revisionSet = true; //  (optional) (default to false)
 Boolean *deviceSet = true; //  (optional) (default to null)
 Boolean *rcOnly = true; //  (optional) (default to false)
+Boolean *updateTimeOnly = true; //  (optional) (default to null)
 
 // Returns a list of firmwares.
 [apiInstance getFirmwareListWith:offset
@@ -5300,6 +5314,7 @@ Boolean *rcOnly = true; //  (optional) (default to false)
     revisionSet:revisionSet
     deviceSet:deviceSet
     rcOnly:rcOnly
+    updateTimeOnly:updateTimeOnly
               completionHandler: ^(getFirmwareList_200_response output, NSError* error) {
     if (output) {
         NSLog(@"%@", output);
@@ -5335,7 +5350,8 @@ var opts = {
   'deviceType': deviceType_example, // {String} 
   'revisionSet': true, // {Boolean} 
   'deviceSet': true, // {Boolean} 
-  'rcOnly': true // {Boolean} 
+  'rcOnly': true, // {Boolean} 
+  'updateTimeOnly': true // {Boolean} 
 };
 
 var callback = function(error, data, response) {
@@ -5382,10 +5398,11 @@ namespace Example
             var revisionSet = true;  // Boolean |  (optional)  (default to false)
             var deviceSet = true;  // Boolean |  (optional)  (default to null)
             var rcOnly = true;  // Boolean |  (optional)  (default to false)
+            var updateTimeOnly = true;  // Boolean |  (optional)  (default to null)
 
             try {
                 // Returns a list of firmwares.
-                getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly);
+                getFirmwareList_200_response result = apiInstance.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly, updateTimeOnly);
                 Debug.WriteLine(result);
             } catch (Exception e) {
                 Debug.Print("Exception when calling FirmwareApi.getFirmwareList: " + e.Message );
@@ -5418,9 +5435,10 @@ $deviceType = deviceType_example; // String |
 $revisionSet = true; // Boolean | 
 $deviceSet = true; // Boolean | 
 $rcOnly = true; // Boolean | 
+$updateTimeOnly = true; // Boolean | 
 
 try {
-    $result = $api_instance->getFirmwareList($offset, $limit, $filter, $latestOnly, $deviceType, $revisionSet, $deviceSet, $rcOnly);
+    $result = $api_instance->getFirmwareList($offset, $limit, $filter, $latestOnly, $deviceType, $revisionSet, $deviceSet, $rcOnly, $updateTimeOnly);
     print_r($result);
 } catch (Exception $e) {
     echo 'Exception when calling FirmwareApi->getFirmwareList: ', $e->getMessage(), PHP_EOL;
@@ -5451,9 +5469,10 @@ my $deviceType = deviceType_example; # String |
 my $revisionSet = true; # Boolean | 
 my $deviceSet = true; # Boolean | 
 my $rcOnly = true; # Boolean | 
+my $updateTimeOnly = true; # Boolean | 
 
 eval {
-    my $result = $api_instance->getFirmwareList(offset => $offset, limit => $limit, filter => $filter, latestOnly => $latestOnly, deviceType => $deviceType, revisionSet => $revisionSet, deviceSet => $deviceSet, rcOnly => $rcOnly);
+    my $result = $api_instance->getFirmwareList(offset => $offset, limit => $limit, filter => $filter, latestOnly => $latestOnly, deviceType => $deviceType, revisionSet => $revisionSet, deviceSet => $deviceSet, rcOnly => $rcOnly, updateTimeOnly => $updateTimeOnly);
     print Dumper($result);
 };
 if ($@) {
@@ -5486,10 +5505,11 @@ deviceType = deviceType_example # String |  (optional) (default to null)
 revisionSet = true # Boolean |  (optional) (default to false)
 deviceSet = true # Boolean |  (optional) (default to null)
 rcOnly = true # Boolean |  (optional) (default to false)
+updateTimeOnly = true # Boolean |  (optional) (default to null)
 
 try:
     # Returns a list of firmwares.
-    api_response = api_instance.get_firmware_list(offset=offset, limit=limit, filter=filter, latestOnly=latestOnly, deviceType=deviceType, revisionSet=revisionSet, deviceSet=deviceSet, rcOnly=rcOnly)
+    api_response = api_instance.get_firmware_list(offset=offset, limit=limit, filter=filter, latestOnly=latestOnly, deviceType=deviceType, revisionSet=revisionSet, deviceSet=deviceSet, rcOnly=rcOnly, updateTimeOnly=updateTimeOnly)
     pprint(api_response)
 except ApiException as e:
     print("Exception when calling FirmwareApi->getFirmwareList: %s\n" % e)</code></pre>
@@ -5507,9 +5527,10 @@ pub fn main() {
     let revisionSet = true; // Boolean
     let deviceSet = true; // Boolean
     let rcOnly = true; // Boolean
+    let updateTimeOnly = true; // Boolean
 
     let mut context = FirmwareApi::Context::default();
-    let result = client.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly, &context).wait();
+    let result = client.getFirmwareList(offset, limit, filter, latestOnly, deviceType, revisionSet, deviceSet, rcOnly, updateTimeOnly, &context).wait();
 
     println!("{:?}", result);
 }
@@ -5670,6 +5691,23 @@ Return only the latest firmware
 
 
     <div id="d2e199_getFirmwareList_rcOnly">
+        <div class="json-schema-view">
+            <div class="primitive">
+                <span class="type">
+                    Boolean
+                </span>
+
+            </div>
+        </div>
+    </div>
+</td>
+</tr>
+
+                                <tr><td style="width:150px;">updateTimeOnly</td>
+<td>
+
+
+    <div id="d2e199_getFirmwareList_updateTimeOnly">
         <div class="json-schema-view">
             <div class="primitive">
                 <span class="type">
