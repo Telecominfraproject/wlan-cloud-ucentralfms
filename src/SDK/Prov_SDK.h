@@ -8,8 +8,7 @@
 
 namespace OpenWifi::SDK::Prov {
 
-    bool GetFirmwareOptions( const std::string & serialNumber, std::string &firmwareUpgrade,
-                             bool &firmwareRCOnly);
+	bool GetFirmwareOptions(const std::string &serialNumber, std::string &firmwareUpgrade,
+							bool &firmwareRCOnly);
 
 };
-

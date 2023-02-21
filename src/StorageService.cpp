@@ -10,40 +10,39 @@
 
 namespace OpenWifi {
 
-    int Storage::Start() {
-        poco_information(Logger(),"Starting...");
-        std::lock_guard		Guard(Mutex_);
+	int Storage::Start() {
+		poco_information(Logger(), "Starting...");
+		std::lock_guard Guard(Mutex_);
 
-        StorageClass::Start();
+		StorageClass::Start();
 
-        HistoryDB_ = std::make_unique<OpenWifi::HistoryDB>(dbType_,*Pool_, Logger());
-        FirmwaresDB_ = std::make_unique<OpenWifi::FirmwaresDB>(dbType_,*Pool_, Logger());
-        DevicesDB_ = std::make_unique<OpenWifi::DevicesDB>(dbType_,*Pool_, Logger());
+		HistoryDB_ = std::make_unique<OpenWifi::HistoryDB>(dbType_, *Pool_, Logger());
+		FirmwaresDB_ = std::make_unique<OpenWifi::FirmwaresDB>(dbType_, *Pool_, Logger());
+		DevicesDB_ = std::make_unique<OpenWifi::DevicesDB>(dbType_, *Pool_, Logger());
 
-        HistoryDB_->Create();
-        FirmwaresDB_->Create();
-        DevicesDB_->Create();
+		HistoryDB_->Create();
+		FirmwaresDB_->Create();
+		DevicesDB_->Create();
 
-        return 0;
-    }
+		return 0;
+	}
 
-    void Storage::Stop() {
-        poco_information(Logger(),"Stopping...");
-        std::lock_guard		Guard(Mutex_);
-        StorageClass::Stop();
-        poco_information(Logger(),"Stopped...");
-    }
+	void Storage::Stop() {
+		poco_information(Logger(), "Stopping...");
+		std::lock_guard Guard(Mutex_);
+		StorageClass::Stop();
+		poco_information(Logger(), "Stopped...");
+	}
 
-    std::string Storage::TrimRevision(const std::string &R) {
-        std::string Result = R;
-/*        if(R.size()>63)
-            Result = R.substr(0,63);
-        else
-            Result = R;
-*/
-        return Result;
-    }
+	std::string Storage::TrimRevision(const std::string &R) {
+		std::string Result = R;
+		/*        if(R.size()>63)
+					Result = R.substr(0,63);
+				else
+					Result = R;
+		*/
+		return Result;
+	}
 
-
-}
-// namespace
+} // namespace OpenWifi
+  // namespace

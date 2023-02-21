@@ -12,42 +12,39 @@
 
 #include "RESTObjects/RESTAPI_FMSObjects.h"
 
-#include "storage/orm_history.h"
-#include "storage/orm_firmwares.h"
 #include "storage/orm_deviceInfo.h"
+#include "storage/orm_firmwares.h"
+#include "storage/orm_history.h"
 
 namespace OpenWifi {
 
-    class Storage : public StorageClass {
-    public:
+	class Storage : public StorageClass {
+	  public:
+		int Start() override;
+		void Stop() override;
 
-        int 	Start() override;
-        void 	Stop() override;
+		int Create_Tables();
+		int Create_DeviceTypes();
+		int Create_DeviceInfo();
 
-        int Create_Tables();
-        int Create_DeviceTypes();
-        int Create_DeviceInfo();
+		bool BuildFirmwareManifest(Poco::JSON::Object &Manifest, uint64_t &Version);
 
-        bool BuildFirmwareManifest(Poco::JSON::Object & Manifest, uint64_t & Version);
+		static std::string TrimRevision(const std::string &R);
+		static auto instance() {
+			static auto instance_ = new Storage;
+			return instance_;
+		}
 
-        static std::string TrimRevision(const std::string &R);
-        static auto instance() {
-            static auto instance_ = new Storage;
-            return instance_;
-        }
-
-        OpenWifi::HistoryDB & HistoryDB() { return * HistoryDB_; }
-        OpenWifi::FirmwaresDB & FirmwaresDB() { return * FirmwaresDB_; }
-        OpenWifi::DevicesDB & DevicesDB() { return * DevicesDB_; }
+		OpenWifi::HistoryDB &HistoryDB() { return *HistoryDB_; }
+		OpenWifi::FirmwaresDB &FirmwaresDB() { return *FirmwaresDB_; }
+		OpenWifi::DevicesDB &DevicesDB() { return *DevicesDB_; }
 
 	  private:
+		std::unique_ptr<OpenWifi::HistoryDB> HistoryDB_;
+		std::unique_ptr<OpenWifi::FirmwaresDB> FirmwaresDB_;
+		std::unique_ptr<OpenWifi::DevicesDB> DevicesDB_;
+	};
 
-        std::unique_ptr<OpenWifi::HistoryDB>        HistoryDB_;
-        std::unique_ptr<OpenWifi::FirmwaresDB>      FirmwaresDB_;
-        std::unique_ptr<OpenWifi::DevicesDB>        DevicesDB_;
-    };
+	inline auto StorageService() { return Storage::instance(); };
 
-    inline auto StorageService() { return Storage::instance(); };
-
-}  // namespace
-
+} // namespace OpenWifi

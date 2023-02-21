@@ -8,7 +8,7 @@
 
 namespace OpenWifi::SDK::GW {
 
-    bool SendFirmwareUpgradeCommand( const std::string & serialNumber, const std::string & URI, uint64_t When = 0 );
+	bool SendFirmwareUpgradeCommand(const std::string &serialNumber, const std::string &URI,
+									uint64_t When = 0);
 
 };
-

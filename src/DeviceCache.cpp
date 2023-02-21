@@ -6,45 +6,39 @@
 
 namespace OpenWifi {
 
-    int DeviceCache::Start() {
-        poco_information(Logger(),"Starting...");
-        return 0;
-    }
+	int DeviceCache::Start() {
+		poco_information(Logger(), "Starting...");
+		return 0;
+	}
 
-    void DeviceCache::Stop() {
-        poco_information(Logger(),"Stopping...");
-        poco_information(Logger(),"Stopped...");
-    }
+	void DeviceCache::Stop() {
+		poco_information(Logger(), "Stopping...");
+		poco_information(Logger(), "Stopped...");
+	}
 
-    void DeviceCache::AddToCache(
-                        const std::string &SerialNumber, const std::string & DeviceType,
-                        const std::string &Host, const std::string &Revision) {
-        std::lock_guard G(Mutex_);
-        auto Device = DeviceCache_.find(SerialNumber);
+	void DeviceCache::AddToCache(const std::string &SerialNumber, const std::string &DeviceType,
+								 const std::string &Host, const std::string &Revision) {
+		std::lock_guard G(Mutex_);
+		auto Device = DeviceCache_.find(SerialNumber);
 
-        if(Device==DeviceCache_.end()) {
-            DeviceCache_[SerialNumber]=DeviceCacheEntry{
-                                                .deviceType=DeviceType,
-                                                .host=Host,
-                                                .revision=Revision};
-        } else {
-            Device->second.revision=Revision;
-            Device->second.host=Host;
-            Device->second.deviceType=DeviceType;
-        }
-    }
+		if (Device == DeviceCache_.end()) {
+			DeviceCache_[SerialNumber] =
+				DeviceCacheEntry{.deviceType = DeviceType, .host = Host, .revision = Revision};
+		} else {
+			Device->second.revision = Revision;
+			Device->second.host = Host;
+			Device->second.deviceType = DeviceType;
+		}
+	}
 
-    bool DeviceCache::GetDevice(const std::string &SerialNumber, DeviceCacheEntry & E) {
-        std::lock_guard G(Mutex_);
-        auto Device = DeviceCache_.find(SerialNumber);
-        if(Device==DeviceCache_.end())
-            return false;
-        E=Device->second;
-        return true;
-    }
+	bool DeviceCache::GetDevice(const std::string &SerialNumber, DeviceCacheEntry &E) {
+		std::lock_guard G(Mutex_);
+		auto Device = DeviceCache_.find(SerialNumber);
+		if (Device == DeviceCache_.end())
+			return false;
+		E = Device->second;
+		return true;
+	}
 
-
-    void DeviceCache::DumpCache() {
-
-    }
-}
+	void DeviceCache::DumpCache() {}
+} // namespace OpenWifi

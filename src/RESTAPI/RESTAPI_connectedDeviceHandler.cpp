@@ -9,19 +9,19 @@
 
 namespace OpenWifi {
 
-    void RESTAPI_connectedDeviceHandler::DoGet() {
-        auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER,"");
+	void RESTAPI_connectedDeviceHandler::DoGet() {
+		auto SerialNumber = GetBinding(RESTAPI::Protocol::SERIALNUMBER, "");
 
-        if(SerialNumber.empty()) {
-            return BadRequest(RESTAPI::Errors::MissingSerialNumber);
-        }
+		if (SerialNumber.empty()) {
+			return BadRequest(RESTAPI::Errors::MissingSerialNumber);
+		}
 
-        FMSObjects::DeviceConnectionInformation DevInfo;
-        if(StorageService()->DevicesDB().GetDevice(SerialNumber, DevInfo)) {
-            Poco::JSON::Object  Answer;
-            DevInfo.to_json(Answer);
-            return ReturnObject(Answer);
-        }
-        NotFound();
-    }
-}
+		FMSObjects::DeviceConnectionInformation DevInfo;
+		if (StorageService()->DevicesDB().GetDevice(SerialNumber, DevInfo)) {
+			Poco::JSON::Object Answer;
+			DevInfo.to_json(Answer);
+			return ReturnObject(Answer);
+		}
+		NotFound();
+	}
+} // namespace OpenWifi

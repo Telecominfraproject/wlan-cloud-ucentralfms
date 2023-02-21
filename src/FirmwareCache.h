@@ -12,30 +12,29 @@
 
 namespace OpenWifi {
 
-    typedef std::map<std::string,std::shared_ptr<FMSObjects::Firmware>> FirmwareCacheMap;
+	typedef std::map<std::string, std::shared_ptr<FMSObjects::Firmware>> FirmwareCacheMap;
 
-    class FirmwareCache: public SubSystemServer {
-    public:
-        static auto instance() {
-            static auto instance_= new FirmwareCache;
-            return instance_;
-        }
+	class FirmwareCache : public SubSystemServer {
+	  public:
+		static auto instance() {
+			static auto instance_ = new FirmwareCache;
+			return instance_;
+		}
 
-        int Start() override;
-        void Stop() override;
+		int Start() override;
+		void Stop() override;
 
-        std::shared_ptr<FMSObjects::Firmware> GetFirmware(const std::string & DeviceType, const std::string & Revision);
-        std::shared_ptr<FMSObjects::Firmware> AddFirmware(const FMSObjects::Firmware &F);
+		std::shared_ptr<FMSObjects::Firmware> GetFirmware(const std::string &DeviceType,
+														  const std::string &Revision);
+		std::shared_ptr<FMSObjects::Firmware> AddFirmware(const FMSObjects::Firmware &F);
 
-    private:
-        std::atomic_bool        Running_=false;
-        FirmwareCacheMap        Cache_;
-        explicit FirmwareCache() noexcept:
-                SubSystemServer("FirmwareCache", "FIRMWARE-CACHE", "firmwarecache")
-        {
-        }
-    };
+	  private:
+		std::atomic_bool Running_ = false;
+		FirmwareCacheMap Cache_;
+		explicit FirmwareCache() noexcept
+			: SubSystemServer("FirmwareCache", "FIRMWARE-CACHE", "firmwarecache") {}
+	};
 
-    inline auto FirmwareCache() { return FirmwareCache::instance(); }
+	inline auto FirmwareCache() { return FirmwareCache::instance(); }
 
-}
+} // namespace OpenWifi

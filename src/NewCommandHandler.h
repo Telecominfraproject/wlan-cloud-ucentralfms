@@ -4,35 +4,33 @@
 
 #pragma once
 
-#include "framework/SubSystemServer.h"
 #include "framework/OpenWifiTypes.h"
+#include "framework/SubSystemServer.h"
 
 namespace OpenWifi {
 
-    class NewCommandHandler : public SubSystemServer, Poco::Runnable {
-    public:
-        static auto instance() {
-            static auto instance_ = new NewCommandHandler;
-            return instance_;
-        }
+	class NewCommandHandler : public SubSystemServer, Poco::Runnable {
+	  public:
+		static auto instance() {
+			static auto instance_ = new NewCommandHandler;
+			return instance_;
+		}
 
-        void run() override;
-        int Start() override;
-        void Stop() override;
-        bool Update();
-        void CommandReceived( const std::string & Key, const std::string & Message);
+		void run() override;
+		int Start() override;
+		void Stop() override;
+		bool Update();
+		void CommandReceived(const std::string &Key, const std::string &Message);
 
-    private:
-        Poco::Thread                Worker_;
-        std::atomic_bool            Running_ = false;
-        int                         WatcherId_=0;
-        Types::StringPairQueue      NewCommands_;
+	  private:
+		Poco::Thread Worker_;
+		std::atomic_bool Running_ = false;
+		int WatcherId_ = 0;
+		Types::StringPairQueue NewCommands_;
 
-        NewCommandHandler() noexcept:
-            SubSystemServer("NewCommandHandler", "NEWCOM-MGR", "commanmdhandler") {
-        }
+		NewCommandHandler() noexcept
+			: SubSystemServer("NewCommandHandler", "NEWCOM-MGR", "commanmdhandler") {}
+	};
+	inline auto NewCommandHandler() { return NewCommandHandler::instance(); };
 
-    };
-    inline auto NewCommandHandler() { return NewCommandHandler::instance(); };
-
-}
+} // namespace OpenWifi
