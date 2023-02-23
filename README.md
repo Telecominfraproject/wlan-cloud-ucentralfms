@@ -31,7 +31,7 @@ Poco may take several minutes depending on the platform you are building on.
 
 ### Ubuntu
 These instructions have proven to work on Ubuntu 20.4.
-```
+```bash
 sudo apt install git cmake g++ libssl-dev libmariabd-dev unixodbc-dev 
 sudo apt install libpq-dev libaprutil1-dev apache2-dev libboost-all-dev
 sudo apt install librdkafka-dev liblua5.3-dev
@@ -63,7 +63,7 @@ make
 
 ### Fedora
 The following instructions have proven to work on Fedora 33
-```
+```bash
 sudo yum install cmake g++ openssl-devel unixODBC-devel mysql-devel mysql apr-util-devel boost boost-devel
 sudo yum install yaml-cpp-devel lua-devel 
 sudo dnf install postgresql.x86_64 librdkafka-devel
@@ -97,7 +97,7 @@ make
 
 ### OSX Build
 The following instructions have proven to work on OSX Big Sur. You need to install [Homebrew](https://brew.sh/). You must also have installed [XCode for OS X](https://www.freecodecamp.org/news/how-to-download-and-install-xcode/).
-```
+```bash
 brew install openssl
 brew install cmake
 brew install libpq
@@ -159,68 +159,33 @@ certs ---+---
          +--- restapi-key.pem
 ```
 
-### Configuration
-The configuration is kep in the file `owfms.properties`. This is a text file read by the service at startup time.
+### OWFMS Service Configuration
+The configuration is kept in a file called `owfms.properties`. To understand the content of this file,
+please look [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralfms/blob/main/CONFIGURATION.md)
 
-#### Basic configuration
-You must set the environment variables:
-- OWFMS_ROOT: represents where the root of the installation is for this service.
-- OWFMS_CONFIG: represents the path where the configuration is kept.
+## Firewall Considerations
+| Port  | Description                                   | Configurable |
+|:------|:----------------------------------------------|:------------:|
+| 16003 | Default port for REST API Access to the OWFMS |     yes      |
 
-#### The file section
-#### RESTAPI
-```json
-openwifi.restapi.host.0.backlog = 100
-openwifi.restapi.host.0.security = relaxed
-openwifi.restapi.host.0.rootca = $OWFMS_ROOT/certs/restapi-ca.pem
-openwifi.restapi.host.0.address = *
-openwifi.restapi.host.0.port = 16004
-openwifi.restapi.host.0.cert = $OWFMS_ROOT/certs/restapi-cert.pem
-openwifi.restapi.host.0.key = $OWFMS_ROOT/certs/restapi-key.pem
-openwifi.restapi.host.0.key.password = mypassword
-```
-Of importance are the `.port` which should point to the port used.
+## Kafka topics
+Toe read more about Kafka, follow the [document](https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/main/KAFKA.md)
 
-#### Internal microservice interface
-```json
-openwifi.internal.restapi.host.0.backlog = 100
-openwifi.internal.restapi.host.0.security = relaxed
-openwifi.internal.restapi.host.0.rootca = $OWFMS_ROOT/certs/restapi-ca.pem
-openwifi.internal.restapi.host.0.address = *
-openwifi.internal.restapi.host.0.port = 17004
-openwifi.internal.restapi.host.0.cert = $OWFMS_ROOT/certs/restapi-cert.pem
-openwifi.internal.restapi.host.0.key = $OWFMS_ROOT/certs/restapi-key.pem
-openwifi.internal.restapi.host.0.key.password = mypassword
-```
-You can leave all the default values for this one. 
+## Contributions
+We need more contributors. Should you wish to contribute,
+please follow the [contributions](https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/master/CONTRIBUTING.md) document.
 
-#### System values
-In the following values, you need to change `.uri.public` and `uri.ui`. The `.uri.public` must point to an externally available FQDN to access the service. The `.uri.ui` must point to web server running 
-the UI for the service. `firmwaredb.refresh` tells the service how often to refresh the firmware database in seconds. `firmwaredb.maxage` tells the service how old you
-want to accept release for. This value is in days.
+## Pull Requests
+Please create a branch with the Jira addressing the issue you are fixing or the feature you are implementing.
+Create a pull-request from the branch into master.
 
-```json
-openwifi.service.key = $OWFMS_ROOT/certs/restapi-key.pem
-openwifi.service.key.password = mypassword
-openwifi.system.data = $OWFMS_ROOT/data
-openwifi.system.debug = false
-openwifi.system.uri.private = https://localhost:17004
-openwifi.system.uri.public = https://ucentral.dpaas.arilia.com:16004
-openwifi.system.commandchannel = /tmp/app.owfms
-openwifi.system.uri.ui = ucentral-ui.arilia.com
-firmwaredb.refresh = 1800
-firmwaredb.maxage = 90
-```
+## Additional OWSDK Microservices
+Here is a list of additional OWSDK microservices
+| Name | Description | Link | OpenAPI |
+| :--- | :--- | :---: | :---: |
+| OWSEC | Security Service | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralsec) | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralsec/blob/main/openpapi/owsec.yaml) |
+| OWGW | Controller Service | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralgw) | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/master/openapi/owgw.yaml) |
+| OWFMS | Firmware Management Service | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralfms) | [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralfms/blob/main/openapi/owfms.yaml) |
+| OWPROV | Provisioning Service | [here](https://github.com/Telecominfraproject/wlan-cloud-owprov) | [here](https://github.com/Telecominfraproject/wlan-cloud-owprov/blob/main/openapi/owprov.yaml) |
+| OWANALYTICS | Analytics Service | [here](https://github.com/Telecominfraproject/wlan-cloud-analytics) | [here](https://github.com/Telecominfraproject/wlan-cloud-analytics/blob/main/openapi/owanalytics.yaml) |
 
-#### S3 configuration
-The service mua read the information about firmware from an Amazon S3 Bucket. You need to replace `s3.secret` and `s3.key` with your own. 
-
-```json
-s3.bucketname = ucentral-ap-firmware
-s3.region = us-east-1
-s3.secret = *******************************************
-s3.key =  *******************************************
-s3.retry = 60
-s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
-
-```

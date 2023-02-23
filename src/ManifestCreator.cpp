@@ -154,7 +154,7 @@ namespace OpenWifi {
 		S3Key_ = MicroServiceConfigGetString("s3.key", "");
 		S3Retry_ = MicroServiceConfigGetInt("s3.retry", 60);
 
-		DBRefresh_ = MicroServiceConfigGetInt("firmwaredb.refresh", 30 * 60);
+		DBRefresh_ = MicroServiceConfigGetInt("firmwaredb.refresh", 24 * 60 * 60);
 		MaxAge_ = MicroServiceConfigGetInt("firmwaredb.maxage", 90) * 24 * 60 * 60;
 
 		AwsConfig_.enableTcpKeepAlive = true;
@@ -167,7 +167,7 @@ namespace OpenWifi {
 
 		ManifestCreatorCallBack_ = std::make_unique<Poco::TimerCallback<ManifestCreator>>(
 			*this, &ManifestCreator::onTimer);
-		Timer_.setStartInterval(1 * 60 * 1000); // first run in 1 minutes
+		Timer_.setStartInterval(1 * 60 * 1000); // first run in 1 hour
 		Timer_.setPeriodicInterval((long)(DBRefresh_ * 1000));
 		Timer_.start(*ManifestCreatorCallBack_);
 
