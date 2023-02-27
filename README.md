@@ -19,29 +19,44 @@ To build the microservice from source, please follow the instructions in [here](
 ## Docker
 To use the CLoudSDK deployment please follow [here](https://github.com/Telecominfraproject/wlan-cloud-ucentral-deploy)
 
-### After completing the build
-After completing the build, you can remove the Poco source as it is no longer needed.
-
 #### Expected directory layout
-From the directory where your cloned source is, you will need to create the `certs`, `logs`, and `data`.
-```shell
+From the directory where your cloned source is, you will need to create the `certs`, `logs`, and `uploads` directories.
+```bash
 mkdir certs
+mkdir certs/cas
 mkdir logs
-mkdir data
+mkdir uploads
+```
+You should now have the following:
+```text
+--+-- certs
+  |   +--- cas
+  +-- cmake
+  +-- cmake-build
+  +-- logs
+  +-- src
+  +-- test_scripts
+  +-- openapi
+  +-- uploads
+  +-- owsec.properties
 ```
 
-### Certificates
-Love'em of hate'em, we gotta use'em. So we tried to make this as easy as possible for you.
+### Certificate
+The OWFMS uses a certificate to provide security for the REST API Certificate to secure the Northbound API.
 
 #### The `certs` directory
 For all deployments, you will need the following `certs` directory, populated with the proper files.
 
-```asm
-certs ---+--- 
-         +--- restapi-ca.pem
+```text
+certs ---+--- restapi-ca.pem
          +--- restapi-cert.pem
          +--- restapi-key.pem
 ```
+
+## Firewall Considerations
+| Port  | Description                                   | Configurable |
+|:------|:----------------------------------------------|:------------:|
+| 16003 | Default port for REST API Access to the OWFMS |     yes      |
 
 ### Environment variables
 The following environment variables should be set from the root directory of the service. They tell the OWGW process where to find
@@ -55,11 +70,6 @@ You can run the shell script `set_env.sh` from the microservice root.
 ### OWFMS Service Configuration
 The configuration is kept in a file called `owfms.properties`. To understand the content of this file,
 please look [here](https://github.com/Telecominfraproject/wlan-cloud-ucentralfms/blob/main/CONFIGURATION.md)
-
-## Firewall Considerations
-| Port  | Description                                   | Configurable |
-|:------|:----------------------------------------------|:------------:|
-| 16003 | Default port for REST API Access to the OWFMS |     yes      |
 
 ## Kafka topics
 Toe read more about Kafka, follow the [document](https://github.com/Telecominfraproject/wlan-cloud-ucentralgw/blob/main/KAFKA.md)
