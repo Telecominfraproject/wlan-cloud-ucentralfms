@@ -12,6 +12,7 @@
 #include "RESTAPI/RESTAPI_historyHandler.h"
 #include "framework/RESTAPI_Handler.h"
 #include "framework/RESTAPI_SystemCommand.h"
+#include "framework/RESTAPI_SystemConfiguration.h"
 #include "framework/RESTAPI_WebSocketServer.h"
 
 namespace OpenWifi {
@@ -19,7 +20,7 @@ namespace OpenWifi {
 	Poco::Net::HTTPRequestHandler *
 	RESTAPI_ExtRouter(const std::string &Path, RESTAPIHandler::BindingMap &Bindings,
 					  Poco::Logger &L, RESTAPI_GenericServerAccounting &S, uint64_t TransactionId) {
-		return RESTAPI_Router<RESTAPI_firmwaresHandler, RESTAPI_firmwareHandler,
+		return RESTAPI_Router<RESTAPI_firmwaresHandler, RESTAPI_system_configuration, RESTAPI_firmwareHandler,
 							  RESTAPI_system_command, RESTAPI_firmwareAgeHandler,
 							  RESTAPI_connectedDevicesHandler, RESTAPI_connectedDeviceHandler,
 							  RESTAPI_historyHandler, RESTAPI_deviceReportHandler,
@@ -30,7 +31,7 @@ namespace OpenWifi {
 	Poco::Net::HTTPRequestHandler *
 	RESTAPI_IntRouter(const std::string &Path, RESTAPIHandler::BindingMap &Bindings,
 					  Poco::Logger &L, RESTAPI_GenericServerAccounting &S, uint64_t TransactionId) {
-		return RESTAPI_Router_I<RESTAPI_firmwaresHandler, RESTAPI_firmwareHandler,
+		return RESTAPI_Router_I<RESTAPI_firmwaresHandler, RESTAPI_system_configuration, RESTAPI_firmwareHandler,
 								RESTAPI_system_command, RESTAPI_firmwareAgeHandler,
 								RESTAPI_connectedDevicesHandler, RESTAPI_connectedDeviceHandler,
 								RESTAPI_historyHandler, RESTAPI_deviceReportHandler,
