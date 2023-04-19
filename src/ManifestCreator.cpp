@@ -317,7 +317,8 @@ namespace OpenWifi {
 
 		// std::cout << "Count:" << Count << "  Runs:" << Runs << std::endl;
 		if (!Outcome.IsSuccess()) {
-			poco_error(Logger(), fmt::format("Error while doing ListObjectsV2: {}, {}",
+			poco_error(Logger(), fmt::format("Run({},{}) Error while doing ListObjectsV2: {}, {}",
+                                             Runs, Count,
 											 std::string{Outcome.GetError().GetExceptionName()},
 											 std::string{Outcome.GetError().GetMessage()}));
 			return false;
