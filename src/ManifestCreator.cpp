@@ -160,7 +160,7 @@ namespace OpenWifi {
 		DBRefresh_ = MicroServiceConfigGetInt("firmwaredb.refresh", 24 * 60 * 60);
 		MaxAge_ = MicroServiceConfigGetInt("firmwaredb.maxage", 90) * 24 * 60 * 60;
 
-		AwsConfig_.enableTcpKeepAlive = false;
+		AwsConfig_.enableTcpKeepAlive = true;
 		AwsConfig_.enableEndpointDiscovery = true;
 		AwsConfig_.useDualStack = true;
 		if(!S3EndpointHttps_)
