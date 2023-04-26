@@ -143,6 +143,9 @@ configProperties:
   openwifi.internal.restapi.host.0.cert: $OWFMS_ROOT/certs/restapi-cert.pem
   openwifi.internal.restapi.host.0.key: $OWFMS_ROOT/certs/restapi-key.pem
   # Firmware Microservice Specific Section
+  s3.endpointOverride: ""
+  s3.useVirtualAdressing: true
+  s3.endpoint.https: true
   s3.bucketname: ucentral-ap-firmware
   s3.region: us-east-1
   s3.retry: 60
