@@ -54,6 +54,9 @@ namespace OpenWifi {
 
 	  private:
 		std::atomic_bool Running_ = false;
+		Aws::String S3EndpointOverride_;
+		bool S3EndpointHttps_;
+		bool S3UseVirtualAdressing_;
 		Aws::String S3BucketName_;
 		Aws::String S3Region_;
 		Aws::String S3Key_;

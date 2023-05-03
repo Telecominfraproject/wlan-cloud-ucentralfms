@@ -39,6 +39,9 @@ ucentral.system.commandchannel = /tmp/app.ucentralfms
 #
 # Firmware Microservice Specific Section
 #
+s3.endpointOverride = 172.31.30.127:9000
+s3.endpoint.https = false
+s3.useVirtualAdressing = false
 s3.bucketname = ucentral-ap-firmware
 s3.region = us-east-1
 s3.secret = ****************************

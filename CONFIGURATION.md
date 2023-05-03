@@ -30,6 +30,9 @@ s3.secret = *******************************************
 s3.key =  *******************************************
 s3.retry = 60
 s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
+s3.endpoint.https = true
+s3.endpointOverride = ""
+s3.useVirtualAdressing = true
 ```
 
 #### s3.bucketname
@@ -44,6 +47,12 @@ The AWS key for access for this S3 bucket
 The AWS retry window in seconds.
 #### s3.bucket.uri = ucentral-ap-firmware.s3.amazonaws.com
 The URI to the S3 bucket
+#### s3.endpointOverride = ""
+The Endpoint Address to override if you using a different provider that not AWS.
+#### s3.endpoint.https = true
+The Endpoint Method if you using a HTTP endpoint
+#### s3.useVirtualAdressing = true
+In a virtual-hosted–style URI, the bucket name is part of the domain name in the URL. (Not supported by all providers)
 
 ## Generic OpenWiFi SDK parameters
 ### REST API External parameters

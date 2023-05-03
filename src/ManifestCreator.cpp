@@ -148,6 +148,9 @@ namespace OpenWifi {
 
 	int ManifestCreator::Start() {
 		Running_ = true;
+		S3EndpointOverride_ = MicroServiceConfigGetString("s3.endpointOverride", "");
+		S3EndpointHttps_ = MicroServiceConfigGetBool("s3.endpoint.https", true);
+		S3UseVirtualAdressing_  = MicroServiceConfigGetBool("s3.useVirtualAdressing", true);
 		S3BucketName_ = MicroServiceConfigGetString("s3.bucketname", "");
 		S3Region_ = MicroServiceConfigGetString("s3.region", "");
 		S3Secret_ = MicroServiceConfigGetString("s3.secret", "");
@@ -160,6 +163,12 @@ namespace OpenWifi {
 		AwsConfig_.enableTcpKeepAlive = true;
 		AwsConfig_.enableEndpointDiscovery = true;
 		AwsConfig_.useDualStack = true;
+		if(!S3EndpointHttps_)
+			AwsConfig_.scheme = Aws::Http::Scheme::HTTP;
+		if(!S3EndpointOverride_.empty()) {
+			AwsConfig_.endpointOverride = Aws::String(S3EndpointOverride_);
+			AwsConfig_.useDualStack = false;
+		}
 		if (!S3Region_.empty())
 			AwsConfig_.region = S3Region_;
 		AwsCreds_.SetAWSAccessKeyId(S3Key_);
@@ -214,7 +223,7 @@ namespace OpenWifi {
 
 		Aws::S3::Model::ListObjectsV2Request Request;
 		Request.WithBucket(S3BucketName_.c_str());
-		Aws::S3::S3Client S3Client(AwsCreds_, AwsConfig_);
+		Aws::S3::S3Client S3Client(AwsCreds_, AwsConfig_, Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never, S3UseVirtualAdressing_);
 		Request.SetMaxKeys(100);
 		Aws::S3::Model::ListObjectsV2Outcome Outcome;
 
