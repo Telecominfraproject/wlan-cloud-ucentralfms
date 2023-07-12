@@ -4743,9 +4743,9 @@ public class FirmwareApiExample {
 
         // Create an instance of the API class
         FirmwareApi apiInstance = new FirmwareApi();
-        String revision = revision_example; // String | The exact current verion of the firmware on that device.
-        String deviceType = deviceType_example; // String | The exact current verion of the firmware on that device.
-        String select = select=serial1,serial2,serial4,serial5.; // String | Specify lits of serial  numbers to retrive age for
+        String revision = revision_example; // String | The exact current version of the firmware on that device.
+        String deviceType = deviceType_example; // String | The exact current version of the firmware on that device.
+        String select = select=serial1,serial2,serial4,serial5.; // String | Specify list of serial  numbers to retrieve age for
 
         try {
             getFirmwareAge_200_response result = apiInstance.getFirmwareAge(revision, deviceType, select);
@@ -4765,9 +4765,9 @@ public class FirmwareApiExample {
 public class FirmwareApiExample {
     public static void main(String[] args) {
         FirmwareApi apiInstance = new FirmwareApi();
-        String revision = revision_example; // String | The exact current verion of the firmware on that device.
-        String deviceType = deviceType_example; // String | The exact current verion of the firmware on that device.
-        String select = select=serial1,serial2,serial4,serial5.; // String | Specify lits of serial  numbers to retrive age for
+        String revision = revision_example; // String | The exact current version of the firmware on that device.
+        String deviceType = deviceType_example; // String | The exact current version of the firmware on that device.
+        String select = select=serial1,serial2,serial4,serial5.; // String | Specify list of serial  numbers to retrieve age for
 
         try {
             getFirmwareAge_200_response result = apiInstance.getFirmwareAge(revision, deviceType, select);
@@ -4796,9 +4796,9 @@ public class FirmwareApiExample {
 
 // Create an instance of the API class
 FirmwareApi *apiInstance = [[FirmwareApi alloc] init];
-String *revision = revision_example; // The exact current verion of the firmware on that device. (default to null)
-String *deviceType = deviceType_example; // The exact current verion of the firmware on that device. (default to null)
-String *select = select=serial1,serial2,serial4,serial5.; // Specify lits of serial  numbers to retrive age for (optional) (default to null)
+String *revision = revision_example; // The exact current version of the firmware on that device. (default to null)
+String *deviceType = deviceType_example; // The exact current version of the firmware on that device. (default to null)
+String *select = select=serial1,serial2,serial4,serial5.; // Specify list of serial  numbers to retrieve age for (optional) (default to null)
 
 // Calculate how old a version of firmware is.
 [apiInstance getFirmwareAgeWith:revision
@@ -4831,10 +4831,10 @@ bearerAuth.accessToken = "YOUR ACCESS TOKEN";
 
 // Create an instance of the API class
 var api = new UCentralFirmwareServiceApi.FirmwareApi()
-var revision = revision_example; // {String} The exact current verion of the firmware on that device.
-var deviceType = deviceType_example; // {String} The exact current verion of the firmware on that device.
+var revision = revision_example; // {String} The exact current version of the firmware on that device.
+var deviceType = deviceType_example; // {String} The exact current version of the firmware on that device.
 var opts = {
-  'select': select=serial1,serial2,serial4,serial5. // {String} Specify lits of serial  numbers to retrive age for
+  'select': select=serial1,serial2,serial4,serial5. // {String} Specify list of serial  numbers to retrieve age for
 };
 
 var callback = function(error, data, response) {
@@ -4873,9 +4873,9 @@ namespace Example
 
             // Create an instance of the API class
             var apiInstance = new FirmwareApi();
-            var revision = revision_example;  // String | The exact current verion of the firmware on that device. (default to null)
-            var deviceType = deviceType_example;  // String | The exact current verion of the firmware on that device. (default to null)
-            var select = select=serial1,serial2,serial4,serial5.;  // String | Specify lits of serial  numbers to retrive age for (optional)  (default to null)
+            var revision = revision_example;  // String | The exact current version of the firmware on that device. (default to null)
+            var deviceType = deviceType_example;  // String | The exact current version of the firmware on that device. (default to null)
+            var select = select=serial1,serial2,serial4,serial5.;  // String | Specify list of serial  numbers to retrieve age for (optional)  (default to null)
 
             try {
                 // Calculate how old a version of firmware is.
@@ -4904,9 +4904,9 @@ OpenAPITools\Client\Configuration::getDefaultConfiguration()->setAccessToken('',
 
 // Create an instance of the API class
 $api_instance = new OpenAPITools\Client\Api\FirmwareApi();
-$revision = revision_example; // String | The exact current verion of the firmware on that device.
-$deviceType = deviceType_example; // String | The exact current verion of the firmware on that device.
-$select = select=serial1,serial2,serial4,serial5.; // String | Specify lits of serial  numbers to retrive age for
+$revision = revision_example; // String | The exact current version of the firmware on that device.
+$deviceType = deviceType_example; // String | The exact current version of the firmware on that device.
+$select = select=serial1,serial2,serial4,serial5.; // String | Specify list of serial  numbers to retrieve age for
 
 try {
     $result = $api_instance->getFirmwareAge($revision, $deviceType, $select);
@@ -4932,9 +4932,9 @@ $WWW::OPenAPIClient::Configuration::access_token = 'YOUR_ACCESS_TOKEN';
 
 # Create an instance of the API class
 my $api_instance = WWW::OPenAPIClient::FirmwareApi->new();
-my $revision = revision_example; # String | The exact current verion of the firmware on that device.
-my $deviceType = deviceType_example; # String | The exact current verion of the firmware on that device.
-my $select = select=serial1,serial2,serial4,serial5.; # String | Specify lits of serial  numbers to retrive age for
+my $revision = revision_example; # String | The exact current version of the firmware on that device.
+my $deviceType = deviceType_example; # String | The exact current version of the firmware on that device.
+my $select = select=serial1,serial2,serial4,serial5.; # String | Specify list of serial  numbers to retrieve age for
 
 eval {
     my $result = $api_instance->getFirmwareAge(revision => $revision, deviceType => $deviceType, select => $select);
@@ -4962,9 +4962,9 @@ openapi_client.configuration.access_token = 'YOUR_ACCESS_TOKEN'
 
 # Create an instance of the API class
 api_instance = openapi_client.FirmwareApi()
-revision = revision_example # String | The exact current verion of the firmware on that device. (default to null)
-deviceType = deviceType_example # String | The exact current verion of the firmware on that device. (default to null)
-select = select=serial1,serial2,serial4,serial5. # String | Specify lits of serial  numbers to retrive age for (optional) (default to null)
+revision = revision_example # String | The exact current version of the firmware on that device. (default to null)
+deviceType = deviceType_example # String | The exact current version of the firmware on that device. (default to null)
+select = select=serial1,serial2,serial4,serial5. # String | Specify list of serial  numbers to retrieve age for (optional) (default to null)
 
 try:
     # Calculate how old a version of firmware is.
@@ -5020,7 +5020,7 @@ pub fn main() {
                 </span>
 
                     <div class="inner description marked">
-The exact current verion of the firmware on that device.
+The exact current version of the firmware on that device.
                     </div>
             </div>
                 <div class="inner required">
@@ -5043,7 +5043,7 @@ The exact current verion of the firmware on that device.
                 </span>
 
                     <div class="inner description marked">
-The exact current verion of the firmware on that device.
+The exact current version of the firmware on that device.
                     </div>
             </div>
                 <div class="inner required">
@@ -5066,7 +5066,7 @@ The exact current verion of the firmware on that device.
                 </span>
 
                     <div class="inner description marked">
-Specify lits of serial  numbers to retrive age for
+Specify list of serial  numbers to retrieve age for
                     </div>
             </div>
         </div>
