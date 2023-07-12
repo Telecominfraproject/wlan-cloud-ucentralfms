@@ -743,19 +743,19 @@ paths:
       operationId: getFirmwareAge
       parameters:
         - in: query
-          description: The exact current verion of the firmware on that device.
+          description: The exact current version of the firmware on that device.
           name: revision
           schema:
             type: string
           required: true
         - in: query
-          description: The exact current verion of the firmware on that device.
+          description: The exact current version of the firmware on that device.
           name: deviceType
           schema:
             type: string
           required: true
         - in: query
-          description: Specify lits of serial  numbers to retrive age for
+          description: Specify list of serial  numbers to retrieve age for
           name: select
           schema:
             type: string
