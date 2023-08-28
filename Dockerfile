@@ -1,6 +1,9 @@
 ARG DEBIAN_VERSION=11.5-slim
 ARG POCO_VERSION=poco-tip-v2
 ARG CPPKAFKA_VERSION=tip-v1
+ARG VALIJASON_VERSION=tip-v1
+ARG APP_NAME=owfms
+ARG APP_HOME_DIR=/openwifi
 
 FROM debian:$DEBIAN_VERSION AS build-base
 
@@ -38,14 +41,17 @@ RUN cmake ..
 RUN cmake --build . --config Release -j8
 RUN cmake --build . --target install
 
-FROM build-base AS owfms-build
+FROM build-base AS app-build
 
-ADD CMakeLists.txt build /owfms/
-ADD overlays /owfms/overlays
-ADD cmake /owfms/cmake
-ADD src /owfms/src
-ADD .git /owfms/.git
+ARG APP_NAME
+
+ADD CMakeLists.txt build /${APP_NAME}/
+ADD overlays /${APP_NAME}/overlays
+ADD cmake /${APP_NAME}/cmake
+ADD src /${APP_NAME}/src
+ADD .git /${APP_NAME}/.git
 ARG VCPKG_VERSION=2022.11.14
+
 RUN git clone --depth 1 --branch ${VCPKG_VERSION} https://github.com/microsoft/vcpkg && \
     ./vcpkg/bootstrap-vcpkg.sh && \
     mkdir /vcpkg/custom-triplets && \
@@ -58,23 +64,28 @@ COPY --from=poco-build /usr/local/lib /usr/local/lib
 COPY --from=cppkafka-build /usr/local/include /usr/local/include
 COPY --from=cppkafka-build /usr/local/lib /usr/local/lib
 
-WORKDIR /owfms
+WORKDIR /${APP_NAME}
 RUN mkdir cmake-build
-WORKDIR /owfms/cmake-build
+WORKDIR /${APP_NAME}/cmake-build
 RUN cmake -DCMAKE_TOOLCHAIN_FILE=/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 RUN cmake --build . --config Release -j8
 
 FROM debian:$DEBIAN_VERSION
 
-ENV OWFMS_USER=owfms \
-    OWFMS_ROOT=/owfms-data \
-    OWFMS_CONFIG=/owfms-data
+ARG APP_NAME
+ARG APP_HOME_DIR
 
-RUN useradd "$OWFMS_USER"
+ENV APP_NAME=$APP_NAME \
+    APP_USER=$APP_NAME \
+    APP_ROOT=/$APP_NAME-data \
+    APP_CONFIG=/$APP_NAME-data \
+    APP_HOME_DIR=$APP_HOME_DIR
 
-RUN mkdir /openwifi
-RUN mkdir -p "$OWFMS_ROOT" "$OWFMS_CONFIG" && \
-    chown "$OWFMS_USER": "$OWFMS_ROOT" "$OWFMS_CONFIG"
+RUN useradd $APP_USER
+
+RUN mkdir $APP_HOME_DIR
+RUN mkdir -p "$APP_ROOT" "$APP_CONFIG" && \
+    chown "$APP_USER": "$APP_ROOT" "$APP_CONFIG"
 
 RUN apt-get update && apt-get install --no-install-recommends -y \
     librdkafka++1 gosu gettext ca-certificates bash jq curl wget \
@@ -83,14 +94,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 COPY readiness_check /readiness_check
 COPY test_scripts/curl/cli /cli
 
-COPY owfms.properties.tmpl /
+COPY $APP_NAME.properties.tmpl /
 COPY docker-entrypoint.sh /
 COPY wait-for-postgres.sh /
 RUN wget https://raw.githubusercontent.com/Telecominfraproject/wlan-cloud-ucentral-deploy/main/docker-compose/certs/restapi-ca.pem \
     -O /usr/local/share/ca-certificates/restapi-ca-selfsigned.crt
 
-COPY --from=owfms-build /owfms/cmake-build/owfms /openwifi/owfms
-COPY --from=owfms-build /vcpkg/installed/x64-linux/lib/ /usr/local/lib/
+COPY --from=app-build /$APP_NAME/cmake-build/$APP_NAME $APP_HOME_DIR/$APP_NAME
+COPY --from=app-build /vcpkg/installed/x64-linux/lib/ /usr/local/lib/
 COPY --from=cppkafka-build /cppkafka/cmake-build/src/lib/ /usr/local/lib/
 COPY --from=poco-build /poco/cmake-build/lib/ /usr/local/lib/
 
@@ -99,4 +110,4 @@ RUN ldconfig
 EXPOSE 16004 17004 16104
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["/openwifi/owfms"]
+CMD ${APP_HOME_DIR}/${APP_NAME}
