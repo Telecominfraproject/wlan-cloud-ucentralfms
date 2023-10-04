@@ -157,6 +157,7 @@ target_link_libraries( owfms PUBLIC
         ${ZLIB_LIBRARIES}
         ${AWSSDK_LINK_LIBRARIES}
         fmt::fmt
+        resolv
         CppKafka::cppkafka
     )
 
