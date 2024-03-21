@@ -16,9 +16,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 FROM build-base AS poco-build
 
 ARG POCO_VERSION
-
-ADD https://api.github.com/repos/AriliaWireless/poco/git/refs/tags/${POCO_VERSION} version.json
-RUN git clone https://github.com/AriliaWireless/poco --branch ${POCO_VERSION} /poco
+ADD https://api.github.com/repos/Telecominfraproject/wlan-cloud-lib-poco/git/refs/tags/${POCO_VERSION} version.json
+RUN git clone https://github.com/Telecominfraproject/wlan-cloud-lib-poco --branch ${POCO_VERSION} /poco
 
 WORKDIR /poco
 RUN mkdir cmake-build
@@ -31,8 +30,8 @@ FROM build-base AS cppkafka-build
 
 ARG CPPKAFKA_VERSION
 
-ADD https://api.github.com/repos/AriliaWireless/cppkafka/git/refs/tags/${CPPKAFKA_VERSION} version.json
-RUN git clone https://github.com/AriliaWireless/cppkafka --branch ${CPPKAFKA_VERSION} /cppkafka
+ADD https://api.github.com/repos/Telecominfraproject/wlan-cloud-lib-cppkafka/git/refs/tags/${CPPKAFKA_VERSION} version.json
+RUN git clone https://github.com/Telecominfraproject/wlan-cloud-lib-cppkafka --branch ${CPPKAFKA_VERSION} /cppkafka
 
 WORKDIR /cppkafka
 RUN mkdir cmake-build
