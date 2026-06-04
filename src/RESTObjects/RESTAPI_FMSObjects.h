@@ -120,6 +120,7 @@ namespace OpenWifi::FMSObjects {
 		Types::CountedMap EndPoints_;
 		Types::CountedMap UsingLatest_;
 		Types::CountedMap UnknownFirmwares_;
+		Types::CountedMap MatchedRevisions_;
 		Types::CountedMap totalSecondsOld_;
 		void to_json(Poco::JSON::Object &Obj) const;
 		void reset();
