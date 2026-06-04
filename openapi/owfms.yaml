@@ -226,6 +226,8 @@ components:
           $ref: '#/components/schemas/TagIntPairList'
         unknownFirmwares:
           $ref: '#/components/schemas/TagIntPairList'
+        matchedRevisions:
+          $ref: '#/components/schemas/TagIntPairList'
         usingLatest:
           $ref: '#/components/schemas/TagIntPairList'
         totalSecondsOld:

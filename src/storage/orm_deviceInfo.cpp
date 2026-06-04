@@ -84,6 +84,11 @@ namespace OpenWifi {
 			UpdateCountedMap(Report.EndPoints_, D.endPoint);
 			UpdateCountedMap(Report.OUI_, D.serialNumber.substr(0, 6));
 			FMSObjects::FirmwareAgeDetails Age;
+			FMSObjects::Firmware MatchedFw;
+			if (StorageService()->FirmwaresDB().GetFirmwareByRevision(
+					D.revision, D.deviceType, MatchedFw)) {
+				UpdateCountedMap(Report.MatchedRevisions_, D.revision);
+			}
 			if (StorageService()->FirmwaresDB().ComputeFirmwareAge(D.deviceType, D.revision, Age)) {
 				if (Age.latest) {
 					UpdateCountedMap(Report.UsingLatest_, D.revision);

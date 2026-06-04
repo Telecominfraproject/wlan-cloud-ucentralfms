@@ -211,6 +211,7 @@ namespace OpenWifi::FMSObjects {
 		field_to_json(Obj, "endPoints", EndPoints_);
 		field_to_json(Obj, "usingLatest", UsingLatest_);
 		field_to_json(Obj, "unknownFirmwares", UnknownFirmwares_);
+		field_to_json(Obj, "matchedRevisions", MatchedRevisions_);
 		field_to_json(Obj, "snapshot", snapshot);
 		field_to_json(Obj, "numberOfDevices", numberOfDevices);
 		field_to_json(Obj, "totalSecondsOld", totalSecondsOld_);
@@ -224,6 +225,7 @@ namespace OpenWifi::FMSObjects {
 		EndPoints_.clear();
 		UsingLatest_.clear();
 		UnknownFirmwares_.clear();
+		MatchedRevisions_.clear();
 		totalSecondsOld_.clear();
 		numberOfDevices = 0;
 		snapshot = Utils::Now();
